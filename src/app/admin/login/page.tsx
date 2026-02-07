@@ -3,8 +3,8 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { createBrowserSupabaseClient } from '@/lib/supabase-auth';
-import { Lock, Mail, Eye, EyeOff, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { getSupabaseClient, isSupabaseConfigured, getSupabaseConfigError } from '@/lib/supabaseClient';
+import { Lock, Mail, Eye, EyeOff, Loader2, AlertCircle, ArrowLeft, Settings } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
@@ -16,28 +16,45 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [configError, setConfigError] = useState<string | null>(null);
+
+  // Check Supabase configuration on mount
+  useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      setConfigError(getSupabaseConfigError());
+    }
+  }, []);
 
   // Check if already logged in
   useEffect(() => {
     const checkAuth = async () => {
-      const supabase = createBrowserSupabaseClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
 
-      if (user) {
-        // Check if admin
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
 
-        if (profile?.role === 'admin') {
-          router.replace(redirectPath);
+        if (user) {
+          // Check if admin
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+          if (profile?.role === 'admin') {
+            router.replace(redirectPath);
+          }
         }
+      } catch (err) {
+        // Ignore errors during auth check
+        console.error('Auth check error:', err);
       }
     };
 
-    checkAuth();
+    if (isSupabaseConfigured()) {
+      checkAuth();
+    }
   }, [router, redirectPath]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,7 +63,11 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      const supabase = createBrowserSupabaseClient();
+      const supabase = getSupabaseClient();
+
+      if (!supabase) {
+        throw new Error(getSupabaseConfigError() || 'Supabase nie jest skonfigurowany');
+      }
 
       // Sign in with email and password
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
@@ -57,6 +78,9 @@ function LoginForm() {
       if (signInError) {
         if (signInError.message.includes('Invalid login credentials')) {
           throw new Error('Nieprawidłowy email lub hasło');
+        }
+        if (signInError.message.includes('Email not confirmed')) {
+          throw new Error('Email nie został potwierdzony. Sprawdź skrzynkę pocztową.');
         }
         throw new Error(signInError.message);
       }
@@ -74,7 +98,7 @@ function LoginForm() {
 
       if (profileError || !profile) {
         await supabase.auth.signOut();
-        throw new Error('Nie znaleziono profilu użytkownika');
+        throw new Error('Nie znaleziono profilu użytkownika. Skontaktuj się z administratorem.');
       }
 
       if (profile.role !== 'admin') {
@@ -90,6 +114,53 @@ function LoginForm() {
       setIsLoading(false);
     }
   };
+
+  // Show configuration error
+  if (configError) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-8 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Powrót do strony głównej
+          </Link>
+
+          <div className="bg-white rounded-2xl shadow-2xl p-8">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Settings className="w-8 h-8 text-orange-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-[#0F172A]">Brak konfiguracji</h1>
+            </div>
+
+            <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg mb-6">
+              <p className="text-sm text-orange-800 font-medium mb-2">
+                Supabase nie jest skonfigurowany:
+              </p>
+              <p className="text-sm text-orange-700">{configError}</p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 space-y-3">
+              <p className="font-medium text-gray-700">Aby naprawić:</p>
+              <ol className="list-decimal list-inside space-y-2">
+                <li>Utwórz plik <code className="bg-gray-200 px-1 rounded">.env.local</code> w katalogu głównym projektu</li>
+                <li>Dodaj zmienne środowiskowe:
+                  <pre className="mt-2 bg-gray-200 p-2 rounded text-xs overflow-x-auto">
+{`NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...`}
+                  </pre>
+                </li>
+                <li>Uruchom ponownie serwer deweloperski</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] flex items-center justify-center p-4">
@@ -137,8 +208,9 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={isLoading}
                   placeholder="admin@example.com"
-                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all"
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
@@ -156,13 +228,15 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={isLoading}
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-12 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all"
+                  className="w-full pl-11 pr-12 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  disabled={isLoading}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
