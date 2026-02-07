@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 const navigation = [
   { name: 'Strona główna', href: '/' },
   { name: 'Rezerwacja', href: '/booking' },
-  { name: 'AI Konsultacja', href: '/ai' },
+  { name: 'Wideo Pomoc', href: '/video-pomoc' },
   { name: 'Cennik', href: '/prices' },
   { name: 'Kontakt', href: '/contact' },
 ];

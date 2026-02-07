@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, MessageSquare, Loader2 } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
 
-export default function AISuccessPage() {
+function AISuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams.get('session_id');
@@ -130,5 +130,29 @@ export default function AISuccessPage() {
         </Card>
       </Container>
     </section>
+  );
+}
+
+export default function AISuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="py-24 lg:py-32">
+          <Container size="sm">
+            <Card className="text-center py-16">
+              <CardContent>
+                <Loader2 className="w-12 h-12 text-[#2563EB] mx-auto mb-4 animate-spin" />
+                <h1 className="text-2xl font-bold text-[#0F172A] mb-2">
+                  Weryfikacja płatności...
+                </h1>
+                <p className="text-gray-600">Proszę czekać</p>
+              </CardContent>
+            </Card>
+          </Container>
+        </section>
+      }
+    >
+      <AISuccessContent />
+    </Suspense>
   );
 }

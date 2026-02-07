@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Send, Bot, User, Loader2, AlertCircle, Calendar } from 'lucide-react';
 import Link from 'next/link';
@@ -23,7 +23,7 @@ interface SessionInfo {
   expiresAt: string;
 }
 
-export default function AIChatPage() {
+function AIChatContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams.get('session');
@@ -386,5 +386,24 @@ export default function AIChatPage() {
         </Container>
       </div>
     </div>
+  );
+}
+
+export default function AIChatPage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="py-24">
+          <Container size="sm">
+            <div className="text-center">
+              <Loader2 className="w-12 h-12 text-[#2563EB] mx-auto mb-4 animate-spin" />
+              <p className="text-gray-600">Ładowanie rozmowy...</p>
+            </div>
+          </Container>
+        </section>
+      }
+    >
+      <AIChatContent />
+    </Suspense>
   );
 }
