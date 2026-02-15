@@ -1,0 +1,20 @@
+[
+  {
+    "key": "video_help_intro",
+    "title": "Wideo Pomoc - Wprowadzenie",
+    "content": "Materiały wideo opracowane przez doświadczonych terapeutów, które pomogą Ci w codziennej pielęgnacji ciała i redukcji dolegliwości bólowych.",
+    "updatedAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "key": "video_help_disclaimer",
+    "title": "Zastrzeżenie",
+    "content": "Materiały wideo mają charakter edukacyjny i nie zastępują profesjonalnej konsultacji medycznej. Przed rozpoczęciem ćwiczeń skonsultuj się z lekarzem lub fizjoterapeutą.",
+    "updatedAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "key": "video_help_package",
+    "title": "Pakiet Wideo",
+    "content": "Wykup dostęp do wszystkich materiałów wideo w atrakcyjnej cenie pakietowej.",
+    "updatedAt": "2026-02-15T00:00:00.000Z"
+  }
+]

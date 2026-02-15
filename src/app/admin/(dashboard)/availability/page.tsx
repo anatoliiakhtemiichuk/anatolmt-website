@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createBrowserSupabaseClient } from '@/lib/supabase-auth';
 import { BlockedSlot } from '@/types/admin';
-import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isPast } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isPast } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import {
   CalendarOff,
@@ -15,7 +14,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  AlertCircle,
 } from 'lucide-react';
 
 export default function AvailabilityPage() {
@@ -39,18 +37,13 @@ export default function AvailabilityPage() {
   }, []);
 
   const fetchBlockedSlots = async () => {
-    const supabase = createBrowserSupabaseClient();
-
     try {
-      const { data, error } = await supabase
-        .from('blocked_slots')
-        .select('*')
-        .gte('date', format(new Date(), 'yyyy-MM-dd'))
-        .order('date', { ascending: true })
-        .order('time_start', { ascending: true });
+      const response = await fetch(`/api/admin/blocked-slots?date_from=${format(new Date(), 'yyyy-MM-dd')}`);
+      const result = await response.json();
 
-      if (error) throw error;
-      setBlockedSlots((data as BlockedSlot[]) || []);
+      if (result.success) {
+        setBlockedSlots(result.data);
+      }
     } catch (error) {
       console.error('Error fetching blocked slots:', error);
     } finally {
@@ -62,36 +55,34 @@ export default function AvailabilityPage() {
     e.preventDefault();
     setIsSaving(true);
 
-    const supabase = createBrowserSupabaseClient();
-
     try {
-      const insertData: Partial<BlockedSlot> = {
-        date: formData.date,
-        is_full_day: formData.is_full_day,
-        reason: formData.reason || null,
-      };
-
-      if (!formData.is_full_day) {
-        insertData.time_start = formData.time_start;
-        insertData.time_end = formData.time_end;
-      }
-
-      const { error } = await supabase.from('blocked_slots').insert(insertData);
-
-      if (error) throw error;
-
-      // Refresh list
-      await fetchBlockedSlots();
-
-      // Close modal and reset form
-      setIsModalOpen(false);
-      setFormData({
-        date: format(new Date(), 'yyyy-MM-dd'),
-        is_full_day: true,
-        time_start: '09:00',
-        time_end: '17:00',
-        reason: '',
+      const response = await fetch('/api/admin/blocked-slots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: formData.date,
+          is_full_day: formData.is_full_day,
+          time_start: formData.is_full_day ? null : formData.time_start,
+          time_end: formData.is_full_day ? null : formData.time_end,
+          reason: formData.reason || null,
+        }),
       });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchBlockedSlots();
+        setIsModalOpen(false);
+        setFormData({
+          date: format(new Date(), 'yyyy-MM-dd'),
+          is_full_day: true,
+          time_start: '09:00',
+          time_end: '17:00',
+          reason: '',
+        });
+      } else {
+        alert(result.error || 'Wystąpił błąd podczas zapisywania');
+      }
     } catch (error) {
       console.error('Error creating blocked slot:', error);
       alert('Wystąpił błąd podczas zapisywania');
@@ -103,14 +94,18 @@ export default function AvailabilityPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Czy na pewno chcesz usunąć tę blokadę?')) return;
 
-    const supabase = createBrowserSupabaseClient();
-
     try {
-      const { error } = await supabase.from('blocked_slots').delete().eq('id', id);
+      const response = await fetch(`/api/admin/blocked-slots/${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      const result = await response.json();
 
-      setBlockedSlots(blockedSlots.filter(slot => slot.id !== id));
+      if (result.success) {
+        setBlockedSlots(blockedSlots.filter(slot => slot.id !== id));
+      } else {
+        alert(result.error || 'Wystąpił błąd podczas usuwania');
+      }
     } catch (error) {
       console.error('Error deleting blocked slot:', error);
       alert('Wystąpił błąd podczas usuwania');

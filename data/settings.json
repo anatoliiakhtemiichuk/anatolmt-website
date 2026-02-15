@@ -1,0 +1,25 @@
+{
+  "openingHours": {
+    "monday": { "open": "00:00", "close": "00:00", "isClosed": true },
+    "tuesday": { "open": "11:00", "close": "22:00", "isClosed": false },
+    "wednesday": { "open": "11:00", "close": "22:00", "isClosed": false },
+    "thursday": { "open": "11:00", "close": "22:00", "isClosed": false },
+    "friday": { "open": "11:00", "close": "22:00", "isClosed": false },
+    "saturday": { "open": "10:00", "close": "18:00", "isClosed": false },
+    "sunday": { "open": "11:00", "close": "15:00", "isClosed": false }
+  },
+  "pricing": {
+    "consultation": 50,
+    "visit1hWeekday": 200,
+    "visit1hWeekend": 250,
+    "visit15hWeekday": 250,
+    "visit15hWeekend": 300
+  },
+  "contact": {
+    "address": "ul. Przykładowa 123",
+    "city": "Warszawa",
+    "phone": "+48 123 456 789",
+    "email": "kontakt@mt-anatol.pl"
+  },
+  "updatedAt": "2026-02-15T00:00:00.000Z"
+}

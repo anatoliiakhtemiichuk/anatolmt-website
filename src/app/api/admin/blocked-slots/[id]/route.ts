@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from '@/lib/supabase-admin';
+import { deleteBlockedSlot } from '@/lib/admin-data';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -13,15 +13,13 @@ interface RouteParams {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const supabase = createAdminSupabaseClient();
+    const deleted = await deleteBlockedSlot(id);
 
-    const { error } = await supabase
-      .from('blocked_slots')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      throw error;
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, error: 'Blokada nie istnieje' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({

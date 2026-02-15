@@ -1,22 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseClient, isSupabaseConfigured } from '@/lib/supabaseClient';
-import { Profile } from '@/types/admin';
 import {
   LayoutDashboard,
   Calendar,
   CalendarOff,
   Users,
+  Settings,
   LogOut,
   Menu,
   X,
-  Loader2,
   ChevronRight,
-  ShieldX,
-  ArrowLeft,
+  Video,
+  FileText,
 } from 'lucide-react';
 
 interface NavItem {
@@ -30,150 +28,26 @@ const navItems: NavItem[] = [
   { href: '/admin/appointments', label: 'Wizyty', icon: <Calendar className="w-5 h-5" /> },
   { href: '/admin/availability', label: 'Dostępność', icon: <CalendarOff className="w-5 h-5" /> },
   { href: '/admin/clients', label: 'Klienci', icon: <Users className="w-5 h-5" /> },
+  { href: '/admin/videos', label: 'Filmy', icon: <Video className="w-5 h-5" /> },
+  { href: '/admin/content', label: 'Treści', icon: <FileText className="w-5 h-5" /> },
+  { href: '/admin/settings', label: 'Ustawienia', icon: <Settings className="w-5 h-5" /> },
 ];
-
-type AuthState = 'loading' | 'authenticated' | 'unauthenticated' | 'unauthorized';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [authState, setAuthState] = useState<AuthState>('loading');
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      // Check if Supabase is configured
-      if (!isSupabaseConfigured()) {
-        router.replace('/admin/login');
-        return;
-      }
-
-      const supabase = getSupabaseClient();
-      if (!supabase) {
-        router.replace('/admin/login');
-        return;
-      }
-
-      try {
-        // Get current user
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-        if (authError || !user) {
-          setAuthState('unauthenticated');
-          router.replace('/admin/login');
-          return;
-        }
-
-        // Get profile with role from database
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError || !profileData) {
-          // User exists but no profile - redirect to login
-          await supabase.auth.signOut();
-          setAuthState('unauthenticated');
-          router.replace('/admin/login');
-          return;
-        }
-
-        // SECURITY CHECK: Verify admin role from database
-        if (profileData.role !== 'admin') {
-          // User is authenticated but NOT an admin
-          // Sign them out and show access denied
-          await supabase.auth.signOut();
-          setAuthState('unauthorized');
-          return;
-        }
-
-        // User is authenticated AND is an admin
-        setProfile(profileData as Profile);
-        setAuthState('authenticated');
-      } catch (error) {
-        console.error('Auth check error:', error);
-        setAuthState('unauthenticated');
-        router.replace('/admin/login');
-      }
-    };
-
-    checkAuth();
-  }, [router]);
-
   const handleLogout = async () => {
-    const supabase = getSupabaseClient();
-    if (supabase) {
-      await supabase.auth.signOut();
+    try {
+      await fetch('/api/admin/auth/logout', { method: 'POST' });
+      router.replace('/admin/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      router.replace('/admin/login');
     }
-    router.replace('/admin/login');
   };
 
-  // Loading state
-  if (authState === 'loading') {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-10 h-10 text-[#2563EB] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Weryfikacja uprawnień...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // ACCESS DENIED - User is authenticated but not an admin
-  if (authState === 'unauthorized') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
-            {/* Icon */}
-            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShieldX className="w-10 h-10 text-red-600" />
-            </div>
-
-            {/* Title */}
-            <h1 className="text-2xl font-bold text-[#0F172A] mb-2">
-              Brak uprawnień administratora
-            </h1>
-
-            {/* Message */}
-            <p className="text-gray-600 mb-8">
-              Twoje konto nie ma uprawnień do panelu administracyjnego.
-              Dostęp jest ograniczony tylko do autoryzowanych administratorów.
-            </p>
-
-            {/* Actions */}
-            <div className="space-y-3">
-              <Link
-                href="/"
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0F172A] text-white rounded-lg hover:bg-[#1E293B] transition-colors font-medium"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Wróć do strony głównej
-              </Link>
-
-              <Link
-                href="/admin/login"
-                className="w-full inline-flex items-center justify-center px-6 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-              >
-                Zaloguj się na inne konto
-              </Link>
-            </div>
-
-            {/* Help text */}
-            <p className="text-sm text-gray-500 mt-8">
-              Jeśli uważasz, że powinnaś/powinieneś mieć dostęp,
-              skontaktuj się z właścicielem systemu.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Authenticated admin - show admin panel
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar - Desktop */}
@@ -215,15 +89,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 px-4 py-3">
             <div className="w-10 h-10 bg-[#2563EB] rounded-full flex items-center justify-center">
-              <span className="text-white font-medium text-sm">
-                {profile?.email?.charAt(0).toUpperCase()}
-              </span>
+              <span className="text-white font-medium text-sm">A</span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-medium truncate">
-                {profile?.full_name || 'Administrator'}
+                Administrator
               </p>
-              <p className="text-white/50 text-xs truncate">{profile?.email}</p>
+              <p className="text-white/50 text-xs truncate">Panel zarządzania</p>
             </div>
           </div>
           <button

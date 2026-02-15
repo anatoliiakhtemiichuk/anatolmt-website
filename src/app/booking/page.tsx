@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { format, addDays, isWeekend, getDay } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import {
@@ -13,110 +13,21 @@ import {
   Phone,
   Mail,
   FileText,
+  Loader2,
 } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { formatPLN } from '@/lib/pricing';
+import type { ClinicSettings } from '@/types/settings';
 
-// Service types with pricing
-const services = [
-  {
-    id: 'consultation',
-    name: 'Konsultacja',
-    duration: 30,
-    priceWeekday: 50,
-    priceWeekend: null, // Not available on weekends
-    description: 'Wstępna konsultacja i ocena potrzeb',
-  },
-  {
-    id: 'visit-1h',
-    name: 'Wizyta 1h',
-    duration: 60,
-    priceWeekday: 200,
-    priceWeekend: 250,
-    description: 'Standardowa sesja terapii manualnej',
-  },
-  {
-    id: 'visit-1.5h',
-    name: 'Wizyta 1.5h',
-    duration: 90,
-    priceWeekday: 250,
-    priceWeekend: 300,
-    description: 'Rozszerzona sesja terapii',
-  },
-];
-
-// Opening hours by day of week (0 = Sunday, 1 = Monday, etc.)
-const openingHours: Record<number, { start: string; end: string } | null> = {
-  0: { start: '11:00', end: '15:00' }, // Sunday
-  1: null, // Monday - closed
-  2: { start: '11:00', end: '22:00' }, // Tuesday
-  3: { start: '11:00', end: '22:00' }, // Wednesday
-  4: { start: '11:00', end: '22:00' }, // Thursday
-  5: { start: '11:00', end: '22:00' }, // Friday
-  6: { start: '10:00', end: '18:00' }, // Saturday
-};
-
-// Generate mock time slots
-const generateTimeSlots = (date: Date, duration: number): string[] => {
-  const dayOfWeek = getDay(date);
-  const hours = openingHours[dayOfWeek];
-
-  if (!hours) return [];
-
-  const slots: string[] = [];
-  const [startHour, startMin] = hours.start.split(':').map(Number);
-  const [endHour, endMin] = hours.end.split(':').map(Number);
-
-  let currentHour = startHour;
-  let currentMin = startMin;
-
-  while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
-    // Check if slot + duration fits before closing
-    const slotEndMin = currentMin + duration;
-    const slotEndHour = currentHour + Math.floor(slotEndMin / 60);
-    const slotEndMinutes = slotEndMin % 60;
-
-    if (slotEndHour < endHour || (slotEndHour === endHour && slotEndMinutes <= endMin)) {
-      const timeStr = `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`;
-
-      // Mock: randomly mark some slots as unavailable
-      const isAvailable = Math.random() > 0.3;
-      if (isAvailable) {
-        slots.push(timeStr);
-      }
-    }
-
-    // Move to next 30-minute slot
-    currentMin += 30;
-    if (currentMin >= 60) {
-      currentHour += 1;
-      currentMin = 0;
-    }
-  }
-
-  return slots;
-};
-
-// Generate next 14 available days
-const generateAvailableDates = (): Date[] => {
-  const dates: Date[] = [];
-  let currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0);
-
-  // Start from tomorrow
-  currentDate = addDays(currentDate, 1);
-
-  while (dates.length < 14) {
-    const dayOfWeek = getDay(currentDate);
-    // Skip Mondays (closed)
-    if (dayOfWeek !== 1) {
-      dates.push(new Date(currentDate));
-    }
-    currentDate = addDays(currentDate, 1);
-  }
-
-  return dates;
-};
+interface Service {
+  id: string;
+  name: string;
+  duration: number;
+  priceWeekday: number;
+  priceWeekend: number | null;
+  description: string;
+}
 
 interface ClientData {
   firstName: string;
@@ -124,6 +35,7 @@ interface ClientData {
   phone: string;
   email: string;
   notes: string;
+  acceptTerms: boolean;
 }
 
 interface FormErrors {
@@ -131,6 +43,14 @@ interface FormErrors {
   lastName?: string;
   phone?: string;
   email?: string;
+  acceptTerms?: string;
+}
+
+interface AvailabilityData {
+  date: string;
+  isBlocked: boolean;
+  isClosed: boolean;
+  availableSlots: string[];
 }
 
 const steps = [
@@ -140,6 +60,16 @@ const steps = [
   { id: 4, name: 'Dane', icon: User },
   { id: 5, name: 'Potwierdzenie', icon: CheckCircle },
 ];
+
+const dayNameMap: Record<number, string> = {
+  0: 'sunday',
+  1: 'monday',
+  2: 'tuesday',
+  3: 'wednesday',
+  4: 'thursday',
+  5: 'friday',
+  6: 'saturday',
+};
 
 export default function BookingPage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -152,19 +82,215 @@ export default function BookingPage() {
     phone: '',
     email: '',
     notes: '',
+    acceptTerms: false,
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
 
-  const availableDates = useMemo(() => generateAvailableDates(), []);
+  // Settings and availability state
+  const [settings, setSettings] = useState<ClinicSettings | null>(null);
+  const [settingsLoading, setSettingsLoading] = useState(true);
+  const [availabilityCache, setAvailabilityCache] = useState<Record<string, AvailabilityData>>({});
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
 
-  const availableTimeSlots = useMemo(() => {
-    if (!selectedDate || !selectedService) return [];
-    const service = services.find((s) => s.id === selectedService);
-    if (!service) return [];
-    return generateTimeSlots(selectedDate, service.duration);
-  }, [selectedDate, selectedService]);
+  // Fetch settings on load
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        if (data.success) {
+          setSettings(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch settings:', error);
+      } finally {
+        setSettingsLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  // Generate services from settings
+  const services: Service[] = useMemo(() => {
+    if (!settings?.pricing) {
+      // Default services if settings not loaded
+      return [
+        {
+          id: 'consultation',
+          name: 'Konsultacja',
+          duration: 30,
+          priceWeekday: 50,
+          priceWeekend: null,
+          description: 'Wstępna konsultacja i ocena potrzeb',
+        },
+        {
+          id: 'visit-1h',
+          name: 'Wizyta 1h',
+          duration: 60,
+          priceWeekday: 200,
+          priceWeekend: 250,
+          description: 'Standardowa sesja terapii manualnej',
+        },
+        {
+          id: 'visit-1.5h',
+          name: 'Wizyta 1.5h',
+          duration: 90,
+          priceWeekday: 250,
+          priceWeekend: 300,
+          description: 'Rozszerzona sesja terapii',
+        },
+      ];
+    }
+
+    return [
+      {
+        id: 'consultation',
+        name: 'Konsultacja',
+        duration: 30,
+        priceWeekday: settings.pricing.consultation,
+        priceWeekend: null, // Consultation not available on weekends
+        description: 'Wstępna konsultacja i ocena potrzeb',
+      },
+      {
+        id: 'visit-1h',
+        name: 'Wizyta 1h',
+        duration: 60,
+        priceWeekday: settings.pricing.visit1hWeekday,
+        priceWeekend: settings.pricing.visit1hWeekend,
+        description: 'Standardowa sesja terapii manualnej',
+      },
+      {
+        id: 'visit-1.5h',
+        name: 'Wizyta 1.5h',
+        duration: 90,
+        priceWeekday: settings.pricing.visit15hWeekday,
+        priceWeekend: settings.pricing.visit15hWeekend,
+        description: 'Rozszerzona sesja terapii',
+      },
+    ];
+  }, [settings]);
+
+  // Check if a date is closed or blocked
+  const isDateDisabled = useCallback((date: Date): { disabled: boolean; reason?: string } => {
+    if (!settings) return { disabled: false };
+
+    const dayOfWeek = getDay(date);
+    const dayName = dayNameMap[dayOfWeek];
+    const daySettings = settings.openingHours[dayName as keyof typeof settings.openingHours];
+
+    // Check if day is closed
+    if (daySettings?.isClosed) {
+      return { disabled: true, reason: 'Zamknięte' };
+    }
+
+    // Check availability cache for blocked days
+    const dateStr = format(date, 'yyyy-MM-dd');
+    const cached = availabilityCache[dateStr];
+    if (cached?.isBlocked) {
+      return { disabled: true, reason: 'Zablokowane' };
+    }
+
+    return { disabled: false };
+  }, [settings, availabilityCache]);
+
+  // Generate available dates (next 14 working days)
+  const availableDates = useMemo(() => {
+    if (!settings) return [];
+
+    const dates: Date[] = [];
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    currentDate = addDays(currentDate, 1); // Start from tomorrow
+
+    while (dates.length < 21) { // Generate more to account for closed days
+      const dayOfWeek = getDay(currentDate);
+      const dayName = dayNameMap[dayOfWeek];
+      const daySettings = settings.openingHours[dayName as keyof typeof settings.openingHours];
+
+      // Include the date but it may be marked as disabled later
+      dates.push(new Date(currentDate));
+      currentDate = addDays(currentDate, 1);
+    }
+
+    return dates.slice(0, 14); // Return first 14 dates
+  }, [settings]);
+
+  // Pre-fetch availability for visible dates
+  useEffect(() => {
+    if (!availableDates.length || !selectedService) return;
+
+    const fetchAvailability = async (dateStr: string, duration: number) => {
+      if (availabilityCache[dateStr]) return;
+
+      try {
+        const res = await fetch(`/api/availability?date=${dateStr}&duration=${duration}`);
+        const data = await res.json();
+        if (data.success) {
+          setAvailabilityCache(prev => ({
+            ...prev,
+            [dateStr]: data.data,
+          }));
+        }
+      } catch (error) {
+        console.error(`Failed to fetch availability for ${dateStr}:`, error);
+      }
+    };
+
+    const service = services.find(s => s.id === selectedService);
+    if (!service) return;
+
+    // Fetch availability for all visible dates
+    availableDates.forEach(date => {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      fetchAvailability(dateStr, service.duration);
+    });
+  }, [availableDates, selectedService, services, availabilityCache]);
+
+  // Fetch available time slots when date is selected
+  useEffect(() => {
+    if (!selectedDate || !selectedService) {
+      setAvailableSlots([]);
+      return;
+    }
+
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    const service = services.find(s => s.id === selectedService);
+    if (!service) return;
+
+    // Check cache first
+    const cached = availabilityCache[dateStr];
+    if (cached) {
+      setAvailableSlots(cached.availableSlots);
+      return;
+    }
+
+    // Fetch from API
+    const fetchSlots = async () => {
+      setSlotsLoading(true);
+      try {
+        const res = await fetch(`/api/availability?date=${dateStr}&duration=${service.duration}`);
+        const data = await res.json();
+        if (data.success) {
+          setAvailabilityCache(prev => ({
+            ...prev,
+            [dateStr]: data.data,
+          }));
+          setAvailableSlots(data.data.availableSlots);
+        }
+      } catch (error) {
+        console.error('Failed to fetch time slots:', error);
+        setAvailableSlots([]);
+      } finally {
+        setSlotsLoading(false);
+      }
+    };
+
+    fetchSlots();
+  }, [selectedDate, selectedService, services, availabilityCache]);
 
   const selectedServiceData = services.find((s) => s.id === selectedService);
 
@@ -185,7 +311,7 @@ export default function BookingPage() {
       return services.filter((s) => s.priceWeekend !== null);
     }
     return services;
-  }, [selectedDate]);
+  }, [selectedDate, services]);
 
   const validateClientData = (): boolean => {
     const newErrors: FormErrors = {};
@@ -206,6 +332,9 @@ export default function BookingPage() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientData.email)) {
       newErrors.email = 'Nieprawidłowy adres email';
     }
+    if (!clientData.acceptTerms) {
+      newErrors.acceptTerms = 'Musisz zapoznać się z Regulaminem i Polityką Prywatności';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -223,11 +352,43 @@ export default function BookingPage() {
   };
 
   const handleSubmit = async () => {
+    if (!selectedServiceData || !selectedDate || !selectedTime) return;
+
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsBooked(true);
+    setBookingError(null);
+
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_type: selectedServiceData.name,
+          duration_minutes: selectedServiceData.duration,
+          price_pln: getPrice(),
+          date: format(selectedDate, 'yyyy-MM-dd'),
+          time: selectedTime,
+          first_name: clientData.firstName,
+          last_name: clientData.lastName,
+          phone: clientData.phone,
+          email: clientData.email,
+          notes: clientData.notes || null,
+          status: 'confirmed',
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setIsBooked(true);
+      } else {
+        setBookingError(data.error || 'Wystąpił błąd podczas rezerwacji');
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+      setBookingError('Wystąpił błąd podczas rezerwacji. Spróbuj ponownie.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const canProceed = () => {
@@ -235,15 +396,28 @@ export default function BookingPage() {
       case 1:
         return selectedService !== null;
       case 2:
-        return selectedDate !== null;
+        return selectedDate !== null && !isDateDisabled(selectedDate).disabled;
       case 3:
         return selectedTime !== null;
       case 4:
-        return clientData.firstName && clientData.lastName && clientData.phone && clientData.email;
+        return clientData.firstName && clientData.lastName && clientData.phone && clientData.email && clientData.acceptTerms;
       default:
         return true;
     }
   };
+
+  if (settingsLoading) {
+    return (
+      <section className="py-16 lg:py-24">
+        <Container size="sm">
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#2563EB] mb-4" />
+            <p className="text-gray-500">Ładowanie...</p>
+          </div>
+        </Container>
+      </section>
+    );
+  }
 
   if (isBooked) {
     return (
@@ -270,7 +444,7 @@ export default function BookingPage() {
                   <strong>Godzina:</strong> {selectedTime}
                 </p>
                 <p className="text-gray-600">
-                  <strong>Cena:</strong> {getPrice()} zł
+                  <strong>Cena:</strong> {formatPLN(getPrice())}
                 </p>
               </div>
               <Button variant="primary" onClick={() => window.location.reload()}>
@@ -372,19 +546,21 @@ export default function BookingPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-1">
                             <h3 className="font-semibold text-[#0F172A]">{service.name}</h3>
-                            <span className="text-xs font-medium text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
-                              {service.duration} min
-                            </span>
+                            {service.id !== 'consultation' && (
+                              <span className="text-xs font-medium text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
+                                {service.duration} min
+                              </span>
+                            )}
                           </div>
                           <p className="text-sm text-gray-500">{service.description}</p>
                         </div>
                         <div className="text-right ml-4">
                           <p className="text-xl font-bold text-[#0F172A]">
-                            {service.priceWeekday} zł
+                            {formatPLN(service.priceWeekday)}
                           </p>
                           {service.priceWeekend && (
                             <p className="text-xs text-gray-500">
-                              weekend: {service.priceWeekend} zł
+                              weekend: {formatPLN(service.priceWeekend)}
                             </p>
                           )}
                         </div>
@@ -407,26 +583,38 @@ export default function BookingPage() {
                   const month = format(date, 'MMM', { locale: pl });
                   const isSelected = selectedDate?.getTime() === date.getTime();
                   const weekend = isWeekend(date);
+                  const { disabled, reason } = isDateDisabled(date);
 
                   return (
                     <button
                       key={date.toISOString()}
                       onClick={() => {
-                        setSelectedDate(date);
-                        setSelectedTime(null); // Reset time when date changes
+                        if (!disabled) {
+                          setSelectedDate(date);
+                          setSelectedTime(null); // Reset time when date changes
+                        }
                       }}
+                      disabled={disabled}
                       className={cn(
                         'p-4 rounded-xl border-2 transition-all text-center',
-                        isSelected
-                          ? 'border-[#2563EB] bg-[#2563EB]/5'
-                          : 'border-gray-200 hover:border-gray-300',
-                        weekend && 'bg-amber-50'
+                        disabled
+                          ? 'border-gray-100 bg-gray-50 cursor-not-allowed opacity-50'
+                          : isSelected
+                            ? 'border-[#2563EB] bg-[#2563EB]/5'
+                            : 'border-gray-200 hover:border-gray-300',
+                        weekend && !disabled && 'bg-amber-50'
                       )}
                     >
                       <p className="text-xs text-gray-500 capitalize mb-1">{dayName}</p>
-                      <p className="text-2xl font-bold text-[#0F172A]">{dayNum}</p>
+                      <p className={cn(
+                        'text-2xl font-bold',
+                        disabled ? 'text-gray-400' : 'text-[#0F172A]'
+                      )}>{dayNum}</p>
                       <p className="text-sm text-gray-500">{month}</p>
-                      {weekend && (
+                      {disabled && reason && (
+                        <span className="text-xs text-red-500 font-medium">{reason}</span>
+                      )}
+                      {!disabled && weekend && (
                         <span className="text-xs text-amber-600 font-medium">weekend</span>
                       )}
                     </button>
@@ -448,9 +636,14 @@ export default function BookingPage() {
               <p className="text-gray-500 mb-6">
                 {selectedDate && format(selectedDate, 'd MMMM yyyy (EEEE)', { locale: pl })}
               </p>
-              {availableTimeSlots.length > 0 ? (
+              {slotsLoading ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-[#2563EB] mb-4" />
+                  <p className="text-gray-500">Sprawdzam dostępność...</p>
+                </div>
+              ) : availableSlots.length > 0 ? (
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                  {availableTimeSlots.map((time) => (
+                  {availableSlots.map((time) => (
                     <button
                       key={time}
                       onClick={() => setSelectedTime(time)}
@@ -574,6 +767,49 @@ export default function BookingPage() {
                         placeholder="Dodatkowe informacje o wizycie..."
                       />
                     </div>
+                    <div className="sm:col-span-2 pt-2">
+                      <label className={cn(
+                        'flex items-start gap-3 cursor-pointer p-4 rounded-lg border-2 transition-all',
+                        clientData.acceptTerms
+                          ? 'border-[#2563EB] bg-[#2563EB]/5'
+                          : errors.acceptTerms
+                            ? 'border-red-300 bg-red-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                      )}>
+                        <input
+                          type="checkbox"
+                          checked={clientData.acceptTerms}
+                          onChange={(e) => setClientData({ ...clientData, acceptTerms: e.target.checked })}
+                          className="w-5 h-5 mt-0.5 rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
+                        />
+                        <span className="text-sm text-gray-700">
+                          Zapoznałem/am się z{' '}
+                          <a
+                            href="/regulamin"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#2563EB] hover:underline font-medium"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Regulaminem
+                          </a>
+                          {' '}i{' '}
+                          <a
+                            href="/polityka-prywatnosci"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#2563EB] hover:underline font-medium"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Polityką Prywatności
+                          </a>
+                          {' '}i akceptuję ich postanowienia *
+                        </span>
+                      </label>
+                      {errors.acceptTerms && (
+                        <p className="mt-2 text-sm text-red-500">{errors.acceptTerms}</p>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -627,9 +863,14 @@ export default function BookingPage() {
                     )}
                     <div className="flex justify-between py-4 bg-gray-50 -mx-6 px-6 rounded-lg mt-4">
                       <span className="text-lg font-semibold text-[#0F172A]">Do zapłaty</span>
-                      <span className="text-2xl font-bold text-[#2563EB]">{getPrice()} zł</span>
+                      <span className="text-2xl font-bold text-[#2563EB]">{formatPLN(getPrice())}</span>
                     </div>
                   </div>
+                  {bookingError && (
+                    <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-600 text-sm">{bookingError}</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

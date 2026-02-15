@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createBrowserSupabaseClient } from '@/lib/supabase-auth';
 import { Booking, BookingStatus } from '@/types/admin';
-import { format, addDays, subDays } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import {
   Calendar,
@@ -12,8 +11,6 @@ import {
   Mail,
   Search,
   Filter,
-  ChevronLeft,
-  ChevronRight,
   X,
   AlertCircle,
   CheckCircle2,
@@ -21,6 +18,7 @@ import {
   Loader2,
   FileText,
   User,
+  Plus,
 } from 'lucide-react';
 
 const STATUS_LABELS: Record<BookingStatus, string> = {
@@ -37,12 +35,20 @@ const STATUS_COLORS: Record<BookingStatus, string> = {
   no_show: 'bg-orange-100 text-orange-700',
 };
 
+const SERVICES = [
+  { name: 'Konsultacja', duration: 30, price: 5000 },
+  { name: 'Wizyta 1h', duration: 60, price: 20000 },
+  { name: 'Wizyta 1.5h', duration: 90, price: 25000 },
+];
+
 export default function AppointmentsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,31 +56,44 @@ export default function AppointmentsPage() {
   const [dateFrom, setDateFrom] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [dateTo, setDateTo] = useState(format(addDays(new Date(), 30), 'yyyy-MM-dd'));
 
+  // New booking form
+  const [newBooking, setNewBooking] = useState({
+    service_type: 'Wizyta 1h',
+    date: format(new Date(), 'yyyy-MM-dd'),
+    time: '11:00',
+    first_name: '',
+    last_name: '',
+    phone: '',
+    email: '',
+    notes: '',
+  });
+
   useEffect(() => {
     fetchBookings();
   }, [statusFilter, dateFrom, dateTo]);
 
   const fetchBookings = async () => {
     setIsLoading(true);
-    const supabase = createBrowserSupabaseClient();
-
     try {
-      let query = supabase
-        .from('bookings')
-        .select('*')
-        .gte('date', dateFrom)
-        .lte('date', dateTo)
-        .order('date', { ascending: true })
-        .order('time', { ascending: true });
-
+      const params = new URLSearchParams({
+        date_from: dateFrom,
+        date_to: dateTo,
+      });
       if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
+        params.set('status', statusFilter);
       }
 
-      const { data, error } = await query;
+      const response = await fetch(`/api/admin/bookings?${params}`);
+      const result = await response.json();
 
-      if (error) throw error;
-      setBookings((data as Booking[]) || []);
+      if (result.success) {
+        // Sort ascending for display
+        const sorted = result.data.sort((a: Booking, b: Booking) => {
+          if (a.date !== b.date) return a.date.localeCompare(b.date);
+          return a.time.localeCompare(b.time);
+        });
+        setBookings(sorted);
+      }
     } catch (error) {
       console.error('Error fetching bookings:', error);
     } finally {
@@ -84,29 +103,74 @@ export default function AppointmentsPage() {
 
   const updateBookingStatus = async (bookingId: string, newStatus: BookingStatus) => {
     setIsUpdating(true);
-    const supabase = createBrowserSupabaseClient();
-
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ status: newStatus })
-        .eq('id', bookingId);
+      const response = await fetch(`/api/admin/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
 
-      // Update local state
-      setBookings(bookings.map(b =>
-        b.id === bookingId ? { ...b, status: newStatus } : b
-      ));
-
-      if (selectedBooking?.id === bookingId) {
-        setSelectedBooking({ ...selectedBooking, status: newStatus });
+      if (result.success) {
+        setBookings(bookings.map(b =>
+          b.id === bookingId ? { ...b, status: newStatus } : b
+        ));
+        if (selectedBooking?.id === bookingId) {
+          setSelectedBooking({ ...selectedBooking, status: newStatus });
+        }
+      } else {
+        alert(result.error || 'Wystąpił błąd podczas aktualizacji');
       }
     } catch (error) {
       console.error('Error updating booking:', error);
       alert('Wystąpił błąd podczas aktualizacji');
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleAddBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsAdding(true);
+
+    try {
+      const service = SERVICES.find(s => s.name === newBooking.service_type) || SERVICES[1];
+
+      const response = await fetch('/api/admin/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...newBooking,
+          duration_minutes: service.duration,
+          price_pln: service.price,
+          status: 'confirmed',
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setIsAddModalOpen(false);
+        setNewBooking({
+          service_type: 'Wizyta 1h',
+          date: format(new Date(), 'yyyy-MM-dd'),
+          time: '11:00',
+          first_name: '',
+          last_name: '',
+          phone: '',
+          email: '',
+          notes: '',
+        });
+        fetchBookings();
+      } else {
+        alert(result.error || 'Wystąpił błąd podczas dodawania');
+      }
+    } catch (error) {
+      console.error('Error adding booking:', error);
+      alert('Wystąpił błąd podczas dodawania');
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -138,6 +202,13 @@ export default function AppointmentsPage() {
           <h1 className="text-2xl font-bold text-[#0F172A]">Wizyty</h1>
           <p className="text-gray-500 mt-1">Zarządzaj wszystkimi rezerwacjami</p>
         </div>
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-colors font-medium"
+        >
+          <Plus className="w-5 h-5" />
+          Dodaj wizytę
+        </button>
       </div>
 
       {/* Filters */}
@@ -390,6 +461,137 @@ export default function AppointmentsPage() {
                 Utworzono: {format(new Date(selectedBooking.created_at), "d MMM yyyy, HH:mm", { locale: pl })}
               </p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add booking modal */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h2 className="text-xl font-bold text-[#0F172A]">Dodaj wizytę</h2>
+              <button
+                onClick={() => setIsAddModalOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddBooking} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Imię</label>
+                  <input
+                    type="text"
+                    value={newBooking.first_name}
+                    onChange={(e) => setNewBooking({ ...newBooking, first_name: e.target.value })}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nazwisko</label>
+                  <input
+                    type="text"
+                    value={newBooking.last_name}
+                    onChange={(e) => setNewBooking({ ...newBooking, last_name: e.target.value })}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+                <input
+                  type="tel"
+                  value={newBooking.phone}
+                  onChange={(e) => setNewBooking({ ...newBooking, phone: e.target.value })}
+                  required
+                  placeholder="500100200"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={newBooking.email}
+                  onChange={(e) => setNewBooking({ ...newBooking, email: e.target.value })}
+                  required
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Usługa</label>
+                <select
+                  value={newBooking.service_type}
+                  onChange={(e) => setNewBooking({ ...newBooking, service_type: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none appearance-none bg-white"
+                >
+                  {SERVICES.map((s) => (
+                    <option key={s.name} value={s.name}>
+                      {s.name} ({s.duration} min) - {s.price / 100} zł
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Data</label>
+                  <input
+                    type="date"
+                    value={newBooking.date}
+                    onChange={(e) => setNewBooking({ ...newBooking, date: e.target.value })}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Godzina</label>
+                  <input
+                    type="time"
+                    value={newBooking.time}
+                    onChange={(e) => setNewBooking({ ...newBooking, time: e.target.value })}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Notatki (opcjonalnie)</label>
+                <textarea
+                  value={newBooking.notes}
+                  onChange={(e) => setNewBooking({ ...newBooking, notes: e.target.value })}
+                  rows={3}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isAdding}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-colors disabled:opacity-50 font-medium"
+              >
+                {isAdding ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Dodawanie...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-5 h-5" />
+                    Dodaj wizytę
+                  </>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       )}

@@ -1,45 +1,10 @@
 /**
- * Admin Bookings API
- * GET /api/admin/bookings - List bookings with filters
- * POST /api/admin/bookings - Create a new booking
+ * Public Bookings API
+ * POST /api/bookings - Create a new booking (public)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getBookings, createBooking, validateBookingSlot, BookingFilters } from '@/lib/admin-data';
-import { BookingStatus } from '@/types/admin';
-
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-
-    // Parse filters
-    const filters: BookingFilters = {};
-
-    const dateFrom = searchParams.get('date_from');
-    const dateTo = searchParams.get('date_to');
-    const status = searchParams.get('status');
-    const search = searchParams.get('search');
-
-    if (dateFrom) filters.date_from = dateFrom;
-    if (dateTo) filters.date_to = dateTo;
-    if (status && status !== 'all') filters.status = status as BookingStatus;
-    if (search) filters.search = search;
-
-    const bookings = await getBookings(filters);
-
-    return NextResponse.json({
-      success: true,
-      data: bookings,
-      total: bookings.length,
-    });
-  } catch (error) {
-    console.error('Error fetching bookings:', error);
-    return NextResponse.json(
-      { success: false, error: 'Wystąpił błąd podczas pobierania rezerwacji' },
-      { status: 500 }
-    );
-  }
-}
+import { createBooking, validateBookingSlot } from '@/lib/admin-data';
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,6 +19,25 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(body.email)) {
+      return NextResponse.json(
+        { success: false, error: 'Nieprawidłowy adres email' },
+        { status: 400 }
+      );
+    }
+
+    // Validate phone format (Polish phone number)
+    const phoneClean = body.phone.replace(/[\s-]/g, '');
+    const phoneRegex = /^(\+48)?[0-9]{9}$/;
+    if (!phoneRegex.test(phoneClean)) {
+      return NextResponse.json(
+        { success: false, error: 'Nieprawidłowy numer telefonu' },
+        { status: 400 }
+      );
     }
 
     // Validate booking slot (check blocks and collisions)
@@ -76,7 +60,7 @@ export async function POST(request: NextRequest) {
       phone: body.phone,
       email: body.email,
       notes: body.notes || null,
-      status: body.status || 'confirmed',
+      status: 'confirmed',
     });
 
     return NextResponse.json({

@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { createBrowserSupabaseClient } from '@/lib/supabase-auth';
 import { Booking, DashboardStats } from '@/types/admin';
-import { format, startOfDay, endOfDay, addDays, startOfMonth, endOfMonth } from 'date-fns';
+import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import {
   Calendar,
@@ -19,83 +18,37 @@ import {
   CalendarOff,
 } from 'lucide-react';
 
+interface DashboardData {
+  stats: DashboardStats;
+  todayAppointments: Booking[];
+  upcomingAppointments: Booking[];
+}
+
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const [stats, setStats] = useState<DashboardStats>({
-    todayBookings: 0,
-    weekBookings: 0,
-    monthRevenue: 0,
-    totalClients: 0,
+  const [data, setData] = useState<DashboardData>({
+    stats: {
+      todayBookings: 0,
+      weekBookings: 0,
+      monthRevenue: 0,
+      totalClients: 0,
+    },
+    todayAppointments: [],
+    upcomingAppointments: [],
   });
-  const [todayAppointments, setTodayAppointments] = useState<Booking[]>([]);
-  const [upcomingAppointments, setUpcomingAppointments] = useState<Booking[]>([]);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
   const fetchDashboardData = async () => {
-    const supabase = createBrowserSupabaseClient();
-    const today = new Date();
-    const todayStr = format(today, 'yyyy-MM-dd');
-    const weekEndStr = format(addDays(today, 7), 'yyyy-MM-dd');
-    const monthStartStr = format(startOfMonth(today), 'yyyy-MM-dd');
-    const monthEndStr = format(endOfMonth(today), 'yyyy-MM-dd');
-
     try {
-      // Fetch today's appointments
-      const { data: todayData } = await supabase
-        .from('bookings')
-        .select('*')
-        .eq('date', todayStr)
-        .neq('status', 'cancelled')
-        .order('time');
+      const response = await fetch('/api/admin/dashboard');
+      const result = await response.json();
 
-      setTodayAppointments((todayData as Booking[]) || []);
-
-      // Fetch upcoming appointments (next 7 days, excluding today)
-      const { data: upcomingData } = await supabase
-        .from('bookings')
-        .select('*')
-        .gt('date', todayStr)
-        .lte('date', weekEndStr)
-        .neq('status', 'cancelled')
-        .order('date')
-        .order('time')
-        .limit(10);
-
-      setUpcomingAppointments((upcomingData as Booking[]) || []);
-
-      // Calculate stats
-      const { count: weekCount } = await supabase
-        .from('bookings')
-        .select('*', { count: 'exact', head: true })
-        .gte('date', todayStr)
-        .lte('date', weekEndStr)
-        .neq('status', 'cancelled');
-
-      const { data: monthRevenue } = await supabase
-        .from('bookings')
-        .select('price_pln')
-        .gte('date', monthStartStr)
-        .lte('date', monthEndStr)
-        .in('status', ['confirmed', 'completed']);
-
-      const totalRevenue = monthRevenue?.reduce((sum, b) => sum + (b.price_pln || 0), 0) || 0;
-
-      // Get unique clients count
-      const { data: clientsData } = await supabase
-        .from('bookings')
-        .select('email');
-
-      const uniqueClients = new Set(clientsData?.map(b => b.email)).size;
-
-      setStats({
-        todayBookings: todayData?.length || 0,
-        weekBookings: weekCount || 0,
-        monthRevenue: totalRevenue,
-        totalClients: uniqueClients,
-      });
+      if (result.success) {
+        setData(result.data);
+      }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -138,7 +91,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <p className="text-sm text-gray-500">Dziś</p>
-              <p className="text-2xl font-bold text-[#0F172A]">{stats.todayBookings}</p>
+              <p className="text-2xl font-bold text-[#0F172A]">{data.stats.todayBookings}</p>
             </div>
           </div>
         </div>
@@ -150,7 +103,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <p className="text-sm text-gray-500">Ten tydzień</p>
-              <p className="text-2xl font-bold text-[#0F172A]">{stats.weekBookings}</p>
+              <p className="text-2xl font-bold text-[#0F172A]">{data.stats.weekBookings}</p>
             </div>
           </div>
         </div>
@@ -162,7 +115,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <p className="text-sm text-gray-500">Przychód (miesiąc)</p>
-              <p className="text-2xl font-bold text-[#0F172A]">{formatPrice(stats.monthRevenue)}</p>
+              <p className="text-2xl font-bold text-[#0F172A]">{formatPrice(data.stats.monthRevenue)}</p>
             </div>
           </div>
         </div>
@@ -174,7 +127,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <p className="text-sm text-gray-500">Klienci</p>
-              <p className="text-2xl font-bold text-[#0F172A]">{stats.totalClients}</p>
+              <p className="text-2xl font-bold text-[#0F172A]">{data.stats.totalClients}</p>
             </div>
           </div>
         </div>
@@ -224,14 +177,14 @@ export default function AdminDashboard() {
             </Link>
           </div>
 
-          {todayAppointments.length === 0 ? (
+          {data.todayAppointments.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               <Calendar className="w-12 h-12 mx-auto mb-3 text-gray-300" />
               <p>Brak wizyt na dziś</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
-              {todayAppointments.map((appointment) => (
+              {data.todayAppointments.map((appointment) => (
                 <div key={appointment.id} className="p-4 hover:bg-gray-50">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
@@ -266,14 +219,14 @@ export default function AdminDashboard() {
             <span className="text-sm text-gray-500">Następne 7 dni</span>
           </div>
 
-          {upcomingAppointments.length === 0 ? (
+          {data.upcomingAppointments.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               <CalendarDays className="w-12 h-12 mx-auto mb-3 text-gray-300" />
               <p>Brak zaplanowanych wizyt</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
-              {upcomingAppointments.map((appointment) => (
+              {data.upcomingAppointments.map((appointment) => (
                 <div key={appointment.id} className="p-4 hover:bg-gray-50">
                   <div className="flex items-start justify-between">
                     <div>

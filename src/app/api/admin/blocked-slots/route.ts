@@ -5,40 +5,21 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from '@/lib/supabase-admin';
-import { BlockedSlot, CreateBlockedSlotRequest } from '@/types/admin';
+import { getBlockedSlots, createBlockedSlot } from '@/lib/admin-data';
+import { CreateBlockedSlotRequest } from '@/types/admin';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createAdminSupabaseClient();
     const { searchParams } = new URL(request.url);
 
-    const dateFrom = searchParams.get('date_from');
-    const dateTo = searchParams.get('date_to');
+    const dateFrom = searchParams.get('date_from') || undefined;
+    const dateTo = searchParams.get('date_to') || undefined;
 
-    let query = supabase
-      .from('blocked_slots')
-      .select('*')
-      .order('date', { ascending: true })
-      .order('time_start', { ascending: true });
-
-    if (dateFrom) {
-      query = query.gte('date', dateFrom);
-    }
-
-    if (dateTo) {
-      query = query.lte('date', dateTo);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      throw error;
-    }
+    const slots = await getBlockedSlots(dateFrom, dateTo);
 
     return NextResponse.json({
       success: true,
-      data: data as BlockedSlot[],
+      data: slots,
     });
   } catch (error) {
     console.error('Error fetching blocked slots:', error);
@@ -51,7 +32,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createAdminSupabaseClient();
     const body: CreateBlockedSlotRequest = await request.json();
 
     // Validate required fields
@@ -62,38 +42,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Prepare insert data
-    const insertData: Partial<BlockedSlot> = {
+    const isFullDay = body.is_full_day ?? !body.time_start;
+
+    // Validate time fields if not full day
+    if (!isFullDay && (!body.time_start || !body.time_end)) {
+      return NextResponse.json(
+        { success: false, error: 'Godziny rozpoczęcia i zakończenia są wymagane' },
+        { status: 400 }
+      );
+    }
+
+    const slot = await createBlockedSlot({
       date: body.date,
-      is_full_day: body.is_full_day ?? true,
+      time_start: isFullDay ? null : body.time_start,
+      time_end: isFullDay ? null : body.time_end,
+      is_full_day: isFullDay,
       reason: body.reason || null,
-    };
-
-    // Add time fields if not full day
-    if (!insertData.is_full_day) {
-      if (!body.time_start || !body.time_end) {
-        return NextResponse.json(
-          { success: false, error: 'Godziny rozpoczęcia i zakończenia są wymagane' },
-          { status: 400 }
-        );
-      }
-      insertData.time_start = body.time_start;
-      insertData.time_end = body.time_end;
-    }
-
-    const { data, error } = await supabase
-      .from('blocked_slots')
-      .insert(insertData)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
+    });
 
     return NextResponse.json({
       success: true,
-      data: data as BlockedSlot,
+      data: slot,
     });
   } catch (error) {
     console.error('Error creating blocked slot:', error);

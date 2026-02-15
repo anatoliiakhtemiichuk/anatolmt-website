@@ -1,170 +1,110 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseClient, isSupabaseConfigured, getSupabaseConfigError } from '@/lib/supabaseClient';
-import { Lock, Mail, Eye, EyeOff, Loader2, AlertCircle, ArrowLeft, Settings } from 'lucide-react';
+import { Lock, Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get('redirect') || '/admin';
+  const redirect = searchParams.get('redirect') || '/admin';
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [pin, setPin] = useState(['', '', '', '', '', '']);
+  const [showPin, setShowPin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [configError, setConfigError] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Check Supabase configuration on mount
+  // Focus first input on mount
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setConfigError(getSupabaseConfigError());
-    }
+    inputRefs.current[0]?.focus();
   }, []);
 
-  // Check if already logged in
-  useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = getSupabaseClient();
-      if (!supabase) return;
+  const handlePinChange = (index: number, value: string) => {
+    // Only allow digits
+    if (value && !/^\d$/.test(value)) return;
 
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
+    const newPin = [...pin];
+    newPin[index] = value;
+    setPin(newPin);
+    setError('');
 
-        if (user) {
-          // Check if admin
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single();
-
-          if (profile?.role === 'admin') {
-            router.replace(redirectPath);
-          }
-        }
-      } catch (err) {
-        // Ignore errors during auth check
-        console.error('Auth check error:', err);
-      }
-    };
-
-    if (isSupabaseConfigured()) {
-      checkAuth();
+    // Auto-focus next input
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
     }
-  }, [router, redirectPath]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    // Auto-submit when all digits are entered
+    if (value && index === 5) {
+      const fullPin = newPin.join('');
+      if (fullPin.length === 6) {
+        handleSubmit(fullPin);
+      }
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !pin[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    setError(null);
+    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (pastedData.length === 6) {
+      const newPin = pastedData.split('');
+      setPin(newPin);
+      handleSubmit(pastedData);
+    }
+  };
+
+  const handleSubmit = async (pinValue?: string) => {
+    const fullPin = pinValue || pin.join('');
+
+    if (fullPin.length !== 6) {
+      setError('Wprowadź 6-cyfrowy PIN');
+      return;
+    }
+
     setIsLoading(true);
+    setError('');
 
     try {
-      const supabase = getSupabaseClient();
-
-      if (!supabase) {
-        throw new Error(getSupabaseConfigError() || 'Supabase nie jest skonfigurowany');
-      }
-
-      // Sign in with email and password
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/admin/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: fullPin }),
       });
 
-      if (signInError) {
-        if (signInError.message.includes('Invalid login credentials')) {
-          throw new Error('Nieprawidłowy email lub hasło');
-        }
-        if (signInError.message.includes('Email not confirmed')) {
-          throw new Error('Email nie został potwierdzony. Sprawdź skrzynkę pocztową.');
-        }
-        throw new Error(signInError.message);
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Nieprawidłowy PIN');
+        setPin(['', '', '', '', '', '']);
+        inputRefs.current[0]?.focus();
+        setIsLoading(false);
+        return;
       }
 
-      if (!data.user) {
-        throw new Error('Nie udało się zalogować');
-      }
-
-      // Check if user is admin
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .single();
-
-      if (profileError || !profile) {
-        await supabase.auth.signOut();
-        throw new Error('Nie znaleziono profilu użytkownika. Skontaktuj się z administratorem.');
-      }
-
-      if (profile.role !== 'admin') {
-        await supabase.auth.signOut();
-        throw new Error('Brak uprawnień administratora');
-      }
-
-      // Success - redirect to admin dashboard
-      router.replace(redirectPath);
+      // Success - redirect to admin panel
+      router.push(redirect);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania');
-    } finally {
+      setError('Błąd połączenia. Spróbuj ponownie.');
       setIsLoading(false);
     }
   };
 
-  // Show configuration error
-  if (configError) {
-    return (
-      <main className="min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-8 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Powrót do strony głównej
-          </Link>
-
-          <div className="bg-white rounded-2xl shadow-2xl p-8">
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Settings className="w-8 h-8 text-orange-600" />
-              </div>
-              <h1 className="text-2xl font-bold text-[#0F172A]">Brak konfiguracji</h1>
-            </div>
-
-            <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg mb-6">
-              <p className="text-sm text-orange-800 font-medium mb-2">
-                Supabase nie jest skonfigurowany:
-              </p>
-              <p className="text-sm text-orange-700">{configError}</p>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 space-y-3">
-              <p className="font-medium text-gray-700">Aby naprawić:</p>
-              <ol className="list-decimal list-inside space-y-2">
-                <li>Utwórz plik <code className="bg-gray-200 px-1 rounded">.env.local</code> w katalogu głównym projektu</li>
-                <li>Dodaj zmienne środowiskowe:
-                  <pre className="mt-2 bg-gray-200 p-2 rounded text-xs overflow-x-auto">
-{`NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...`}
-                  </pre>
-                </li>
-                <li>Uruchom ponownie serwer deweloperski</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] flex items-center justify-center p-4">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#2563EB]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#2563EB]/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-md relative">
         {/* Back link */}
         <Link
           href="/"
@@ -174,106 +114,108 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...`}
           Powrót do strony głównej
         </Link>
 
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#2563EB] rounded-2xl mb-4 shadow-lg shadow-[#2563EB]/25">
+            <span className="text-white font-bold text-xl">M&T</span>
+          </div>
+          <h1 className="text-2xl font-bold text-white">Panel Administracyjny</h1>
+          <p className="text-white/60 mt-2">Wprowadź PIN, aby kontynuować</p>
+        </div>
+
         {/* Login card */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
-          {/* Logo/Header */}
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[#0F172A] rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-8 h-8 text-white" />
+          {/* Lock icon */}
+          <div className="flex justify-center mb-6">
+            <div className="w-14 h-14 bg-[#0F172A] rounded-full flex items-center justify-center">
+              <Lock className="w-7 h-7 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-[#0F172A]">Panel Administracyjny</h1>
-            <p className="text-gray-500 mt-2">Zaloguj się, aby zarządzać rezerwacjami</p>
           </div>
 
-          {/* Error message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          )}
-
-          {/* Login form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email field */}
+          {/* PIN input */}
+          <div className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+              <label className="block text-sm font-medium text-gray-700 text-center mb-4">
+                6-cyfrowy PIN administratora
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  placeholder="admin@example.com"
-                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-                />
+              <div className="flex justify-center gap-2" onPaste={handlePaste}>
+                {pin.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => { inputRefs.current[index] = el; }}
+                    type={showPin ? 'text' : 'password'}
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handlePinChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    disabled={isLoading}
+                    className="w-12 h-14 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 outline-none transition-all disabled:bg-gray-50 disabled:text-gray-400"
+                  />
+                ))}
               </div>
+
+              {/* Show/Hide PIN toggle */}
+              <button
+                type="button"
+                onClick={() => setShowPin(!showPin)}
+                className="mt-3 mx-auto flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {showPin ? (
+                  <>
+                    <EyeOff className="w-4 h-4" />
+                    Ukryj PIN
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4" />
+                    Pokaż PIN
+                  </>
+                )}
+              </button>
             </div>
 
-            {/* Password field */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Hasło
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  placeholder="••••••••"
-                  className="w-full pl-11 pr-12 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
+            {/* Error message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-center text-sm">
+                {error}
               </div>
-            </div>
+            )}
 
             {/* Submit button */}
             <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 bg-[#0F172A] text-white rounded-lg font-medium hover:bg-[#1E293B] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              onClick={() => handleSubmit()}
+              disabled={isLoading || pin.join('').length !== 6}
+              className="w-full py-4 bg-[#2563EB] text-white rounded-xl font-semibold hover:bg-[#1D4ED8] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Logowanie...
+                  Weryfikacja...
                 </>
               ) : (
-                'Zaloguj się'
+                <>
+                  <ShieldCheck className="w-5 h-5" />
+                  Zaloguj się
+                </>
               )}
             </button>
-          </form>
-
-          {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-            <p className="text-sm text-gray-500">
-              Dostęp tylko dla autoryzowanych użytkowników
-            </p>
           </div>
+
+          {/* Security note */}
+          <p className="text-xs text-gray-400 text-center mt-6">
+            Dostęp tylko dla autoryzowanych administratorów.
+            <br />
+            Wszystkie próby logowania są rejestrowane.
+          </p>
         </div>
 
-        {/* Security notice */}
+        {/* Footer */}
         <p className="text-center text-white/40 text-sm mt-6">
-          Połączenie zabezpieczone protokołem SSL
+          M&T ANATOL &copy; {new Date().getFullYear()}
         </p>
       </div>
-    </main>
+    </div>
   );
 }
 

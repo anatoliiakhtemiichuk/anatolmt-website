@@ -6,8 +6,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from '@/lib/supabase-admin';
-import { Booking, UpdateBookingData } from '@/types/admin';
+import { getBookingById, updateBooking, deleteBooking } from '@/lib/admin-data';
+import { UpdateBookingData } from '@/types/admin';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -16,27 +16,18 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const supabase = createAdminSupabaseClient();
+    const booking = await getBookingById(id);
 
-    const { data, error } = await supabase
-      .from('bookings')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { success: false, error: 'Rezerwacja nie istnieje' },
-          { status: 404 }
-        );
-      }
-      throw error;
+    if (!booking) {
+      return NextResponse.json(
+        { success: false, error: 'Rezerwacja nie istnieje' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
       success: true,
-      data: data as Booking,
+      data: booking,
     });
   } catch (error) {
     console.error('Error fetching booking:', error);
@@ -50,7 +41,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const supabase = createAdminSupabaseClient();
     const body: UpdateBookingData = await request.json();
 
     // Only allow updating specific fields
@@ -70,26 +60,18 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { data, error } = await supabase
-      .from('bookings')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
+    const booking = await updateBooking(id, updateData);
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { success: false, error: 'Rezerwacja nie istnieje' },
-          { status: 404 }
-        );
-      }
-      throw error;
+    if (!booking) {
+      return NextResponse.json(
+        { success: false, error: 'Rezerwacja nie istnieje' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
       success: true,
-      data: data as Booking,
+      data: booking,
     });
   } catch (error) {
     console.error('Error updating booking:', error);
@@ -103,15 +85,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const supabase = createAdminSupabaseClient();
+    const deleted = await deleteBooking(id);
 
-    const { error } = await supabase
-      .from('bookings')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      throw error;
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, error: 'Rezerwacja nie istnieje' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({

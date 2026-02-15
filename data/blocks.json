@@ -1,0 +1,11 @@
+[
+  {
+    "id": "block-1",
+    "date": "2026-02-20",
+    "time_start": null,
+    "time_end": null,
+    "is_full_day": true,
+    "reason": "Dzien wolny",
+    "created_at": "2026-02-10T08:00:00Z"
+  }
+]

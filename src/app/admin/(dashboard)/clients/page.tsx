@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createBrowserSupabaseClient } from '@/lib/supabase-auth';
 import { Client, Booking } from '@/types/admin';
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
@@ -10,12 +9,11 @@ import {
   Search,
   Phone,
   Mail,
-  Calendar,
-  TrendingUp,
   ChevronRight,
   X,
   Loader2,
   User,
+  TrendingUp,
 } from 'lucide-react';
 
 export default function ClientsPage() {
@@ -50,49 +48,16 @@ export default function ClientsPage() {
   }, [searchQuery, clients]);
 
   const fetchClients = async () => {
-    const supabase = createBrowserSupabaseClient();
-
     try {
-      // Get all bookings and aggregate by email
-      const { data: bookings, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .order('date', { ascending: false });
+      const response = await fetch('/api/admin/clients');
+      const result = await response.json();
 
-      if (error) throw error;
-
-      // Aggregate clients from bookings
-      const clientsMap = new Map<string, Client>();
-
-      (bookings as Booking[])?.forEach((booking) => {
-        const existing = clientsMap.get(booking.email);
-
-        if (existing) {
-          existing.visit_count += 1;
-          existing.total_spent += booking.price_pln;
-          if (booking.date > existing.last_visit) {
-            existing.last_visit = booking.date;
-          }
-        } else {
-          clientsMap.set(booking.email, {
-            email: booking.email,
-            first_name: booking.first_name,
-            last_name: booking.last_name,
-            phone: booking.phone,
-            visit_count: 1,
-            last_visit: booking.date,
-            total_spent: booking.price_pln,
-          });
-        }
-      });
-
-      // Convert to array and sort by visit count
-      const clientsArray = Array.from(clientsMap.values()).sort(
-        (a, b) => b.visit_count - a.visit_count
-      );
-
-      setClients(clientsArray);
-      setFilteredClients(clientsArray);
+      if (result.success) {
+        // Sort by visit count
+        const sorted = result.data.sort((a: Client, b: Client) => b.visit_count - a.visit_count);
+        setClients(sorted);
+        setFilteredClients(sorted);
+      }
     } catch (error) {
       console.error('Error fetching clients:', error);
     } finally {
@@ -105,18 +70,13 @@ export default function ClientsPage() {
     setIsModalOpen(true);
     setIsLoadingBookings(true);
 
-    const supabase = createBrowserSupabaseClient();
-
     try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .eq('email', client.email)
-        .order('date', { ascending: false })
-        .order('time', { ascending: false });
+      const response = await fetch(`/api/admin/clients/${encodeURIComponent(client.email)}/bookings`);
+      const result = await response.json();
 
-      if (error) throw error;
-      setClientBookings((data as Booking[]) || []);
+      if (result.success) {
+        setClientBookings(result.data);
+      }
     } catch (error) {
       console.error('Error fetching client bookings:', error);
     } finally {
@@ -314,7 +274,9 @@ export default function ClientsPage() {
                   <h3 className="text-xl font-bold text-[#0F172A]">
                     {selectedClient.first_name} {selectedClient.last_name}
                   </h3>
-                  <p className="text-gray-500">Klient od {format(new Date(clientBookings[clientBookings.length - 1]?.created_at || selectedClient.last_visit), 'MMMM yyyy', { locale: pl })}</p>
+                  <p className="text-gray-500">
+                    Ostatnia wizyta: {format(new Date(selectedClient.last_visit), 'd MMMM yyyy', { locale: pl })}
+                  </p>
                 </div>
               </div>
 

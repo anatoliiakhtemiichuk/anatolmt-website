@@ -1,10 +1,10 @@
 /**
- * Video System Types
- * Types for the "Wideo Pomoc" educational video feature
+ * Video Content Types
+ * Types for video management and page content
  */
 
 // ============================================
-// VIDEO TYPES
+// LEGACY TYPES (for existing video-pomoc page)
 // ============================================
 
 export interface Video {
@@ -12,10 +12,10 @@ export interface Video {
   title: string;
   slug: string;
   category: string;
-  description: string | null;
-  when_to_do: string | null;
-  when_not_to_do: string | null;
-  embed_url: string | null;
+  description: string;
+  when_to_do: string;
+  when_not_to_do: string;
+  embed_url: string;
   thumbnail_url: string | null;
   duration_seconds: number | null;
   sort_order: number;
@@ -28,142 +28,83 @@ export interface VideoCategory {
   id: string;
   name: string;
   slug: string;
-  description: string | null;
-  icon: string | null;
+  description: string;
+  icon: string;
   sort_order: number;
   active: boolean;
   created_at: string;
 }
 
-// ============================================
-// PURCHASE TYPES
-// ============================================
-
-export type ProductType = 'single' | 'standard' | 'full';
-export type PurchaseStatus = 'pending' | 'paid' | 'expired' | 'refunded';
-
-export interface VideoPurchase {
-  id: string;
-  stripe_session_id: string | null;
-  stripe_payment_intent: string | null;
-  product_type: ProductType;
-  video_id: string | null;
-  access_token: string;
-  customer_email: string | null;
-  amount_paid: number;
-  currency: string;
-  status: PurchaseStatus;
-  expires_at: string;
-  accessed_at: string | null;
-  access_count: number;
-  created_at: string;
-  updated_at: string;
-}
-
-// Extended purchase with video details
-export interface VideoPurchaseWithVideo extends VideoPurchase {
-  video?: Video | null;
-}
-
-// ============================================
-// API REQUEST/RESPONSE TYPES
-// ============================================
-
-export interface CheckoutRequest {
-  product_type: ProductType;
-  video_slug?: string; // Required for single video purchase
-  customer_email?: string;
-}
-
-export interface CheckoutResponse {
-  checkout_url: string;
-  session_id: string;
-}
-
-export interface ValidateTokenRequest {
-  token: string;
-}
-
-export interface ValidateTokenResponse {
-  valid: boolean;
-  purchase?: {
-    product_type: ProductType;
-    video_id: string | null;
-    expires_at: string;
-    days_remaining: number;
-  };
-  videos?: Video[];
-  error?: string;
-}
-
-// ============================================
-// COMPONENT PROPS TYPES
-// ============================================
-
-export interface VideoCardProps {
-  video: Video;
-  locked?: boolean;
-  onPurchase?: () => void;
-}
-
-export interface CategoryCardProps {
-  category: VideoCategory;
-  videoCount: number;
-  onClick?: () => void;
-}
-
-export interface VideoPlayerProps {
-  video: Video;
-  autoplay?: boolean;
-}
-
-export interface PurchaseButtonProps {
-  productType: ProductType;
-  videoSlug?: string;
-  price: number;
-  label?: string;
-  className?: string;
-}
-
-export interface DisclaimerProps {
-  variant?: 'full' | 'compact';
-  className?: string;
-}
-
-// ============================================
-// CONSTANTS
-// ============================================
-
+// Video prices in cents (EUR)
 export const VIDEO_PRICES = {
-  single: 300,    // 3.00 EUR in cents
-  standard: 1200, // 12.00 EUR in cents
-  full: 1500,     // 15.00 EUR in cents
+  single: 300,      // 3 EUR per single video
+  standard: 1200,   // 12 EUR for standard package
+  full: 1500,       // 15 EUR for full package
 } as const;
 
-// Package video counts
-export const PACKAGE_VIDEO_COUNTS = {
-  standard: 10, // 10-12 videos in standard package
-  full: 0,      // 0 means all videos
-} as const;
+// ============================================
+// ADMIN VIDEO MANAGEMENT TYPES
+// ============================================
 
-export const VIDEO_CURRENCY = 'eur';
+export interface VideoItem {
+  id: string;
+  title: string;
+  description: string;
+  bodyPart: string;
+  durationMin?: number;
+  priceEur: number;
+  includedInPackage: boolean;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-export const ACCESS_DURATION_DAYS = 30;
+export interface PageText {
+  key: string;
+  title: string;
+  content: string;
+  updatedAt: string;
+}
 
-export const CATEGORY_ICONS: Record<string, string> = {
-  'kregoslup-szyjny': 'activity',
-  'odcinek-piersiowy': 'heart',
-  'odcinek-ledźwiowy': 'move',
-  'bark': 'hand',
-  'biodro': 'footprints',
-  'kolano': 'circle-dot',
-} as const;
+export interface VideoFilters {
+  bodyPart?: string;
+  search?: string;
+  isPublished?: boolean;
+}
 
-export const CATEGORY_NAMES: Record<string, string> = {
-  'kregoslup-szyjny': 'Kręgosłup szyjny',
-  'odcinek-piersiowy': 'Odcinek piersiowy',
-  'odcinek-ledźwiowy': 'Odcinek lędźwiowy',
-  'bark': 'Bark',
-  'biodro': 'Biodro',
-  'kolano': 'Kolano',
-} as const;
+export const BODY_PARTS = [
+  'Kark',
+  'Plecy',
+  'Bark',
+  'Biodra',
+  'Kolana',
+  'Stopy',
+  'Nadgarstki',
+  'Łokcie',
+  'Ogólne',
+] as const;
+
+export type BodyPart = typeof BODY_PARTS[number];
+
+export const DEFAULT_PAGE_TEXTS: PageText[] = [
+  {
+    key: 'video_help_intro',
+    title: 'Wideo Pomoc - Wprowadzenie',
+    content: 'Materiały wideo opracowane przez doświadczonych terapeutów, które pomogą Ci w codziennej pielęgnacji ciała i redukcji dolegliwości bólowych.',
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    key: 'video_help_disclaimer',
+    title: 'Zastrzeżenie',
+    content: 'Materiały wideo mają charakter edukacyjny i nie zastępują profesjonalnej konsultacji medycznej. Przed rozpoczęciem ćwiczeń skonsultuj się z lekarzem lub fizjoterapeutą.',
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    key: 'video_help_package',
+    title: 'Pakiet Wideo',
+    content: 'Wykup dostęp do wszystkich materiałów wideo w atrakcyjnej cenie pakietowej.',
+    updatedAt: new Date().toISOString(),
+  },
+];
