@@ -10,9 +10,16 @@ import { Profile } from '@/types/admin';
 // SERVICE ROLE SUPABASE (Admin operations)
 // ============================================
 
-export function createAdminSupabaseClient(): SupabaseClient {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+export function createAdminSupabaseClient(): SupabaseClient | null {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  // Check if properly configured (not placeholder values)
+  if (!supabaseUrl || !supabaseServiceKey ||
+      supabaseUrl.includes('placeholder') ||
+      supabaseServiceKey.includes('placeholder')) {
+    return null;
+  }
 
   return createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
@@ -31,6 +38,10 @@ export function createAdminSupabaseClient(): SupabaseClient {
  */
 export async function getProfileById(userId: string): Promise<Profile | null> {
   const supabase = createAdminSupabaseClient();
+  if (!supabase) {
+    console.warn('Supabase not configured, cannot fetch profile');
+    return null;
+  }
 
   const { data, error } = await supabase
     .from('profiles')
@@ -54,8 +65,12 @@ export async function verifyAdminAccess(authHeader: string | null): Promise<{ is
     return { isAdmin: false, error: 'Missing or invalid authorization header' };
   }
 
-  const token = authHeader.replace('Bearer ', '');
   const supabase = createAdminSupabaseClient();
+  if (!supabase) {
+    return { isAdmin: false, error: 'Supabase not configured' };
+  }
+
+  const token = authHeader.replace('Bearer ', '');
 
   // Verify the JWT token
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);

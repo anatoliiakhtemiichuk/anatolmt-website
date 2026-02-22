@@ -11,7 +11,12 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // Runtime validation
 export function isSupabaseConfigured(): boolean {
-  return !!(supabaseUrl && supabaseAnonKey);
+  return !!(
+    supabaseUrl &&
+    supabaseAnonKey &&
+    !supabaseUrl.includes('placeholder') &&
+    !supabaseAnonKey.includes('placeholder')
+  );
 }
 
 export function getSupabaseConfigError(): string | null {
