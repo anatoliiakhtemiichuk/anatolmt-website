@@ -13,6 +13,9 @@ import {
   Mail,
   MapPin,
   RefreshCw,
+  Instagram,
+  Facebook,
+  Link as LinkIcon,
 } from 'lucide-react';
 import type { SiteSettings, Service, OpeningHoursMap } from '@/types/site-settings';
 import { DAY_NAMES_PL, DAY_ORDER, DEFAULT_SITE_SETTINGS } from '@/types/site-settings';
@@ -602,6 +605,7 @@ export default function UstawieniaPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <LinkIcon className="w-4 h-4 inline mr-2" />
                       Link do Google Maps (opcjonalnie)
                     </label>
                     <input
@@ -610,6 +614,44 @@ export default function UstawieniaPage() {
                       onChange={(e) => updateContact('googleMapsUrl', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
                       placeholder="https://maps.google.com/..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Social Media */}
+              <div>
+                <h3 className="text-lg font-semibold text-[#0F172A] mb-4">Media społecznościowe</h3>
+                <p className="text-sm text-gray-500 mb-6">
+                  Linki do profili społecznościowych (opcjonalnie). Gdy podasz link, ikona pojawi się w stopce strony.
+                </p>
+
+                <div className="grid gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <Instagram className="w-4 h-4 inline mr-2" />
+                      Instagram URL
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.contact.instagramUrl || ''}
+                      onChange={(e) => updateContact('instagramUrl', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                      placeholder="https://instagram.com/twoj-profil"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <Facebook className="w-4 h-4 inline mr-2" />
+                      Facebook URL
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.contact.facebookUrl || ''}
+                      onChange={(e) => updateContact('facebookUrl', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
+                      placeholder="https://facebook.com/twoj-profil"
                     />
                   </div>
                 </div>

@@ -19,12 +19,12 @@ export const metadata: Metadata = {
     template: '%s | M&T ANATOL',
   },
   description:
-    'Profesjonalna terapia manualna i masaż leczniczy. Umów wizytę online. Doświadczony terapeuta, indywidualne podejście do każdego pacjenta.',
+    'Profesjonalna terapia manualna i masaż. Umów wizytę online. Doświadczony terapeuta, indywidualne podejście do każdego pacjenta.',
   keywords: [
     'terapia manualna',
     'masaż',
     'fizjoterapia',
-    'rehabilitacja',
+    'terapia',
     'Polska',
     'rezerwacja online',
     'M&T ANATOL',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: 'M&T ANATOL',
     title: 'M&T ANATOL',
     description:
-      'Profesjonalna terapia manualna i masaż leczniczy. Umów wizytę online.',
+      'Profesjonalna terapia manualna i masaż. Umów wizytę online.',
   },
 };
 

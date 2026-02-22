@@ -70,7 +70,7 @@ export default async function HomePage() {
                 {' '}- Profesjonalna Terapia Manualna
               </h1>
               <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
-                {settings.texts.heroSubtitle || 'Doświadczony terapeuta, indywidualne podejście do każdego pacjenta. Skuteczna pomoc w bólu kręgosłupa, napięciach mięśniowych i rehabilitacji pourazowej.'}
+                {settings.texts.heroSubtitle || 'Doświadczony terapeuta, wsparcie w dolegliwościach bólowych kręgosłupa, napięciach mięśniowych oraz powrocie do sprawności po urazach.'}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link

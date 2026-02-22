@@ -40,6 +40,8 @@ export interface ContactSettings {
   addressLine1: string;
   addressLine2: string;
   googleMapsUrl: string;
+  instagramUrl: string;
+  facebookUrl: string;
 }
 
 // Site texts (hero, about, etc.)
@@ -144,12 +146,14 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     addressLine1: 'ul. Przykładowa 123',
     addressLine2: '00-000 Warszawa',
     googleMapsUrl: '',
+    instagramUrl: '',
+    facebookUrl: '',
   },
   texts: {
     heroTitle: 'M&T ANATOL - Profesjonalna Terapia Manualna',
-    heroSubtitle: 'Doświadczony terapeuta, indywidualne podejście do każdego pacjenta. Skuteczna pomoc w bólu kręgosłupa, napięciach mięśniowych i rehabilitacji pourazowej.',
+    heroSubtitle: 'Doświadczony terapeuta, wsparcie w dolegliwościach bólowych kręgosłupa, napięciach mięśniowych oraz powrocie do sprawności po urazach.',
     aboutTitle: 'O nas',
-    aboutText: 'Profesjonalna terapia manualna i masaż leczniczy. Indywidualne podejście do każdego pacjenta.',
+    aboutText: 'Profesjonalna terapia manualna i masaż. Indywidualne podejście do każdego pacjenta.',
     bookingInfoText: 'Zarezerwuj wizytę online w kilka minut. Wybierz usługę i dogodną godzinę.',
     footerText: 'M&T ANATOL',
   },

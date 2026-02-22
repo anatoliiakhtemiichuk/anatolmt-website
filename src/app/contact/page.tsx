@@ -1,39 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
+import type { SiteSettings } from '@/types/site-settings';
+import { DAY_NAMES_PL, DAY_ORDER, DEFAULT_SITE_SETTINGS } from '@/types/site-settings';
 
-const openingHours = [
-  { day: 'Poniedziałek', hours: 'Zamknięte', closed: true },
-  { day: 'Wtorek', hours: '11:00 - 22:00', closed: false },
-  { day: 'Środa', hours: '11:00 - 22:00', closed: false },
-  { day: 'Czwartek', hours: '11:00 - 22:00', closed: false },
-  { day: 'Piątek', hours: '11:00 - 22:00', closed: false },
-  { day: 'Sobota', hours: '10:00 - 18:00', closed: false },
-  { day: 'Niedziela', hours: '11:00 - 15:00', closed: false },
-];
-
-const contactInfo = [
-  {
-    icon: Phone,
-    label: 'Telefon',
-    value: '+48 123 456 789',
-    href: 'tel:+48123456789',
-  },
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'kontakt@mt-anatol.pl',
-    href: 'mailto:kontakt@mt-anatol.pl',
-  },
-  {
-    icon: MapPin,
-    label: 'Adres',
-    value: 'ul. Przykładowa 123, 00-000 Warszawa',
-    href: null,
-  },
-];
+// Facebook icon component (lucide-react's Facebook icon is different)
+const FacebookIcon = ({ className }: { className?: string }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
 
 interface FormData {
   name: string;
@@ -48,6 +26,8 @@ interface FormErrors {
 }
 
 export default function ContactPage() {
+  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -56,6 +36,55 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/site-settings');
+        const result = await response.json();
+        if (result.success) {
+          setSettings(result.data);
+        }
+      } catch (err) {
+        console.error('Error fetching settings:', err);
+      } finally {
+        setIsLoadingSettings(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  // Build contact info from settings
+  const contactInfo = [
+    {
+      icon: Phone,
+      label: 'Telefon',
+      value: settings.contact.phone,
+      href: `tel:${settings.contact.phone.replace(/\s/g, '')}`,
+    },
+    {
+      icon: Mail,
+      label: 'Email',
+      value: settings.contact.email,
+      href: `mailto:${settings.contact.email}`,
+    },
+    {
+      icon: MapPin,
+      label: 'Adres',
+      value: `${settings.contact.addressLine1}${settings.contact.addressLine2 ? ', ' + settings.contact.addressLine2 : ''}`,
+      href: settings.contact.googleMapsUrl || null,
+    },
+  ];
+
+  // Build opening hours from settings
+  const openingHours = DAY_ORDER.map((day) => {
+    const daySettings = settings.openingHours[day];
+    return {
+      day: DAY_NAMES_PL[day],
+      hours: daySettings.closed ? 'Zamknięte' : `${daySettings.open} - ${daySettings.close}`,
+      closed: daySettings.closed,
+    };
+  });
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -106,6 +135,27 @@ export default function ContactPage() {
     }
   };
 
+  // Show skeleton while loading
+  if (isLoadingSettings) {
+    return (
+      <>
+        <section className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white py-16 lg:py-24">
+          <Container>
+            <div className="max-w-3xl">
+              <div className="h-12 w-48 bg-gray-600 rounded animate-pulse mb-4" />
+              <div className="h-6 w-96 bg-gray-600 rounded animate-pulse" />
+            </div>
+          </Container>
+        </section>
+        <section className="py-16 lg:py-24">
+          <Container>
+            <div className="h-96 bg-gray-100 rounded-xl animate-pulse" />
+          </Container>
+        </section>
+      </>
+    );
+  }
+
   return (
     <>
       {/* Hero Section */}
@@ -139,6 +189,8 @@ export default function ContactPage() {
                       {item.href ? (
                         <a
                           href={item.href}
+                          target={item.label === 'Adres' ? '_blank' : undefined}
+                          rel={item.label === 'Adres' ? 'noopener noreferrer' : undefined}
                           className="text-[#0F172A] font-medium hover:text-[#2563EB] transition-colors"
                         >
                           {item.value}
@@ -150,6 +202,35 @@ export default function ContactPage() {
                   </div>
                 ))}
               </div>
+
+              {/* Social Media Links */}
+              {(settings.contact.instagramUrl || settings.contact.facebookUrl) && (
+                <div className="mb-10">
+                  <h2 className="text-2xl font-bold text-[#0F172A] mb-6">Znajdź nas</h2>
+                  <div className="flex gap-4">
+                    {settings.contact.instagramUrl && (
+                      <a
+                        href={settings.contact.instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform"
+                      >
+                        <Instagram className="w-6 h-6" />
+                      </a>
+                    )}
+                    {settings.contact.facebookUrl && (
+                      <a
+                        href={settings.contact.facebookUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 bg-[#1877F2] rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform"
+                      >
+                        <FacebookIcon className="w-6 h-6" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Opening Hours */}
               <h2 className="text-2xl font-bold text-[#0F172A] mb-6 flex items-center gap-2">
@@ -296,7 +377,7 @@ export default function ContactPage() {
                 <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500 font-medium">Mapa Google</p>
                 <p className="text-gray-400 text-sm mt-1">
-                  ul. Przykładowa 123, 00-000 Warszawa
+                  {settings.contact.addressLine1}{settings.contact.addressLine2 && `, ${settings.contact.addressLine2}`}
                 </p>
                 <p className="text-gray-400 text-xs mt-4">
                   (Miejsce na osadzenie mapy Google Maps)

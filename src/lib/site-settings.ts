@@ -267,6 +267,8 @@ export function convertLegacySettings(legacy: {
       addressLine1: legacy.contact.address,
       addressLine2: legacy.contact.city,
       googleMapsUrl: '',
+      instagramUrl: '',
+      facebookUrl: '',
     };
   }
 

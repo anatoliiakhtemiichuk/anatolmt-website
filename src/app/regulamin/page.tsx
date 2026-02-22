@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Regulamin | M&T ANATOL',
-  description: 'Regulamin świadczenia usług M&T ANATOL - terapia manualna i masaż leczniczy',
+  description: 'Regulamin świadczenia usług M&T ANATOL - terapia manualna i masaż',
 };
 
 export default function RegulaminPage() {
@@ -24,8 +24,8 @@ export default function RegulaminPage() {
           <section className="py-8 border-b border-[#e5e5e5]">
             <h2 className="text-xl font-bold mb-6">§ 1. Postanowienia ogólne</h2>
             <ol className="list-decimal list-outside ml-6 space-y-4">
-              <li>Niniejszy Regulamin określa zasady korzystania z usług świadczonych przez M&T ANATOL (dalej: „Usługodawca") w zakresie terapii manualnej, masażu leczniczego oraz materiałów edukacyjnych wideo.</li>
-              <li>Usługodawca prowadzi działalność w zakresie fizjoterapii, terapii manualnej i masażu leczniczego, oferując usługi stacjonarne oraz cyfrowe materiały edukacyjne.</li>
+              <li>Niniejszy Regulamin określa zasady korzystania z usług świadczonych przez M&T ANATOL (dalej: „Usługodawca") w zakresie terapii manualnej, masażu oraz materiałów edukacyjnych wideo.</li>
+              <li>Usługodawca prowadzi działalność w zakresie terapii manualnej i masażu, oferując usługi stacjonarne oraz cyfrowe materiały edukacyjne.</li>
               <li>Korzystanie z usług Usługodawcy oznacza akceptację niniejszego Regulaminu.</li>
             </ol>
           </section>
@@ -50,7 +50,7 @@ export default function RegulaminPage() {
               <li>Klient zobowiązany jest do poinformowania terapeuty o wszelkich przeciwwskazaniach zdrowotnych, urazach, chorobach przewlekłych oraz przyjmowanych lekach przed rozpoczęciem zabiegu.</li>
               <li>Usługodawca nie ponosi odpowiedzialności za skutki zatajenia informacji o stanie zdrowia przez Klienta. Klient ponosi pełną odpowiedzialność za zatajenie istotnych informacji o stanie zdrowia.</li>
               <li>Usługodawca zastrzega sobie prawo do odmowy wykonania usługi, jeżeli stwierdzi istnienie przeciwwskazań zdrowotnych lub innych okoliczności mogących zagrozić zdrowiu Klienta.</li>
-              <li>Usługi świadczone przez Usługodawcę nie stanowią diagnozy medycznej ani leczenia. W przypadku poważnych dolegliwości zdrowotnych zalecana jest konsultacja z lekarzem.</li>
+              <li>Usługi świadczone przez Usługodawcę nie stanowią diagnozy medycznej ani terapii medycznej. W przypadku poważnych dolegliwości zdrowotnych zalecana jest konsultacja z lekarzem.</li>
             </ol>
           </section>
 

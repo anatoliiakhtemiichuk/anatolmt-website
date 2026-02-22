@@ -73,7 +73,7 @@ export default function PakietPage() {
               <p className="text-lg text-white/80 mb-8 leading-relaxed">
                 Dostęp do wszystkich {videoCount} filmów edukacyjnych w{' '}
                 {VIDEO_CATEGORIES.length} kategoriach. Idealne rozwiązanie dla
-                kompleksowej rehabilitacji domowej.
+                kompleksowej terapii domowej.
               </p>
 
               {/* Benefits */}
@@ -168,7 +168,7 @@ export default function PakietPage() {
             <p className="text-gray-600 max-w-2xl mx-auto">
               Pełny dostęp do wszystkich kategorii ćwiczeń. Materiały są
               przygotowane przez doświadczonego terapeutę i przeznaczone do
-              wsparcia domowej rehabilitacji.
+              wsparcia domowej terapii.
             </p>
           </div>
 
