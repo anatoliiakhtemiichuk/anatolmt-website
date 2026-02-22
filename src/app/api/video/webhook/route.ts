@@ -36,10 +36,16 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let event: Stripe.Event;
+  let event: Stripe.Event | null;
 
   try {
     event = verifyWebhookSignature(body, signature, webhookSecret);
+    if (!event) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 503 }
+      );
+    }
   } catch (err) {
     console.error('Webhook signature verification failed:', err);
     return NextResponse.json(
