@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import {
   Calendar,
   Clock,
@@ -9,6 +10,18 @@ import {
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
 import { getSiteSettings } from '@/lib/site-settings';
+
+// SEO Metadata for homepage
+export const metadata: Metadata = {
+  title: 'Terapeuta manualny Warszawa | M&T Anatol',
+  description:
+    'Wsparcie w dolegliwościach bólowych kręgosłupa i napięciach mięśniowych w Warszawie. Umów wizytę u M&T Anatol.',
+  openGraph: {
+    title: 'Terapeuta manualny Warszawa | M&T Anatol',
+    description:
+      'Wsparcie w dolegliwościach bólowych kręgosłupa i napięciach mięśniowych w Warszawie. Umów wizytę u M&T Anatol.',
+  },
+};
 
 // Features/benefits (static)
 const features = [
@@ -65,9 +78,13 @@ export default async function HomePage() {
         <Container>
           <div className="relative py-20 lg:py-32">
             <div className="max-w-3xl">
+              {/* Brand name */}
+              <p className="text-[#2563EB] text-xl font-semibold mb-3">
+                {settings.texts.footerText || 'M&T ANATOL'}
+              </p>
+              {/* Main H1 for SEO */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                <span className="text-[#2563EB]">{settings.texts.footerText || 'M&T ANATOL'}</span>
-                {' '}- Profesjonalna Terapia Manualna
+                Terapeuta manualny w Warszawie
               </h1>
               <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
                 {settings.texts.heroSubtitle || 'Doświadczony terapeuta, wsparcie w dolegliwościach bólowych kręgosłupa, napięciach mięśniowych oraz powrocie do sprawności po urazach.'}
@@ -119,7 +136,7 @@ export default async function HomePage() {
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
-              Nasze Usługi
+              Usługi terapii manualnej w Warszawie
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Oferujemy szeroki zakres usług terapeutycznych dostosowanych do
@@ -201,6 +218,53 @@ export default async function HomePage() {
               >
                 Skontaktuj się
               </Link>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* SEO Content Section */}
+      <section className="py-16 lg:py-20 bg-gray-50">
+        <Container>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-8 text-center">
+              Terapeuta manualny Warszawa – kiedy warto się zgłosić?
+            </h2>
+
+            <div className="space-y-6 text-gray-700 leading-relaxed">
+              <p>
+                Ból kręgosłupa to jedna z najczęstszych dolegliwości, z którą zgłaszają się pacjenci
+                do gabinetu terapii manualnej w Warszawie. Może być wynikiem przeciążeń, nieprawidłowej
+                postawy ciała lub długotrwałego stresu. Profesjonalna terapia manualna pomaga zmniejszyć
+                napięcie mięśniowe i przywrócić prawidłową ruchomość kręgosłupa.
+              </p>
+
+              <p>
+                Napięcia szyi i barków często towarzyszą osobom pracującym przy komputerze lub
+                spędzającym wiele godzin w jednej pozycji. Objawy takie jak sztywność karku, bóle głowy
+                czy ograniczona ruchomość mogą znacząco wpływać na codzienne funkcjonowanie.
+                Regularne wizyty u terapeuty manualnego pomagają zapobiegać narastaniu dolegliwości.
+              </p>
+
+              <p>
+                Siedzący tryb pracy to wyzwanie dla współczesnego organizmu. Długie godziny spędzone
+                przy biurku prowadzą do osłabienia mięśni stabilizujących, przykurczów i zaburzeń
+                postawy. Terapia manualna w połączeniu z odpowiednimi ćwiczeniami może skutecznie
+                przeciwdziałać tym negatywnym skutkom.
+              </p>
+
+              <p>
+                Powrót do sprawności po urazach wymaga odpowiedniego wsparcia specjalisty. Niezależnie
+                od tego, czy mierzysz się z kontuzją sportową, czy skutkami przeciążenia, terapeuta
+                manualny pomoże Ci bezpiecznie odzyskać pełną funkcjonalność ciała i zapobiec
+                nawrotom dolegliwości.
+              </p>
+
+              <p>
+                W gabinecie M&T Anatol w Warszawie każdy pacjent traktowany jest indywidualnie.
+                Przed rozpoczęciem terapii przeprowadzamy dokładny wywiad i ocenę funkcjonalną,
+                aby dobrać odpowiednie techniki do Twoich potrzeb i celów.
+              </p>
             </div>
           </div>
         </Container>
