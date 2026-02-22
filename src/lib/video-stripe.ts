@@ -6,15 +6,37 @@
 import Stripe from 'stripe';
 import { VIDEO_PRICES, VIDEO_CURRENCY, ACCESS_DURATION_DAYS, ProductType } from '@/types/video';
 
-// Initialize Stripe
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-
-if (!stripeSecretKey) {
-  console.warn('Warning: STRIPE_SECRET_KEY is not set');
+// Check if Stripe is configured
+export function isVideoStripeConfigured(): boolean {
+  const key = process.env.STRIPE_SECRET_KEY;
+  return !!(key && !key.includes('placeholder'));
 }
 
-export const stripe = new Stripe(stripeSecretKey || '', {
-  typescript: true,
+// Lazy-loaded Stripe client
+let _stripeClient: Stripe | null = null;
+
+function getStripeClient(): Stripe | null {
+  if (!isVideoStripeConfigured()) {
+    return null;
+  }
+  if (!_stripeClient) {
+    _stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      typescript: true,
+    });
+  }
+  return _stripeClient;
+}
+
+// Export stripe for backwards compatibility
+export const stripe = new Proxy({} as Stripe, {
+  get(_, prop) {
+    const client = getStripeClient();
+    if (!client) {
+      console.warn('Stripe is not configured for video payments');
+      return undefined;
+    }
+    return (client as unknown as Record<string | symbol, unknown>)[prop];
+  },
 });
 
 // Product names and descriptions
@@ -73,7 +95,13 @@ export async function createVideoCheckoutSession(options: {
   customerEmail?: string;
   successUrl: string;
   cancelUrl: string;
-}): Promise<Stripe.Checkout.Session> {
+}): Promise<Stripe.Checkout.Session | null> {
+  const client = getStripeClient();
+  if (!client) {
+    console.error('Stripe is not configured');
+    return null;
+  }
+
   const { productType, videoSlug, videoTitle, customerEmail, successUrl, cancelUrl } = options;
 
   const product = VIDEO_PRODUCTS[productType];
@@ -121,14 +149,16 @@ export async function createVideoCheckoutSession(options: {
     sessionParams.customer_email = customerEmail;
   }
 
-  return stripe.checkout.sessions.create(sessionParams);
+  return client.checkout.sessions.create(sessionParams);
 }
 
 /**
  * Retrieve Stripe checkout session
  */
-export async function getCheckoutSession(sessionId: string): Promise<Stripe.Checkout.Session> {
-  return stripe.checkout.sessions.retrieve(sessionId);
+export async function getCheckoutSession(sessionId: string): Promise<Stripe.Checkout.Session | null> {
+  const client = getStripeClient();
+  if (!client) return null;
+  return client.checkout.sessions.retrieve(sessionId);
 }
 
 /**
@@ -138,8 +168,10 @@ export function verifyWebhookSignature(
   payload: string | Buffer,
   signature: string,
   webhookSecret: string
-): Stripe.Event {
-  return stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+): Stripe.Event | null {
+  const client = getStripeClient();
+  if (!client) return null;
+  return client.webhooks.constructEvent(payload, signature, webhookSecret);
 }
 
 /**

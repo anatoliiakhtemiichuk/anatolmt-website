@@ -11,6 +11,7 @@ import {
   createVideoCheckoutSession,
   generateAccessToken,
   calculateExpirationDate,
+  isVideoStripeConfigured,
 } from '@/lib/video-stripe';
 import { getVideoBySlug } from '@/data/videos';
 import { VIDEO_PRICES, ProductType } from '@/types/video';
@@ -23,6 +24,14 @@ interface CheckoutRequestBody {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Stripe is configured
+    if (!isVideoStripeConfigured()) {
+      return NextResponse.json(
+        { error: 'Płatności są tymczasowo niedostępne' },
+        { status: 503 }
+      );
+    }
+
     const body: CheckoutRequestBody = await request.json();
     const { product_type, video_slug, customer_email } = body;
 
@@ -74,6 +83,13 @@ export async function POST(request: NextRequest) {
       successUrl: `${baseUrl}/video-pomoc/success?token=${accessToken}&session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${baseUrl}/video-pomoc${video_slug ? `/${video_slug}` : ''}?canceled=true`,
     });
+
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Nie udało się utworzyć sesji płatności' },
+        { status: 500 }
+      );
+    }
 
     // Create pending purchase record in database
     const supabase = createServerSupabaseClient();
