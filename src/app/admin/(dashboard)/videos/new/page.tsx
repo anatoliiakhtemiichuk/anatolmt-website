@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BODY_PARTS } from '@/types/video';
+import { BODY_PARTS, BodyPart } from '@/types/video';
 import {
   ArrowLeft,
   Save,
@@ -19,7 +19,17 @@ import {
 export default function NewVideoPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    bodyPart: BodyPart;
+    durationMin: string;
+    priceEur: string;
+    includedInPackage: boolean;
+    videoUrl: string;
+    thumbnailUrl: string;
+    isPublished: boolean;
+  }>({
     title: '',
     description: '',
     bodyPart: BODY_PARTS[0],
@@ -152,7 +162,7 @@ export default function NewVideoPage() {
             </label>
             <select
               value={formData.bodyPart}
-              onChange={(e) => setFormData({ ...formData, bodyPart: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, bodyPart: e.target.value as BodyPart })}
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none appearance-none bg-white"
             >
               {BODY_PARTS.map(part => (

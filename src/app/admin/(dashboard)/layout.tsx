@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
   { href: '/admin/clients', label: 'Klienci', icon: <Users className="w-5 h-5" /> },
   { href: '/admin/videos', label: 'Filmy', icon: <Video className="w-5 h-5" /> },
   { href: '/admin/content', label: 'Treści', icon: <FileText className="w-5 h-5" /> },
-  { href: '/admin/settings', label: 'Ustawienia', icon: <Settings className="w-5 h-5" /> },
+  { href: '/admin/ustawienia', label: 'Ustawienia', icon: <Settings className="w-5 h-5" /> },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

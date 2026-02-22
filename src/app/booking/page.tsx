@@ -17,17 +17,8 @@ import {
 } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { formatPLN } from '@/lib/pricing';
-import type { ClinicSettings } from '@/types/settings';
-
-interface Service {
-  id: string;
-  name: string;
-  duration: number;
-  priceWeekday: number;
-  priceWeekend: number | null;
-  description: string;
-}
+import type { Service, SiteSettings, OpeningHoursMap } from '@/types/site-settings';
+import { JS_DAY_TO_KEY } from '@/types/site-settings';
 
 interface ClientData {
   firstName: string;
@@ -61,15 +52,12 @@ const steps = [
   { id: 5, name: 'Potwierdzenie', icon: CheckCircle },
 ];
 
-const dayNameMap: Record<number, string> = {
-  0: 'sunday',
-  1: 'monday',
-  2: 'tuesday',
-  3: 'wednesday',
-  4: 'thursday',
-  5: 'friday',
-  6: 'saturday',
-};
+function formatPrice(price: number | null | undefined): string {
+  if (price === null || price === undefined || isNaN(price)) {
+    return '— zł';
+  }
+  return `${price} zł`;
+}
 
 export default function BookingPage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -90,20 +78,20 @@ export default function BookingPage() {
   const [bookingError, setBookingError] = useState<string | null>(null);
 
   // Settings and availability state
-  const [settings, setSettings] = useState<ClinicSettings | null>(null);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [settingsLoading, setSettingsLoading] = useState(true);
   const [availabilityCache, setAvailabilityCache] = useState<Record<string, AvailabilityData>>({});
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
 
-  // Fetch settings on load
+  // Fetch site settings on load
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await fetch('/api/settings');
+        const res = await fetch('/api/site-settings');
         const data = await res.json();
         if (data.success) {
-          setSettings(data.data);
+          setSiteSettings(data.data);
         }
       } catch (error) {
         console.error('Failed to fetch settings:', error);
@@ -114,76 +102,23 @@ export default function BookingPage() {
     fetchSettings();
   }, []);
 
-  // Generate services from settings
+  // Get active services
   const services: Service[] = useMemo(() => {
-    if (!settings?.pricing) {
-      // Default services if settings not loaded
-      return [
-        {
-          id: 'consultation',
-          name: 'Konsultacja',
-          duration: 30,
-          priceWeekday: 50,
-          priceWeekend: null,
-          description: 'Wstępna konsultacja i ocena potrzeb',
-        },
-        {
-          id: 'visit-1h',
-          name: 'Wizyta 1h',
-          duration: 60,
-          priceWeekday: 200,
-          priceWeekend: 250,
-          description: 'Standardowa sesja terapii manualnej',
-        },
-        {
-          id: 'visit-1.5h',
-          name: 'Wizyta 1.5h',
-          duration: 90,
-          priceWeekday: 250,
-          priceWeekend: 300,
-          description: 'Rozszerzona sesja terapii',
-        },
-      ];
+    if (!siteSettings?.services) {
+      return [];
     }
-
-    return [
-      {
-        id: 'consultation',
-        name: 'Konsultacja',
-        duration: 30,
-        priceWeekday: settings.pricing.consultation,
-        priceWeekend: null, // Consultation not available on weekends
-        description: 'Wstępna konsultacja i ocena potrzeb',
-      },
-      {
-        id: 'visit-1h',
-        name: 'Wizyta 1h',
-        duration: 60,
-        priceWeekday: settings.pricing.visit1hWeekday,
-        priceWeekend: settings.pricing.visit1hWeekend,
-        description: 'Standardowa sesja terapii manualnej',
-      },
-      {
-        id: 'visit-1.5h',
-        name: 'Wizyta 1.5h',
-        duration: 90,
-        priceWeekday: settings.pricing.visit15hWeekday,
-        priceWeekend: settings.pricing.visit15hWeekend,
-        description: 'Rozszerzona sesja terapii',
-      },
-    ];
-  }, [settings]);
+    return siteSettings.services.filter((s) => s.isActive);
+  }, [siteSettings]);
 
   // Check if a date is closed or blocked
   const isDateDisabled = useCallback((date: Date): { disabled: boolean; reason?: string } => {
-    if (!settings) return { disabled: false };
+    if (!siteSettings) return { disabled: false };
 
-    const dayOfWeek = getDay(date);
-    const dayName = dayNameMap[dayOfWeek];
-    const daySettings = settings.openingHours[dayName as keyof typeof settings.openingHours];
+    const dayKey = JS_DAY_TO_KEY[getDay(date)];
+    const daySettings = siteSettings.openingHours[dayKey as keyof OpeningHoursMap];
 
     // Check if day is closed
-    if (daySettings?.isClosed) {
+    if (daySettings?.closed) {
       return { disabled: true, reason: 'Zamknięte' };
     }
 
@@ -195,11 +130,11 @@ export default function BookingPage() {
     }
 
     return { disabled: false };
-  }, [settings, availabilityCache]);
+  }, [siteSettings, availabilityCache]);
 
   // Generate available dates (next 14 working days)
   const availableDates = useMemo(() => {
-    if (!settings) return [];
+    if (!siteSettings) return [];
 
     const dates: Date[] = [];
     let currentDate = new Date();
@@ -207,21 +142,19 @@ export default function BookingPage() {
     currentDate = addDays(currentDate, 1); // Start from tomorrow
 
     while (dates.length < 21) { // Generate more to account for closed days
-      const dayOfWeek = getDay(currentDate);
-      const dayName = dayNameMap[dayOfWeek];
-      const daySettings = settings.openingHours[dayName as keyof typeof settings.openingHours];
-
-      // Include the date but it may be marked as disabled later
       dates.push(new Date(currentDate));
       currentDate = addDays(currentDate, 1);
     }
 
     return dates.slice(0, 14); // Return first 14 dates
-  }, [settings]);
+  }, [siteSettings]);
 
   // Pre-fetch availability for visible dates
   useEffect(() => {
     if (!availableDates.length || !selectedService) return;
+
+    const service = services.find(s => s.id === selectedService);
+    if (!service) return;
 
     const fetchAvailability = async (dateStr: string, duration: number) => {
       if (availabilityCache[dateStr]) return;
@@ -240,13 +173,10 @@ export default function BookingPage() {
       }
     };
 
-    const service = services.find(s => s.id === selectedService);
-    if (!service) return;
-
     // Fetch availability for all visible dates
     availableDates.forEach(date => {
       const dateStr = format(date, 'yyyy-MM-dd');
-      fetchAvailability(dateStr, service.duration);
+      fetchAvailability(dateStr, service.durationMinutes);
     });
   }, [availableDates, selectedService, services, availabilityCache]);
 
@@ -272,7 +202,7 @@ export default function BookingPage() {
     const fetchSlots = async () => {
       setSlotsLoading(true);
       try {
-        const res = await fetch(`/api/availability?date=${dateStr}&duration=${service.duration}`);
+        const res = await fetch(`/api/availability?date=${dateStr}&duration=${service.durationMinutes}`);
         const data = await res.json();
         if (data.success) {
           setAvailabilityCache(prev => ({
@@ -297,13 +227,13 @@ export default function BookingPage() {
   const getPrice = () => {
     if (!selectedServiceData || !selectedDate) return 0;
     const weekend = isWeekend(selectedDate);
-    if (weekend && selectedServiceData.priceWeekend) {
+    if (weekend && selectedServiceData.priceWeekend !== null) {
       return selectedServiceData.priceWeekend;
     }
     return selectedServiceData.priceWeekday;
   };
 
-  // Filter services based on selected date
+  // Filter services based on selected date (no consultation on weekends)
   const availableServices = useMemo(() => {
     if (!selectedDate) return services;
     const weekend = isWeekend(selectedDate);
@@ -363,7 +293,7 @@ export default function BookingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service_type: selectedServiceData.name,
-          duration_minutes: selectedServiceData.duration,
+          duration_minutes: selectedServiceData.durationMinutes,
           price_pln: getPrice(),
           date: format(selectedDate, 'yyyy-MM-dd'),
           time: selectedTime,
@@ -444,7 +374,7 @@ export default function BookingPage() {
                   <strong>Godzina:</strong> {selectedTime}
                 </p>
                 <p className="text-gray-600">
-                  <strong>Cena:</strong> {formatPLN(getPrice())}
+                  <strong>Cena:</strong> {formatPrice(getPrice())}
                 </p>
               </div>
               <Button variant="primary" onClick={() => window.location.reload()}>
@@ -546,9 +476,9 @@ export default function BookingPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-1">
                             <h3 className="font-semibold text-[#0F172A]">{service.name}</h3>
-                            {service.id !== 'consultation' && (
+                            {service.showDuration && (
                               <span className="text-xs font-medium text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
-                                {service.duration} min
+                                {service.durationMinutes} min
                               </span>
                             )}
                           </div>
@@ -556,11 +486,11 @@ export default function BookingPage() {
                         </div>
                         <div className="text-right ml-4">
                           <p className="text-xl font-bold text-[#0F172A]">
-                            {formatPLN(service.priceWeekday)}
+                            {formatPrice(service.priceWeekday)}
                           </p>
-                          {service.priceWeekend && (
+                          {service.priceWeekend !== null && (
                             <p className="text-xs text-gray-500">
-                              weekend: {formatPLN(service.priceWeekend)}
+                              weekend: {formatPrice(service.priceWeekend)}
                             </p>
                           )}
                         </div>
@@ -826,7 +756,8 @@ export default function BookingPage() {
                     <div className="flex justify-between py-3 border-b border-gray-100">
                       <span className="text-gray-500">Usługa</span>
                       <span className="font-medium text-[#0F172A]">
-                        {selectedServiceData?.name} ({selectedServiceData?.duration} min)
+                        {selectedServiceData?.name}
+                        {selectedServiceData?.showDuration && ` (${selectedServiceData?.durationMinutes} min)`}
                       </span>
                     </div>
                     <div className="flex justify-between py-3 border-b border-gray-100">
@@ -863,7 +794,7 @@ export default function BookingPage() {
                     )}
                     <div className="flex justify-between py-4 bg-gray-50 -mx-6 px-6 rounded-lg mt-4">
                       <span className="text-lg font-semibold text-[#0F172A]">Do zapłaty</span>
-                      <span className="text-2xl font-bold text-[#2563EB]">{formatPLN(getPrice())}</span>
+                      <span className="text-2xl font-bold text-[#2563EB]">{formatPrice(getPrice())}</span>
                     </div>
                   </div>
                   {bookingError && (

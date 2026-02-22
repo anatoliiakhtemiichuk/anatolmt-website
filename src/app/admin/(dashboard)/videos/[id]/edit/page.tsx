@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { VideoItem, BODY_PARTS } from '@/types/video';
+import { VideoItem, BODY_PARTS, BodyPart } from '@/types/video';
 import {
   ArrowLeft,
   Save,
@@ -23,10 +23,20 @@ export default function EditVideoPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    bodyPart: BodyPart;
+    durationMin: string;
+    priceEur: string;
+    includedInPackage: boolean;
+    videoUrl: string;
+    thumbnailUrl: string;
+    isPublished: boolean;
+  }>({
     title: '',
     description: '',
-    bodyPart: BODY_PARTS[0] as string,
+    bodyPart: BODY_PARTS[0],
     durationMin: '',
     priceEur: '',
     includedInPackage: false,
@@ -50,7 +60,7 @@ export default function EditVideoPage() {
         setFormData({
           title: video.title,
           description: video.description,
-          bodyPart: video.bodyPart,
+          bodyPart: video.bodyPart as BodyPart,
           durationMin: video.durationMin?.toString() || '',
           priceEur: video.priceEur.toString(),
           includedInPackage: video.includedInPackage,
@@ -197,7 +207,7 @@ export default function EditVideoPage() {
             </label>
             <select
               value={formData.bodyPart}
-              onChange={(e) => setFormData({ ...formData, bodyPart: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, bodyPart: e.target.value as BodyPart })}
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none appearance-none bg-white"
             >
               {BODY_PARTS.map(part => (

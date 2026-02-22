@@ -64,6 +64,18 @@ export default function AdminDashboard() {
     return `${(priceInGroszy / 100).toFixed(0)} zł`;
   };
 
+  // Buffer time between appointments
+  const BUFFER_MINUTES = 20;
+
+  // Calculate blocked until time (service + buffer)
+  const calculateBlockedUntil = (startTime: string, durationMinutes: number): string => {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes + durationMinutes + BUFFER_MINUTES;
+    const endHours = Math.floor(totalMinutes / 60);
+    const endMinutes = totalMinutes % 60;
+    return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -195,7 +207,9 @@ export default function AdminDashboard() {
                         <p className="font-medium text-[#0F172A]">
                           {formatTime(appointment.time)} - {appointment.first_name} {appointment.last_name}
                         </p>
-                        <p className="text-sm text-gray-500">{appointment.service_type}</p>
+                        <p className="text-sm text-gray-500">
+                          {appointment.service_type} • Do {calculateBlockedUntil(appointment.time, appointment.duration_minutes)}
+                        </p>
                         <div className="flex items-center gap-2 mt-1 text-sm text-gray-400">
                           <Phone className="w-3 h-3" />
                           <span>{appointment.phone}</span>

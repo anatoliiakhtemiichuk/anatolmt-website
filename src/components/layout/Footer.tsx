@@ -1,26 +1,77 @@
 import Link from 'next/link';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { Container } from '@/components/ui';
+import { getSiteSettings } from '@/lib/site-settings';
+import { DAY_NAMES_PL, DAY_ORDER } from '@/types/site-settings';
 
 const navigation = {
   main: [
     { name: 'Strona główna', href: '/' },
     { name: 'Rezerwacja', href: '/booking' },
-    { name: 'AI Konsultacja', href: '/ai' },
+    { name: 'Wideo Pomoc', href: '/video-pomoc' },
     { name: 'Cennik', href: '/prices' },
     { name: 'Kontakt', href: '/contact' },
   ],
 };
 
-const openingHours = [
-  { day: 'Poniedziałek', hours: 'Zamknięte' },
-  { day: 'Wtorek - Piątek', hours: '11:00 - 22:00' },
-  { day: 'Sobota', hours: '10:00 - 18:00' },
-  { day: 'Niedziela', hours: '11:00 - 15:00' },
-];
-
-export function Footer() {
+export async function Footer() {
+  const settings = await getSiteSettings();
   const currentYear = new Date().getFullYear();
+
+  // Format opening hours for display
+  const formattedHours = DAY_ORDER.map(day => {
+    const daySettings = settings.openingHours[day];
+    const dayName = DAY_NAMES_PL[day];
+
+    if (daySettings.closed) {
+      return { day: dayName, hours: 'Zamknięte', isClosed: true };
+    }
+    return {
+      day: dayName,
+      hours: `${daySettings.open} - ${daySettings.close}`,
+      isClosed: false,
+    };
+  });
+
+  // Group similar hours for cleaner display
+  interface HoursGroup {
+    days: string[];
+    hours: string;
+    isClosed: boolean;
+  }
+
+  const groupedHours: { day: string; hours: string; isClosed: boolean }[] = [];
+  let currentGroup: HoursGroup | null = null;
+
+  formattedHours.forEach(({ day, hours, isClosed }) => {
+    if (currentGroup && currentGroup.hours === hours) {
+      currentGroup.days.push(day);
+    } else {
+      if (currentGroup) {
+        const group = currentGroup;
+        groupedHours.push({
+          day: group.days.length > 1
+            ? `${group.days[0]} - ${group.days[group.days.length - 1]}`
+            : group.days[0],
+          hours: group.hours,
+          isClosed: group.isClosed,
+        });
+      }
+      currentGroup = { days: [day], hours, isClosed };
+    }
+  });
+
+  // Add the last group
+  if (currentGroup) {
+    const group = currentGroup as HoursGroup;
+    groupedHours.push({
+      day: group.days.length > 1
+        ? `${group.days[0]} - ${group.days[group.days.length - 1]}`
+        : group.days[0],
+      hours: group.hours,
+      isClosed: group.isClosed,
+    });
+  }
 
   return (
     <footer className="bg-[#0F172A] text-white">
@@ -33,11 +84,10 @@ export function Footer() {
                 <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">M&T</span>
                 </div>
-                <span className="font-semibold text-lg">M&T ANATOL</span>
+                <span className="font-semibold text-lg">{settings.texts.footerText || 'M&T ANATOL'}</span>
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Profesjonalna terapia manualna i masaż leczniczy.
-                Indywidualne podejście do każdego pacjenta.
+                {settings.texts.aboutText || 'Profesjonalna terapia manualna i masaż leczniczy. Indywidualne podejście do każdego pacjenta.'}
               </p>
             </div>
 
@@ -67,12 +117,12 @@ export function Footer() {
                 Godziny otwarcia
               </h3>
               <ul className="space-y-2">
-                {openingHours.map((item) => (
-                  <li key={item.day} className="text-sm">
+                {groupedHours.map((item, index) => (
+                  <li key={index} className="text-sm">
                     <span className="text-gray-400">{item.day}:</span>
                     <span
                       className={`ml-2 ${
-                        item.hours === 'Zamknięte'
+                        item.isClosed
                           ? 'text-red-400'
                           : 'text-white'
                       }`}
@@ -92,30 +142,55 @@ export function Footer() {
               <ul className="space-y-3">
                 <li>
                   <a
-                    href="tel:+48123456789"
+                    href={`tel:${settings.contact.phone.replace(/\s/g, '')}`}
                     className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm"
                   >
                     <Phone className="w-4 h-4 text-[#2563EB]" />
-                    +48 123 456 789
+                    {settings.contact.phone}
                   </a>
                 </li>
                 <li>
                   <a
-                    href="mailto:kontakt@mt-anatol.pl"
+                    href={`mailto:${settings.contact.email}`}
                     className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm"
                   >
                     <Mail className="w-4 h-4 text-[#2563EB]" />
-                    kontakt@mt-anatol.pl
+                    {settings.contact.email}
                   </a>
                 </li>
                 <li>
-                  <div className="flex items-start gap-3 text-gray-400 text-sm">
-                    <MapPin className="w-4 h-4 text-[#2563EB] mt-0.5" />
-                    <span>
-                      ul. Przykładowa 123<br />
-                      00-000 Warszawa
-                    </span>
-                  </div>
+                  {settings.contact.googleMapsUrl ? (
+                    <a
+                      href={settings.contact.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                    >
+                      <MapPin className="w-4 h-4 text-[#2563EB] mt-0.5" />
+                      <span>
+                        {settings.contact.addressLine1}
+                        {settings.contact.addressLine2 && (
+                          <>
+                            <br />
+                            {settings.contact.addressLine2}
+                          </>
+                        )}
+                      </span>
+                    </a>
+                  ) : (
+                    <div className="flex items-start gap-3 text-gray-400 text-sm">
+                      <MapPin className="w-4 h-4 text-[#2563EB] mt-0.5" />
+                      <span>
+                        {settings.contact.addressLine1}
+                        {settings.contact.addressLine2 && (
+                          <>
+                            <br />
+                            {settings.contact.addressLine2}
+                          </>
+                        )}
+                      </span>
+                    </div>
+                  )}
                 </li>
               </ul>
             </div>
@@ -126,7 +201,7 @@ export function Footer() {
         <div className="border-t border-gray-800 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-sm">
-              © {currentYear} M&T ANATOL. Wszelkie prawa zastrzeżone.
+              © {currentYear} {settings.texts.footerText || 'M&T ANATOL'}. Wszelkie prawa zastrzeżone.
             </p>
             <div className="flex gap-6">
               <Link

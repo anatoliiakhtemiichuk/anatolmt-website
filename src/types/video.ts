@@ -42,6 +42,38 @@ export const VIDEO_PRICES = {
   full: 1500,       // 15 EUR for full package
 } as const;
 
+// Video currency
+export const VIDEO_CURRENCY = 'eur';
+
+// Access duration in days
+export const ACCESS_DURATION_DAYS = 30;
+
+// Product type for video purchases
+export type ProductType = keyof typeof VIDEO_PRICES;
+
+// Token validation response
+export interface ValidateTokenResponse {
+  valid: boolean;
+  error?: string;
+  purchase?: {
+    product_type: ProductType;
+    video_id?: string;
+    expires_at: string;
+    days_remaining: number;
+  };
+  videos?: Video[];
+}
+
+// Category slug to display name mapping
+export const CATEGORY_NAMES: Record<string, string> = {
+  'kregoslup-szyjny': 'Kręgosłup szyjny',
+  'odcinek-piersiowy': 'Odcinek piersiowy',
+  'odcinek-ledźwiowy': 'Odcinek lędźwiowy',
+  'bark': 'Bark',
+  'biodro': 'Biodro',
+  'kolano': 'Kolano',
+};
+
 // ============================================
 // ADMIN VIDEO MANAGEMENT TYPES
 // ============================================

@@ -1,0 +1,65 @@
+{
+  "services": [
+    {
+      "id": "consultation",
+      "slug": "konsultacja",
+      "name": "Konsultacja",
+      "description": "Wstępna konsultacja i ocena potrzeb terapeutycznych",
+      "durationMinutes": 20,
+      "showDuration": false,
+      "priceWeekday": 50,
+      "priceWeekend": null,
+      "isActive": true
+    },
+    {
+      "id": "visit_60",
+      "slug": "wizyta-1h",
+      "name": "Wizyta standardowa",
+      "description": "Pełna sesja terapii manualnej",
+      "durationMinutes": 60,
+      "showDuration": true,
+      "priceWeekday": 200,
+      "priceWeekend": 250,
+      "isActive": true
+    },
+    {
+      "id": "visit_90",
+      "slug": "wizyta-1.5h",
+      "name": "Wizyta rozszerzona",
+      "description": "Rozszerzona sesja dla kompleksowej terapii",
+      "durationMinutes": 90,
+      "showDuration": true,
+      "priceWeekday": 250,
+      "priceWeekend": 300,
+      "isActive": true
+    }
+  ],
+  "openingHours": {
+    "mon": { "open": "00:00", "close": "00:00", "closed": true },
+    "tue": { "open": "11:00", "close": "22:00", "closed": false },
+    "wed": { "open": "11:00", "close": "22:00", "closed": false },
+    "thu": { "open": "11:00", "close": "22:00", "closed": false },
+    "fri": { "open": "11:00", "close": "22:00", "closed": false },
+    "sat": { "open": "10:00", "close": "18:00", "closed": false },
+    "sun": { "open": "11:00", "close": "15:00", "closed": false }
+  },
+  "contact": {
+    "phone": "+48 123 456 789",
+    "email": "kontakt@mt-anatol.pl",
+    "addressLine1": "ul. Przykładowa 123",
+    "addressLine2": "00-000 Warszawa",
+    "googleMapsUrl": ""
+  },
+  "texts": {
+    "heroTitle": "M&T ANATOL - Profesjonalna Terapia Manualna",
+    "heroSubtitle": "Doświadczony terapeuta, indywidualne podejście do każdego pacjenta. Skuteczna pomoc w bólu kręgosłupa, napięciach mięśniowych i rehabilitacji pourazowej.",
+    "aboutTitle": "O nas",
+    "aboutText": "Profesjonalna terapia manualna i masaż leczniczy. Indywidualne podejście do każdego pacjenta.",
+    "bookingInfoText": "Zarezerwuj wizytę online w kilka minut. Wybierz usługę i dogodną godzinę.",
+    "footerText": "M&T ANATOL"
+  },
+  "booking": {
+    "bufferMinutes": 20
+  },
+  "updatedAt": "2026-02-22T00:00:00.000Z"
+}

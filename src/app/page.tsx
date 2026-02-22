@@ -8,30 +8,9 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
+import { getSiteSettings } from '@/lib/site-settings';
 
-// Services preview data
-const services = [
-  {
-    name: 'Konsultacja',
-    duration: '30 min',
-    price: '50 PLN',
-    description: 'Wstępna konsultacja i ocena potrzeb terapeutycznych',
-  },
-  {
-    name: 'Wizyta 1h',
-    duration: '60 min',
-    price: 'od 200 PLN',
-    description: 'Standardowa sesja terapii manualnej',
-  },
-  {
-    name: 'Wizyta 1.5h',
-    duration: '90 min',
-    price: 'od 250 PLN',
-    description: 'Rozszerzona sesja dla kompleksowej terapii',
-  },
-];
-
-// Features/benefits
+// Features/benefits (static)
 const features = [
   {
     icon: Award,
@@ -55,7 +34,20 @@ const features = [
   },
 ];
 
-export default function HomePage() {
+// Revalidate every 60 seconds to pick up settings changes
+export const revalidate = 60;
+
+function formatPrice(price: number | null | undefined): string {
+  if (price === null || price === undefined || isNaN(price)) {
+    return '—';
+  }
+  return `${price}`;
+}
+
+export default async function HomePage() {
+  const settings = await getSiteSettings();
+  const activeServices = settings.services.filter(s => s.isActive);
+
   return (
     <>
       {/* Hero Section */}
@@ -74,13 +66,11 @@ export default function HomePage() {
           <div className="relative py-20 lg:py-32">
             <div className="max-w-3xl">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                <span className="text-[#2563EB]">M&T ANATOL</span>
+                <span className="text-[#2563EB]">{settings.texts.footerText || 'M&T ANATOL'}</span>
                 {' '}- Profesjonalna Terapia Manualna
               </h1>
               <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
-                Doświadczony terapeuta, indywidualne podejście do każdego
-                pacjenta. Skuteczna pomoc w bólu kręgosłupa, napięciach
-                mięśniowych i rehabilitacji pourazowej.
+                {settings.texts.heroSubtitle || 'Doświadczony terapeuta, indywidualne podejście do każdego pacjenta. Skuteczna pomoc w bólu kręgosłupa, napięciach mięśniowych i rehabilitacji pourazowej.'}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -138,31 +128,42 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {services.map((service) => (
-              <Card key={service.name} hover variant="bordered" padding="lg">
-                <CardContent>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-medium text-[#2563EB] bg-[#2563EB]/10 px-3 py-1 rounded-full">
-                      {service.duration}
-                    </span>
-                    <span className="text-lg font-bold text-[#0F172A]">
-                      {service.price}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
-                    {service.name}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{service.description}</p>
-                  <Link
-                    href="/booking"
-                    className="inline-flex items-center text-[#2563EB] font-medium hover:underline"
-                  >
-                    Zarezerwuj
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+            {activeServices.map((service) => {
+              const hasWeekendPrice = service.priceWeekend !== null;
+              const priceDisplay = hasWeekendPrice
+                ? `od ${formatPrice(service.priceWeekday)} PLN`
+                : `${formatPrice(service.priceWeekday)} PLN`;
+
+              return (
+                <Card key={service.id} hover variant="bordered" padding="lg">
+                  <CardContent>
+                    <div className="flex items-center justify-between mb-4">
+                      {service.showDuration ? (
+                        <span className="text-sm font-medium text-[#2563EB] bg-[#2563EB]/10 px-3 py-1 rounded-full">
+                          {service.durationMinutes} min
+                        </span>
+                      ) : (
+                        <span />
+                      )}
+                      <span className="text-lg font-bold text-[#0F172A]">
+                        {priceDisplay}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
+                      {service.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4">{service.description}</p>
+                    <Link
+                      href="/booking"
+                      className="inline-flex items-center text-[#2563EB] font-medium hover:underline"
+                    >
+                      Zarezerwuj
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Link>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           <div className="text-center mt-10">
@@ -184,8 +185,7 @@ export default function HomePage() {
               Gotowy na wizytę?
             </h2>
             <p className="text-blue-100 max-w-2xl mx-auto mb-8 text-lg">
-              Umów się na wizytę online w kilka minut. Wybierz dogodny termin i
-              zacznij swoją drogę do lepszego samopoczucia.
+              {settings.texts.bookingInfoText || 'Umów się na wizytę online w kilka minut. Wybierz dogodny termin i zacznij swoją drogę do lepszego samopoczucia.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -212,11 +212,11 @@ export default function HomePage() {
           <div className="flex flex-wrap justify-center items-center gap-8 text-gray-500">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm">Certyfikowany terapeuta</span>
+              <span className="text-sm">Dyplomowany terapeuta manualny</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm">Ponad 500+ zadowolonych pacjentów</span>
+              <span className="text-sm">Indywidualne podejście do każdego pacjenta</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-500" />

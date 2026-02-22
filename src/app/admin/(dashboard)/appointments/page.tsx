@@ -19,7 +19,25 @@ import {
   FileText,
   User,
   Plus,
+  Timer,
 } from 'lucide-react';
+
+// Buffer time between appointments (must match server constant)
+const BUFFER_MINUTES = 20;
+
+// Calculate end time of service
+const calculateEndTime = (startTime: string, durationMinutes: number): string => {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + durationMinutes;
+  const endHours = Math.floor(totalMinutes / 60);
+  const endMinutes = totalMinutes % 60;
+  return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+};
+
+// Calculate blocked until time (service + buffer)
+const calculateBlockedUntil = (startTime: string, durationMinutes: number): string => {
+  return calculateEndTime(startTime, durationMinutes + BUFFER_MINUTES);
+};
 
 const STATUS_LABELS: Record<BookingStatus, string> = {
   confirmed: 'Potwierdzona',
@@ -312,7 +330,12 @@ export default function AppointmentsPage() {
                     <td className="py-4 px-6">
                       <div>
                         <p className="text-[#0F172A]">{booking.service_type}</p>
-                        <p className="text-sm text-gray-500">{booking.duration_minutes} min</p>
+                        <p className="text-sm text-gray-500">
+                          {booking.duration_minutes} min + {BUFFER_MINUTES} min bufor
+                        </p>
+                        <p className="text-xs text-amber-600">
+                          Zablokowane do {calculateBlockedUntil(booking.time, booking.duration_minutes)}
+                        </p>
                       </div>
                     </td>
                     <td className="py-4 px-6">
@@ -380,7 +403,22 @@ export default function AppointmentsPage() {
                   <p className="font-medium text-[#0F172A]">
                     {format(new Date(selectedBooking.date), "EEEE, d MMMM yyyy", { locale: pl })}
                   </p>
-                  <p className="text-gray-500">{formatTime(selectedBooking.time)} • {selectedBooking.duration_minutes} min</p>
+                  <p className="text-gray-500">
+                    {formatTime(selectedBooking.time)} – {calculateEndTime(selectedBooking.time, selectedBooking.duration_minutes)} • {selectedBooking.duration_minutes} min
+                  </p>
+                </div>
+              </div>
+
+              {/* Buffer info */}
+              <div className="flex items-center gap-4 bg-amber-50 rounded-xl p-4">
+                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                  <Timer className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-amber-800">Bufor między wizytami</p>
+                  <p className="text-sm text-amber-600">
+                    +{BUFFER_MINUTES} min • Zablokowane do {calculateBlockedUntil(selectedBooking.time, selectedBooking.duration_minutes)}
+                  </p>
                 </div>
               </div>
 

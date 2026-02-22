@@ -18,6 +18,29 @@ const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
 const VIDEOS_FILE = path.join(DATA_DIR, 'videos.json');
 const PAGE_TEXTS_FILE = path.join(DATA_DIR, 'page-texts.json');
 
+// Buffer time between appointments (in minutes)
+// This is added after each booking to allow for cleanup/preparation
+export const BUFFER_MINUTES = 20;
+
+/**
+ * Calculate the end time of a booking (service duration only)
+ */
+export function calculateEndTime(startTime: string, durationMinutes: number): string {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + durationMinutes;
+  const endHours = Math.floor(totalMinutes / 60);
+  const endMinutes = totalMinutes % 60;
+  return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Calculate the "blocked until" time (service duration + buffer)
+ * This is the time when the next appointment can start
+ */
+export function calculateBlockedUntil(startTime: string, durationMinutes: number): string {
+  return calculateEndTime(startTime, durationMinutes + BUFFER_MINUTES);
+}
+
 // Check if Supabase is properly configured
 function isSupabaseConfigured(): boolean {
   return !!(
@@ -563,6 +586,8 @@ export async function isTimeSlotBlocked(date: string, time: string, durationMinu
 
 /**
  * Check if a booking would overlap with existing bookings
+ * Includes buffer time - each existing booking blocks: startTime to startTime + duration + BUFFER_MINUTES
+ * New booking needs: startTime to startTime + duration + BUFFER_MINUTES
  */
 export async function hasBookingCollision(
   date: string,
@@ -575,18 +600,19 @@ export async function hasBookingCollision(
     (b) => b.status !== 'cancelled' && b.id !== excludeBookingId
   );
 
-  // Calculate new booking time range
+  // Calculate new booking time range (including buffer)
   const [hours, minutes] = time.split(':').map(Number);
   const newStartMinutes = hours * 60 + minutes;
-  const newEndMinutes = newStartMinutes + durationMinutes;
+  const newEndMinutesWithBuffer = newStartMinutes + durationMinutes + BUFFER_MINUTES;
 
   for (const booking of activeBookings) {
     const [bHours, bMinutes] = booking.time.split(':').map(Number);
     const existingStartMinutes = bHours * 60 + bMinutes;
-    const existingEndMinutes = existingStartMinutes + booking.duration_minutes;
+    // Existing booking blocks until: service duration + buffer
+    const existingEndMinutesWithBuffer = existingStartMinutes + booking.duration_minutes + BUFFER_MINUTES;
 
-    // Check overlap
-    if (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes) {
+    // Check overlap (new booking with buffer vs existing booking with buffer)
+    if (newStartMinutes < existingEndMinutesWithBuffer && newEndMinutesWithBuffer > existingStartMinutes) {
       return { hasCollision: true, conflictingBooking: booking };
     }
   }
@@ -661,8 +687,15 @@ export async function getAvailableTimeSlots(
 
   const slots: string[] = [];
 
-  // Generate slots every 30 minutes
-  for (let minutes = openMinutes; minutes + durationMinutes <= closeMinutes; minutes += 30) {
+  // Generate slots based on service duration
+  // For short services (<=30 min), use the duration as the step
+  // For longer services, use 30-minute intervals
+  const slotStep = durationMinutes <= 30 ? durationMinutes : 30;
+
+  // Total time needed: service duration + buffer (must fit within working hours)
+  const totalTimeNeeded = durationMinutes + BUFFER_MINUTES;
+
+  for (let minutes = openMinutes; minutes + totalTimeNeeded <= closeMinutes; minutes += slotStep) {
     const time = `${Math.floor(minutes / 60).toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}`;
 
     // Check if slot is available

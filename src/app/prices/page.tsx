@@ -2,49 +2,32 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Calendar, Clock, Info } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
+import { getSiteSettings } from '@/lib/site-settings';
+import type { Service } from '@/types/site-settings';
 
 export const metadata: Metadata = {
   title: 'Cennik',
   description: 'Cennik usług terapii manualnej i masażu. Sprawdź ceny wizyt w dni robocze i weekendy.',
 };
 
-const weekdayServices = [
-  {
-    name: 'Konsultacja',
-    duration: '30 min',
-    price: 50,
-    description: 'Wstępna konsultacja i ocena potrzeb terapeutycznych',
-  },
-  {
-    name: 'Wizyta standardowa',
-    duration: '60 min',
-    price: 200,
-    description: 'Pełna sesja terapii manualnej',
-  },
-  {
-    name: 'Wizyta rozszerzona',
-    duration: '90 min',
-    price: 250,
-    description: 'Rozszerzona sesja dla kompleksowej terapii',
-  },
-];
+// Revalidate every 60 seconds to pick up settings changes
+export const revalidate = 60;
 
-const weekendServices = [
-  {
-    name: 'Wizyta standardowa',
-    duration: '60 min',
-    price: 250,
-    description: 'Pełna sesja terapii manualnej',
-  },
-  {
-    name: 'Wizyta rozszerzona',
-    duration: '90 min',
-    price: 300,
-    description: 'Rozszerzona sesja dla kompleksowej terapii',
-  },
-];
+function formatPrice(price: number | null | undefined): string {
+  if (price === null || price === undefined || isNaN(price)) {
+    return '—';
+  }
+  return `${price}`;
+}
 
-export default function PricesPage() {
+export default async function PricesPage() {
+  const settings = await getSiteSettings();
+  const activeServices = settings.services.filter(s => s.isActive);
+
+  // Separate services for weekday and weekend display
+  const weekdayServices = activeServices;
+  const weekendServices = activeServices.filter(s => s.priceWeekend !== null);
+
   return (
     <>
       {/* Hero Section */}
@@ -86,25 +69,12 @@ export default function PricesPage() {
 
               <div className="space-y-4">
                 {weekdayServices.map((service) => (
-                  <Card key={service.name} variant="bordered" padding="none" className="overflow-hidden">
-                    <CardContent className="p-0">
-                      <div className="flex items-center justify-between p-5">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-[#0F172A]">{service.name}</h3>
-                            <span className="text-xs font-medium text-[#2563EB] bg-[#2563EB]/10 px-2 py-0.5 rounded-full">
-                              {service.duration}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-500">{service.description}</p>
-                        </div>
-                        <div className="text-right ml-4">
-                          <span className="text-2xl font-bold text-[#0F172A]">{service.price}</span>
-                          <span className="text-gray-500 ml-1">zł</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    price={service.priceWeekday}
+                    variant="weekday"
+                  />
                 ))}
               </div>
             </div>
@@ -123,31 +93,18 @@ export default function PricesPage() {
 
               <div className="space-y-4">
                 {weekendServices.map((service) => (
-                  <Card key={`weekend-${service.name}`} variant="bordered" padding="none" className="overflow-hidden border-amber-200">
-                    <CardContent className="p-0">
-                      <div className="flex items-center justify-between p-5">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-[#0F172A]">{service.name}</h3>
-                            <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
-                              {service.duration}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-500">{service.description}</p>
-                        </div>
-                        <div className="text-right ml-4">
-                          <span className="text-2xl font-bold text-[#0F172A]">{service.price}</span>
-                          <span className="text-gray-500 ml-1">zł</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <ServiceCard
+                    key={`weekend-${service.id}`}
+                    service={service}
+                    price={service.priceWeekend!}
+                    variant="weekend"
+                  />
                 ))}
               </div>
 
               {/* Note about consultation */}
               <p className="text-sm text-gray-500 mt-4 italic">
-                * Konsultacja (30 min, 50 zł) dostępna wyłącznie w dni robocze
+                * Konsultacja ({formatPrice(activeServices.find(s => s.id === 'consultation')?.priceWeekday)} zł) dostępna wyłącznie w dni robocze
               </p>
             </div>
           </div>
@@ -162,7 +119,7 @@ export default function PricesPage() {
               Gotowy na wizytę?
             </h2>
             <p className="text-gray-600 mb-8 max-w-xl mx-auto">
-              Zarezerwuj termin online w kilka minut. Wybierz usługę i dogodną godzinę.
+              {settings.texts.bookingInfoText}
             </p>
             <Link
               href="/booking"
@@ -175,5 +132,53 @@ export default function PricesPage() {
         </Container>
       </section>
     </>
+  );
+}
+
+function ServiceCard({
+  service,
+  price,
+  variant,
+}: {
+  service: Service;
+  price: number;
+  variant: 'weekday' | 'weekend';
+}) {
+  const isWeekend = variant === 'weekend';
+
+  return (
+    <Card
+      variant="bordered"
+      padding="none"
+      className={`overflow-hidden ${isWeekend ? 'border-amber-200' : ''}`}
+    >
+      <CardContent className="p-0">
+        <div className="flex items-center justify-between p-5">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-[#0F172A]">{service.name}</h3>
+              {service.showDuration && (
+                <span
+                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    isWeekend
+                      ? 'text-amber-600 bg-amber-100'
+                      : 'text-[#2563EB] bg-[#2563EB]/10'
+                  }`}
+                >
+                  {service.durationMinutes} min
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-gray-500">{service.description}</p>
+          </div>
+          <div className="text-right ml-4">
+            <span className="text-2xl font-bold text-[#0F172A]">
+              {formatPrice(price)}
+            </span>
+            <span className="text-gray-500 ml-1">zł</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
