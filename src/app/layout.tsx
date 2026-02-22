@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Header, Footer } from '@/components/layout';
+import { getSiteUrl } from '@/lib/config';
 import './globals.css';
 
 const geistSans = Geist({
@@ -13,7 +14,10 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'M&T ANATOL',
     template: '%s | M&T ANATOL',
@@ -30,9 +34,13 @@ export const metadata: Metadata = {
     'M&T ANATOL',
   ],
   authors: [{ name: 'M&T ANATOL' }],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: 'website',
     locale: 'pl_PL',
+    url: siteUrl,
     siteName: 'M&T ANATOL',
     title: 'M&T ANATOL',
     description:

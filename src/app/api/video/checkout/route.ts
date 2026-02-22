@@ -15,6 +15,7 @@ import {
 } from '@/lib/video-stripe';
 import { getVideoBySlug } from '@/data/videos';
 import { VIDEO_PRICES, ProductType } from '@/types/video';
+import { getSiteUrl } from '@/lib/config';
 
 interface CheckoutRequestBody {
   product_type: ProductType;
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = calculateExpirationDate();
 
     // Get base URL
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:1000';
+    const baseUrl = getSiteUrl();
 
     // Create Stripe checkout session
     const session = await createVideoCheckoutSession({
