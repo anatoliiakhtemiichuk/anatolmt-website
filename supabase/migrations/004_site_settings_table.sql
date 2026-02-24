@@ -8,8 +8,9 @@
 -- SITE_SETTINGS TABLE
 -- Stores JSON settings with a single row (key-value style)
 -- ============================================
+-- Note: If table already exists with UUID id column, this is compatible
 CREATE TABLE IF NOT EXISTS site_settings (
-    id VARCHAR(50) PRIMARY KEY DEFAULT 'site_settings',
+    id UUID PRIMARY KEY DEFAULT '00000000-0000-0000-0000-000000000001',
     data JSONB NOT NULL DEFAULT '{}',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -66,5 +67,5 @@ CREATE POLICY "Admins can insert site settings" ON site_settings
 -- COMMENTS
 -- ============================================
 COMMENT ON TABLE site_settings IS 'Stores site-wide settings as JSON (services, hours, contact, texts)';
-COMMENT ON COLUMN site_settings.id IS 'Settings key, usually "site_settings" for the main config';
+COMMENT ON COLUMN site_settings.id IS 'Fixed UUID for single-row config: 00000000-0000-0000-0000-000000000001';
 COMMENT ON COLUMN site_settings.data IS 'JSONB object containing all settings';

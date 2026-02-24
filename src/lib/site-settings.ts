@@ -27,8 +27,8 @@ import {
 const DATA_DIR = path.join(process.cwd(), 'data');
 const SITE_SETTINGS_FILE = path.join(DATA_DIR, 'site-settings.json');
 
-// Supabase key for storing site settings
-const SITE_SETTINGS_KEY = 'site_settings';
+// Supabase key for storing site settings (fixed UUID for single-row config)
+const SITE_SETTINGS_KEY = '00000000-0000-0000-0000-000000000001';
 
 /**
  * Check if Supabase is properly configured
