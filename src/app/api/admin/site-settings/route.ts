@@ -127,20 +127,50 @@ export async function PUT(request: NextRequest) {
       success: true,
       data: updated,
     });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
-    console.error('Error updating site settings:', errorMessage);
+  } catch (error: unknown) {
+    // Extract error details - handle both Error instances and Supabase error objects
+    const err = error as Record<string, unknown>;
+    const errorMessage =
+      (err?.message as string) ||
+      (error instanceof Error ? error.message : null) ||
+      'Nieznany błąd';
+    const errorCode = (err?.code as string) || null;
+    const errorDetails = (err?.details as string) || null;
+    const errorHint = (err?.hint as string) || null;
+
+    // Structured logging for Vercel logs
+    console.error('[site-settings] Save failed:', {
+      message: errorMessage,
+      code: errorCode,
+      details: errorDetails,
+      hint: errorHint,
+      name: err?.name,
+      stack: error instanceof Error
+        ? error.stack?.split('\n').slice(0, 6).join('\n')
+        : undefined,
+    });
 
     // Determine if this is a configuration error vs runtime error
     const isConfigError =
       errorMessage.includes('Supabase') ||
       errorMessage.includes('skonfigurowany') ||
-      errorMessage.includes('zmienne');
+      errorMessage.includes('zmienne') ||
+      errorMessage.includes('Invalid API key');
+
+    // Build user-friendly error message
+    let userError = errorMessage;
+    if (errorCode) {
+      userError += ` (kod: ${errorCode})`;
+    }
+    if (errorHint) {
+      userError += `. ${errorHint}`;
+    }
 
     return NextResponse.json(
       {
         success: false,
-        error: errorMessage,
+        error: userError,
+        code: errorCode,
         isConfigError,
       },
       { status: isConfigError ? 503 : 500 }

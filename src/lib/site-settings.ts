@@ -164,23 +164,32 @@ async function readSupabaseSettings(): Promise<SiteSettings | null> {
  * Write site settings to Supabase
  */
 async function writeSupabaseSettings(settings: SiteSettings): Promise<void> {
-  try {
-    const supabase = await getSupabaseClient();
-    const { error } = await supabase
-      .from('site_settings')
-      .upsert({
-        id: SITE_SETTINGS_KEY,
-        settings: settings,
-        updated_at: new Date().toISOString(),
-      });
+  const supabase = await getSupabaseClient();
 
-    if (error) {
-      throw error;
-    }
-  } catch (error) {
-    console.error('Error writing to Supabase site_settings:', error);
+  console.log('[site-settings] Attempting Supabase upsert...');
+
+  const { error } = await supabase
+    .from('site_settings')
+    .upsert({
+      id: SITE_SETTINGS_KEY,
+      settings: settings,
+      updated_at: new Date().toISOString(),
+    });
+
+  if (error) {
+    // Log full error details for debugging
+    console.error('[site-settings] Supabase upsert error:', {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+    });
+
+    // Re-throw the error object directly (preserves all properties)
     throw error;
   }
+
+  console.log('[site-settings] Supabase upsert successful');
 }
 
 /**
