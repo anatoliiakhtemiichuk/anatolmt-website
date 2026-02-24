@@ -144,7 +144,7 @@ async function readSupabaseSettings(): Promise<SiteSettings | null> {
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase
       .from('site_settings')
-      .select('settings')
+      .select('data')
       .eq('id', SITE_SETTINGS_KEY)
       .single();
 
@@ -153,7 +153,7 @@ async function readSupabaseSettings(): Promise<SiteSettings | null> {
       throw error;
     }
 
-    return data?.settings || null;
+    return data?.data || null;
   } catch (error) {
     console.error('Error reading from Supabase site_settings:', error);
     throw error;
@@ -172,7 +172,7 @@ async function writeSupabaseSettings(settings: SiteSettings): Promise<void> {
     .from('site_settings')
     .upsert({
       id: SITE_SETTINGS_KEY,
-      settings: settings,
+      data: settings,
       updated_at: new Date().toISOString(),
     });
 

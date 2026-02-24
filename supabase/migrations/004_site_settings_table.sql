@@ -10,7 +10,7 @@
 -- ============================================
 CREATE TABLE IF NOT EXISTS site_settings (
     id VARCHAR(50) PRIMARY KEY DEFAULT 'site_settings',
-    settings JSONB NOT NULL DEFAULT '{}',
+    data JSONB NOT NULL DEFAULT '{}',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -67,4 +67,4 @@ CREATE POLICY "Admins can insert site settings" ON site_settings
 -- ============================================
 COMMENT ON TABLE site_settings IS 'Stores site-wide settings as JSON (services, hours, contact, texts)';
 COMMENT ON COLUMN site_settings.id IS 'Settings key, usually "site_settings" for the main config';
-COMMENT ON COLUMN site_settings.settings IS 'JSONB object containing all settings';
+COMMENT ON COLUMN site_settings.data IS 'JSONB object containing all settings';
