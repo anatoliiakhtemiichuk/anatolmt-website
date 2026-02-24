@@ -68,6 +68,18 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  // Diagnostic logging for Supabase env vars (temporary)
+  console.log('[site-settings] Environment check:', {
+    hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    urlStartsWithHttp: process.env.NEXT_PUBLIC_SUPABASE_URL?.startsWith('http') ?? false,
+    hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    anonKeyLength: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length ?? 0,
+    hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    serviceKeyLength: process.env.SUPABASE_SERVICE_ROLE_KEY?.length ?? 0,
+    nodeEnv: process.env.NODE_ENV,
+    isVercel: !!process.env.VERCEL,
+  });
+
   try {
     const body = await request.json();
 

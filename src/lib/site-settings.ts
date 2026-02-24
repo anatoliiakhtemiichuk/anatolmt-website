@@ -34,13 +34,38 @@ const SITE_SETTINGS_KEY = 'site_settings';
  * Check if Supabase is properly configured
  */
 function isSupabaseConfigured(): boolean {
-  return !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-    process.env.SUPABASE_SERVICE_ROLE_KEY &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
-    !process.env.SUPABASE_SERVICE_ROLE_KEY.includes('placeholder')
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  // Simple validation: check that all variables exist and URL starts with http
+  const hasUrl = !!url && url.startsWith('http');
+  const hasAnonKey = !!anonKey && anonKey.length > 10;
+  const hasServiceKey = !!serviceKey && serviceKey.length > 10;
+
+  return hasUrl && hasAnonKey && hasServiceKey;
+}
+
+/**
+ * Get detailed error about which Supabase env var is missing
+ */
+function getSupabaseMissingVars(): string[] {
+  const missing: string[] = [];
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !url.startsWith('http')) {
+    missing.push('NEXT_PUBLIC_SUPABASE_URL');
+  }
+  if (!anonKey || anonKey.length <= 10) {
+    missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  }
+  if (!serviceKey || serviceKey.length <= 10) {
+    missing.push('SUPABASE_SERVICE_ROLE_KEY');
+  }
+
+  return missing;
 }
 
 /**
@@ -245,10 +270,9 @@ export async function saveSiteSettings(settings: SiteSettings): Promise<SiteSett
   // In production, Supabase is required
   if (isProduction()) {
     if (!isSupabaseConfigured()) {
+      const missing = getSupabaseMissingVars();
       throw new Error(
-        'Supabase nie jest skonfigurowany. ' +
-        'W środowisku produkcyjnym wymagane są zmienne: ' +
-        'NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY'
+        `Supabase nie jest skonfigurowany. Brakujące zmienne: ${missing.join(', ')}`
       );
     }
 
