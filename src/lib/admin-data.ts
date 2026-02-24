@@ -175,22 +175,31 @@ export async function getBookingById(id: string): Promise<Booking | null> {
 
 export async function createBooking(booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>): Promise<Booking> {
   const now = new Date().toISOString();
+  // Generate UUID client-side to avoid needing SELECT after INSERT
+  const id = crypto.randomUUID();
 
   if (isSupabaseConfigured()) {
     try {
       const supabase = createServerSupabaseClient();
-      const { data, error } = await supabase
+      // Do NOT use .select() after insert - it requires SELECT policy under RLS
+      const { error } = await supabase
         .from('bookings')
         .insert({
+          id,
           ...booking,
           created_at: now,
           updated_at: now,
-        })
-        .select()
-        .single();
+        });
 
       if (error) throw error;
-      return data as Booking;
+
+      // Return the booking we just created (no SELECT needed)
+      return {
+        id,
+        ...booking,
+        created_at: now,
+        updated_at: now,
+      };
     } catch (error) {
       // In production, throw the error (no filesystem fallback on Vercel)
       if (isProduction()) {
@@ -336,21 +345,34 @@ export async function createBlockedSlot(slot: {
 }): Promise<BlockedSlot> {
   const now = new Date().toISOString();
 
+  // Generate UUID client-side to avoid needing SELECT after INSERT
+  const id = crypto.randomUUID();
+
   if (isSupabaseConfigured()) {
     try {
       const supabase = createServerSupabaseClient();
-      const { data, error } = await supabase
+      // Do NOT use .select() after insert - it requires SELECT policy under RLS
+      const { error } = await supabase
         .from('blocked_slots')
         .insert({
+          id,
           ...slot,
           is_full_day: slot.is_full_day ?? !slot.time_start,
           created_at: now,
-        })
-        .select()
-        .single();
+        });
 
       if (error) throw error;
-      return data as BlockedSlot;
+
+      // Return the slot we just created (no SELECT needed)
+      return {
+        id,
+        date: slot.date,
+        time_start: slot.time_start || null,
+        time_end: slot.time_end || null,
+        is_full_day: slot.is_full_day ?? !slot.time_start,
+        reason: slot.reason || null,
+        created_at: now,
+      };
     } catch (error) {
       if (isProduction()) {
         console.error('[createBlockedSlot] Supabase error in production:', error);
@@ -366,7 +388,7 @@ export async function createBlockedSlot(slot: {
   }
 
   const newSlot: BlockedSlot = {
-    id: generateId(),
+    id,
     date: slot.date,
     time_start: slot.time_start || null,
     time_end: slot.time_end || null,
