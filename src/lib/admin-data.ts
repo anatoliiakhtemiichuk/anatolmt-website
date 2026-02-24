@@ -50,6 +50,11 @@ function isSupabaseConfigured(): boolean {
   );
 }
 
+// Check if running in production (Vercel has read-only filesystem)
+function isProduction(): boolean {
+  return process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+}
+
 // ============================================
 // JSON FILE HELPERS
 // ============================================
@@ -187,11 +192,20 @@ export async function createBooking(booking: Omit<Booking, 'id' | 'created_at' |
       if (error) throw error;
       return data as Booking;
     } catch (error) {
+      // In production, throw the error (no filesystem fallback on Vercel)
+      if (isProduction()) {
+        console.error('[createBooking] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const newBooking: Booking = {
     ...booking,
     id: generateId(),
@@ -222,11 +236,19 @@ export async function updateBooking(id: string, updates: Partial<Booking>): Prom
       if (error) throw error;
       return data as Booking;
     } catch (error) {
+      if (isProduction()) {
+        console.error('[updateBooking] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const bookings = await readJsonFile<Booking[]>(BOOKINGS_FILE, []);
   const index = bookings.findIndex((b) => b.id === id);
   if (index === -1) return null;
@@ -245,11 +267,19 @@ export async function deleteBooking(id: string): Promise<boolean> {
       if (error) throw error;
       return true;
     } catch (error) {
+      if (isProduction()) {
+        console.error('[deleteBooking] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const bookings = await readJsonFile<Booking[]>(BOOKINGS_FILE, []);
   const newBookings = bookings.filter((b) => b.id !== id);
   if (newBookings.length === bookings.length) return false;
@@ -322,11 +352,19 @@ export async function createBlockedSlot(slot: {
       if (error) throw error;
       return data as BlockedSlot;
     } catch (error) {
+      if (isProduction()) {
+        console.error('[createBlockedSlot] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const newSlot: BlockedSlot = {
     id: generateId(),
     date: slot.date,
@@ -352,11 +390,19 @@ export async function deleteBlockedSlot(id: string): Promise<boolean> {
       if (error) throw error;
       return true;
     } catch (error) {
+      if (isProduction()) {
+        console.error('[deleteBlockedSlot] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const blocks = await readJsonFile<BlockedSlot[]>(BLOCKS_FILE, []);
   const newBlocks = blocks.filter((b) => b.id !== id);
   if (newBlocks.length === blocks.length) return false;
@@ -530,11 +576,19 @@ export async function updateSettings(settings: Partial<ClinicSettings>): Promise
       if (error) throw error;
       return updated;
     } catch (error) {
+      if (isProduction()) {
+        console.error('[updateSettings] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   await writeJsonFile(SETTINGS_FILE, updated);
   return updated;
 }
@@ -812,11 +866,19 @@ export async function createVideo(
       if (error) throw error;
       return mapDbToVideo(data);
     } catch (error) {
+      if (isProduction()) {
+        console.error('[createVideo] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const newVideo: VideoItem = {
     ...video,
     id,
@@ -859,11 +921,19 @@ export async function updateVideo(id: string, updates: Partial<VideoItem>): Prom
       if (error) throw error;
       return mapDbToVideo(data);
     } catch (error) {
+      if (isProduction()) {
+        console.error('[updateVideo] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const videos = await readJsonFile<VideoItem[]>(VIDEOS_FILE, []);
   const index = videos.findIndex((v) => v.id === id);
   if (index === -1) return null;
@@ -882,11 +952,19 @@ export async function deleteVideo(id: string): Promise<boolean> {
       if (error) throw error;
       return true;
     } catch (error) {
+      if (isProduction()) {
+        console.error('[deleteVideo] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const videos = await readJsonFile<VideoItem[]>(VIDEOS_FILE, []);
   const newVideos = videos.filter((v) => v.id !== id);
   if (newVideos.length === videos.length) return false;
@@ -970,11 +1048,19 @@ export async function updatePageText(key: string, data: { title?: string; conten
         updatedAt: updated.updated_at,
       };
     } catch (error) {
+      if (isProduction()) {
+        console.error('[updatePageText] Supabase error in production:', error);
+        throw error;
+      }
       console.error('Supabase error, falling back to JSON:', error);
     }
   }
 
-  // Fallback to JSON
+  // Fallback to JSON (development only)
+  if (isProduction()) {
+    throw new Error('Supabase is not configured for production');
+  }
+
   const texts = await readJsonFile<PageText[]>(PAGE_TEXTS_FILE, DEFAULT_PAGE_TEXTS);
   const index = texts.findIndex((t) => t.key === key);
 

@@ -67,10 +67,28 @@ export async function POST(request: NextRequest) {
       success: true,
       data: booking,
     });
-  } catch (error) {
-    console.error('Error creating booking:', error);
+  } catch (error: unknown) {
+    // Extract error details
+    const err = error as Record<string, unknown>;
+    const errorMessage =
+      (err?.message as string) ||
+      (error instanceof Error ? error.message : null) ||
+      'Nieznany błąd';
+    const errorCode = (err?.code as string) || null;
+
+    console.error('[bookings] Create failed:', {
+      message: errorMessage,
+      code: errorCode,
+      details: err?.details,
+      hint: err?.hint,
+    });
+
     return NextResponse.json(
-      { success: false, error: 'Wystąpił błąd podczas tworzenia rezerwacji' },
+      {
+        success: false,
+        error: errorMessage,
+        code: errorCode,
+      },
       { status: 500 }
     );
   }
