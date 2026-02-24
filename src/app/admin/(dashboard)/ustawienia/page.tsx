@@ -87,11 +87,24 @@ export default function UstawieniaPage() {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       } else {
-        setError(result.error || 'Błąd zapisywania');
+        // Build detailed error message
+        let errorMessage = result.error || 'Błąd zapisywania ustawień';
+
+        // Append validation details if present
+        if (result.details && Array.isArray(result.details)) {
+          errorMessage += ':\n• ' + result.details.join('\n• ');
+        }
+
+        // Add hint for configuration errors
+        if (result.isConfigError) {
+          errorMessage += '\n\nSkontaktuj się z administratorem systemu.';
+        }
+
+        setError(errorMessage);
       }
     } catch (err) {
       console.error('Error saving settings:', err);
-      setError('Nie udało się zapisać ustawień');
+      setError('Nie udało się połączyć z serwerem. Sprawdź połączenie internetowe.');
     } finally {
       setIsSaving(false);
     }
@@ -230,8 +243,13 @@ export default function UstawieniaPage() {
 
       {/* Error message */}
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
-          {error}
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 whitespace-pre-line">
+          <div className="flex items-start gap-2">
+            <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <div className="flex-1">{error}</div>
+          </div>
         </div>
       )}
 
