@@ -146,7 +146,6 @@ export async function POST(request: NextRequest) {
     if (errorCode === '23P01') {
       console.warn('[admin/blocked-slots] Overlap conflict (expected business case):', {
         code: errorCode,
-        date: (await request.clone().json().catch(() => ({}))).date,
       });
 
       return NextResponse.json(
