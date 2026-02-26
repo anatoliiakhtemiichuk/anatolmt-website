@@ -19,7 +19,9 @@ export async function GET() {
       );
     }
 
+    console.log('[admin/content] GET - Fetching page texts');
     const pageTexts = await getPageTexts();
+    console.log('[admin/content] GET - Found', pageTexts.length, 'texts');
 
     return NextResponse.json({
       success: true,
@@ -27,7 +29,7 @@ export async function GET() {
       total: pageTexts.length,
     });
   } catch (error) {
-    console.error('Error fetching page texts:', error);
+    console.error('[admin/content] GET failed:', error);
     return NextResponse.json(
       { success: false, error: 'Wystąpił błąd podczas pobierania tekstów' },
       { status: 500 }
@@ -36,6 +38,8 @@ export async function GET() {
 }
 
 export async function PATCH(request: NextRequest) {
+  let body: Record<string, unknown> = {};
+
   try {
     // Check admin authentication
     const isAuthenticated = await isAdminAuthenticated();
@@ -46,7 +50,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    body = await request.json();
 
     // Validate required fields
     if (!body.key) {
@@ -57,7 +61,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Check if page text exists
-    const existingText = await getPageText(body.key);
+    const existingText = await getPageText(body.key as string);
     if (!existingText) {
       return NextResponse.json(
         { success: false, error: 'Tekst o podanym kluczu nie istnieje' },
@@ -67,8 +71,8 @@ export async function PATCH(request: NextRequest) {
 
     // Build update object with only provided fields
     const updates: { title?: string; content?: string } = {};
-    if (body.title !== undefined) updates.title = body.title;
-    if (body.content !== undefined) updates.content = body.content;
+    if (body.title !== undefined) updates.title = body.title as string;
+    if (body.content !== undefined) updates.content = body.content as string;
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json(
@@ -77,16 +81,49 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const updatedText = await updatePageText(body.key, updates);
+    console.log('[admin/content] PATCH - Updating:', { key: body.key, updates: { ...updates, content: updates.content?.slice(0, 50) } });
+
+    const updatedText = await updatePageText(body.key as string, updates);
+
+    console.log('[admin/content] PATCH - Success:', { key: body.key });
 
     return NextResponse.json({
       success: true,
       data: updatedText,
     });
-  } catch (error) {
-    console.error('Error updating page text:', error);
+  } catch (error: unknown) {
+    // Extract error details for better debugging
+    const err = error as Record<string, unknown>;
+    const errorMessage =
+      (err?.message as string) ||
+      (error instanceof Error ? error.message : null) ||
+      'Nieznany błąd';
+    const errorCode = (err?.code as string) || null;
+
+    console.error('[admin/content] Update failed:', {
+      key: body?.key,
+      message: errorMessage,
+      code: errorCode,
+      details: err?.details,
+      hint: err?.hint,
+    });
+
+    // Provide user-friendly error messages
+    let userMessage = 'Wystąpił błąd podczas aktualizacji tekstu';
+    if (errorCode === '42501') {
+      userMessage = 'Brak uprawnień do zapisu. Uruchom migrację 011_fix_page_texts_rls.sql w Supabase.';
+    } else if (errorCode === '23505') {
+      userMessage = 'Tekst o tym kluczu już istnieje.';
+    } else if (errorCode === 'PGRST301') {
+      userMessage = 'Tabela page_texts nie istnieje. Uruchom migrację 007_create_page_texts.sql w Supabase.';
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Wystąpił błąd podczas aktualizacji tekstu' },
+      {
+        success: false,
+        error: userMessage,
+        code: errorCode,
+      },
       { status: 500 }
     );
   }

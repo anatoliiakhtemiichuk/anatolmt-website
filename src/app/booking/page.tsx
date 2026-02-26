@@ -288,13 +288,13 @@ export default function BookingPage() {
     setBookingError(null);
 
     try {
+      // SECURITY: Only send service_id - price is calculated server-side
+      // DO NOT send: price_pln, duration_minutes, service_type
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          service_type: selectedServiceData.name,
-          duration_minutes: selectedServiceData.durationMinutes,
-          price_pln: getPrice(),
+          service_id: selectedServiceData.id,  // Server looks up service and calculates price
           date: format(selectedDate, 'yyyy-MM-dd'),
           time: selectedTime,
           first_name: clientData.firstName,
@@ -302,7 +302,6 @@ export default function BookingPage() {
           phone: clientData.phone,
           email: clientData.email,
           notes: clientData.notes || null,
-          status: 'confirmed',
         }),
       });
 

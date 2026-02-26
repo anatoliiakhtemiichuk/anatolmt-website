@@ -1,17 +1,52 @@
 /**
  * Public Bookings API
  * POST /api/bookings - Create a new booking (public)
+ *
+ * SECURITY: Price is calculated server-side from service data.
+ * Frontend MUST NOT send price_pln - it will be ignored.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createBooking, validateBookingSlot } from '@/lib/admin-data';
+import { getSiteSettings } from '@/lib/site-settings';
+import { Service } from '@/types/site-settings';
+
+/**
+ * Check if a date is a weekend (Saturday = 6, Sunday = 0)
+ */
+function isWeekend(dateString: string): boolean {
+  const date = new Date(dateString);
+  const day = date.getDay();
+  return day === 0 || day === 6;
+}
+
+/**
+ * Calculate the final price for a service based on the booking date
+ */
+function calculateServicePrice(service: Service, dateString: string): number {
+  const weekend = isWeekend(dateString);
+
+  if (weekend && service.priceWeekend !== null) {
+    return service.priceWeekend;
+  }
+
+  return service.priceWeekday;
+}
+
+/**
+ * Minimum allowed price (safety check against data corruption)
+ */
+const MIN_PRICE_PLN = 50;
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate required fields
-    const requiredFields = ['service_type', 'duration_minutes', 'price_pln', 'date', 'time', 'first_name', 'last_name', 'phone', 'email'];
+    // ===========================================
+    // STEP 1: Validate required fields from client
+    // ===========================================
+    // NOTE: price_pln is intentionally NOT in this list
+    const requiredFields = ['service_id', 'date', 'time', 'first_name', 'last_name', 'phone', 'email'];
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
@@ -40,8 +75,66 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate booking slot (check blocks and collisions)
-    const validation = await validateBookingSlot(body.date, body.time, body.duration_minutes);
+    // ===========================================
+    // STEP 2: Fetch service and calculate price SERVER-SIDE
+    // ===========================================
+    const settings = await getSiteSettings();
+    const service = settings.services.find(
+      (s) => s.id === body.service_id && s.isActive
+    );
+
+    if (!service) {
+      console.error('[bookings] Service not found:', {
+        requested_service_id: body.service_id,
+        available_services: settings.services.map((s) => ({ id: s.id, name: s.name, isActive: s.isActive })),
+      });
+      return NextResponse.json(
+        { success: false, error: 'Wybrana usługa nie istnieje lub jest nieaktywna' },
+        { status: 400 }
+      );
+    }
+
+    // Calculate price based on service and date
+    const calculatedPrice = calculateServicePrice(service, body.date);
+
+    // Log calculated price for debugging
+    console.log('[bookings] Price calculated server-side:', {
+      service_id: service.id,
+      service_name: service.name,
+      date: body.date,
+      isWeekend: isWeekend(body.date),
+      priceWeekday: service.priceWeekday,
+      priceWeekend: service.priceWeekend,
+      calculatedPrice,
+    });
+
+    // ===========================================
+    // STEP 3: Safety checks
+    // ===========================================
+    if (calculatedPrice < MIN_PRICE_PLN) {
+      console.error('[bookings] Price below minimum:', {
+        calculatedPrice,
+        minPrice: MIN_PRICE_PLN,
+        service,
+      });
+      return NextResponse.json(
+        { success: false, error: 'Błąd kalkulacji ceny. Skontaktuj się z nami.' },
+        { status: 500 }
+      );
+    }
+
+    // Check if service is available on weekends
+    if (isWeekend(body.date) && service.priceWeekend === null) {
+      return NextResponse.json(
+        { success: false, error: 'Ta usługa nie jest dostępna w weekendy' },
+        { status: 400 }
+      );
+    }
+
+    // ===========================================
+    // STEP 4: Validate booking slot availability
+    // ===========================================
+    const validation = await validateBookingSlot(body.date, body.time, service.durationMinutes);
     if (!validation.valid) {
       return NextResponse.json(
         { success: false, error: validation.error },
@@ -49,10 +142,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ===========================================
+    // STEP 5: Create booking with server-calculated price
+    // ===========================================
     const booking = await createBooking({
-      service_type: body.service_type,
-      duration_minutes: body.duration_minutes,
-      price_pln: body.price_pln,
+      service_type: service.name,           // Store the service name
+      duration_minutes: service.durationMinutes,  // From service, not client
+      price_pln: calculatedPrice,           // SERVER-CALCULATED, not from client
       date: body.date,
       time: body.time,
       first_name: body.first_name,
@@ -61,6 +157,14 @@ export async function POST(request: NextRequest) {
       email: body.email,
       notes: body.notes || null,
       status: 'confirmed',
+    });
+
+    console.log('[bookings] Booking created successfully:', {
+      booking_id: booking.id,
+      service: service.name,
+      price_pln: calculatedPrice,
+      date: body.date,
+      time: body.time,
     });
 
     return NextResponse.json({

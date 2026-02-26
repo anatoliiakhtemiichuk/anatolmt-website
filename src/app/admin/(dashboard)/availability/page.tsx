@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { BlockedSlot } from '@/types/admin';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isPast } from 'date-fns';
 import { pl } from 'date-fns/locale';
@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
+  AlertTriangle,
 } from 'lucide-react';
 
 export default function AvailabilityPage() {
@@ -22,6 +23,7 @@ export default function AvailabilityPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [formError, setFormError] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -31,6 +33,18 @@ export default function AvailabilityPage() {
     time_end: '17:00',
     reason: '',
   });
+
+  // Check if selected date already has a full-day block
+  const selectedDateFullDayBlock = useMemo(() => {
+    return blockedSlots.find(slot =>
+      slot.date === formData.date && slot.is_full_day
+    );
+  }, [blockedSlots, formData.date]);
+
+  // Get existing blocks for selected date
+  const selectedDateBlocks = useMemo(() => {
+    return blockedSlots.filter(slot => slot.date === formData.date);
+  }, [blockedSlots, formData.date]);
 
   useEffect(() => {
     fetchBlockedSlots();
@@ -54,6 +68,7 @@ export default function AvailabilityPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    setFormError(null);
 
     try {
       const response = await fetch('/api/admin/blocked-slots', {
@@ -73,6 +88,7 @@ export default function AvailabilityPage() {
       if (result.success) {
         await fetchBlockedSlots();
         setIsModalOpen(false);
+        setFormError(null);
         setFormData({
           date: format(new Date(), 'yyyy-MM-dd'),
           is_full_day: true,
@@ -80,12 +96,16 @@ export default function AvailabilityPage() {
           time_end: '17:00',
           reason: '',
         });
+      } else if (response.status === 409 || result.isConflict) {
+        // Overlap/conflict - show inline error, not alert
+        setFormError(result.error || 'Ten termin nakłada się z istniejącą blokadą.');
       } else {
-        alert(result.error || 'Wystąpił błąd podczas zapisywania');
+        // Other errors
+        setFormError(result.error || 'Wystąpił błąd podczas zapisywania.');
       }
     } catch (error) {
       console.error('Error creating blocked slot:', error);
-      alert('Wystąpił błąd podczas zapisywania');
+      setFormError('Wystąpił błąd połączenia. Spróbuj ponownie.');
     } finally {
       setIsSaving(false);
     }
@@ -144,6 +164,7 @@ export default function AvailabilityPage() {
       ...prev,
       date: format(date, 'yyyy-MM-dd'),
     }));
+    setFormError(null);
     setIsModalOpen(true);
   };
 
@@ -156,7 +177,10 @@ export default function AvailabilityPage() {
           <p className="text-gray-500 mt-1">Zarządzaj zablokowanymi terminami</p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setFormError(null);
+            setIsModalOpen(true);
+          }}
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-colors font-medium"
         >
           <Plus className="w-5 h-5" />
@@ -318,7 +342,10 @@ export default function AvailabilityPage() {
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-[#0F172A]">Zablokuj termin</h2>
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setFormError(null);
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5 text-gray-500" />
@@ -327,6 +354,17 @@ export default function AvailabilityPage() {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
+              {/* Error message */}
+              {formError && (
+                <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-lg">
+                  <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-red-700 font-medium">Nie można utworzyć blokady</p>
+                    <p className="text-sm text-red-600 mt-1">{formError}</p>
+                  </div>
+                </div>
+              )}
+
               {/* Date */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -337,7 +375,10 @@ export default function AvailabilityPage() {
                   <input
                     type="date"
                     value={formData.date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, date: e.target.value }));
+                      setFormError(null); // Clear error when date changes
+                    }}
                     min={format(new Date(), 'yyyy-MM-dd')}
                     required
                     className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
@@ -345,15 +386,50 @@ export default function AvailabilityPage() {
                 </div>
               </div>
 
+              {/* Warning if date already has full-day block */}
+              {selectedDateFullDayBlock && (
+                <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
+                  <CalendarOff className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-amber-800 font-medium">Ten dzień jest już zablokowany w całości</p>
+                    <p className="text-sm text-amber-700 mt-1">
+                      {selectedDateFullDayBlock.reason
+                        ? `Powód: ${selectedDateFullDayBlock.reason}`
+                        : 'Aby dodać blokadę godzinową, najpierw usuń blokadę całodniową.'}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Show existing blocks for this date */}
+              {selectedDateBlocks.length > 0 && !selectedDateFullDayBlock && (
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500 mb-2">Istniejące blokady tego dnia:</p>
+                  <div className="space-y-1">
+                    {selectedDateBlocks.map(slot => (
+                      <div key={slot.id} className="text-sm text-gray-600">
+                        {slot.is_full_day
+                          ? 'Cały dzień'
+                          : `${slot.time_start?.substring(0, 5)} - ${slot.time_end?.substring(0, 5)}`}
+                        {slot.reason && <span className="text-gray-400"> ({slot.reason})</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Full day toggle */}
-              <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
+              <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${
+                selectedDateFullDayBlock ? 'bg-gray-100 opacity-50' : 'bg-gray-50'
+              }`}>
                 <span className="text-gray-700">Zablokuj cały dzień</span>
                 <button
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, is_full_day: !prev.is_full_day }))}
+                  disabled={!!selectedDateFullDayBlock}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     formData.is_full_day ? 'bg-[#2563EB]' : 'bg-gray-200'
-                  }`}
+                  } ${selectedDateFullDayBlock ? 'cursor-not-allowed' : ''}`}
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -417,21 +493,26 @@ export default function AvailabilityPage() {
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setFormError(null);
+                  }}
                   className="flex-1 px-4 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
                   Anuluj
                 </button>
                 <button
                   type="submit"
-                  disabled={isSaving}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-colors font-medium disabled:opacity-50"
+                  disabled={isSaving || !!selectedDateFullDayBlock}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSaving ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Zapisywanie...
                     </>
+                  ) : selectedDateFullDayBlock ? (
+                    'Dzień już zablokowany'
                   ) : (
                     'Zapisz blokadę'
                   )}

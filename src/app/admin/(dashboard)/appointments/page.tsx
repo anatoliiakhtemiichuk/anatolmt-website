@@ -21,6 +21,7 @@ import {
   Plus,
   Timer,
 } from 'lucide-react';
+import { Service } from '@/types/site-settings';
 
 // Buffer time between appointments (must match server constant)
 const BUFFER_MINUTES = 20;
@@ -53,12 +54,6 @@ const STATUS_COLORS: Record<BookingStatus, string> = {
   no_show: 'bg-orange-100 text-orange-700',
 };
 
-const SERVICES = [
-  { name: 'Konsultacja', duration: 30, price: 5000 },
-  { name: 'Wizyta 1h', duration: 60, price: 20000 },
-  { name: 'Wizyta 1.5h', duration: 90, price: 25000 },
-];
-
 export default function AppointmentsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -68,15 +63,18 @@ export default function AppointmentsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
+  // Services from site settings
+  const [services, setServices] = useState<Service[]>([]);
+
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<BookingStatus | 'all'>('all');
   const [dateFrom, setDateFrom] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [dateTo, setDateTo] = useState(format(addDays(new Date(), 30), 'yyyy-MM-dd'));
 
-  // New booking form
+  // New booking form - uses service_id instead of service_type
   const [newBooking, setNewBooking] = useState({
-    service_type: 'Wizyta 1h',
+    service_id: '',  // Will be set after services load
     date: format(new Date(), 'yyyy-MM-dd'),
     time: '11:00',
     first_name: '',
@@ -85,6 +83,27 @@ export default function AppointmentsPage() {
     email: '',
     notes: '',
   });
+
+  // Fetch services from site settings
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/site-settings');
+        const result = await response.json();
+        if (result.success && result.data?.services) {
+          const activeServices = result.data.services.filter((s: Service) => s.isActive);
+          setServices(activeServices);
+          // Set default service_id to first active service
+          if (activeServices.length > 0 && !newBooking.service_id) {
+            setNewBooking(prev => ({ ...prev, service_id: activeServices[0].id }));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    };
+    fetchServices();
+  }, []);
 
   useEffect(() => {
     fetchBookings();
@@ -153,15 +172,20 @@ export default function AppointmentsPage() {
     setIsAdding(true);
 
     try {
-      const service = SERVICES.find(s => s.name === newBooking.service_type) || SERVICES[1];
-
+      // SECURITY: Only send service_id - price is calculated server-side
+      // DO NOT send: price_pln, duration_minutes, service_type
       const response = await fetch('/api/admin/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...newBooking,
-          duration_minutes: service.duration,
-          price_pln: service.price,
+          service_id: newBooking.service_id,
+          date: newBooking.date,
+          time: newBooking.time,
+          first_name: newBooking.first_name,
+          last_name: newBooking.last_name,
+          phone: newBooking.phone,
+          email: newBooking.email,
+          notes: newBooking.notes || null,
           status: 'confirmed',
         }),
       });
@@ -171,7 +195,7 @@ export default function AppointmentsPage() {
       if (result.success) {
         setIsAddModalOpen(false);
         setNewBooking({
-          service_type: 'Wizyta 1h',
+          service_id: services[0]?.id || '',
           date: format(new Date(), 'yyyy-MM-dd'),
           time: '11:00',
           first_name: '',
@@ -205,7 +229,8 @@ export default function AppointmentsPage() {
   });
 
   const formatTime = (time: string) => time.substring(0, 5);
-  const formatPrice = (priceInGroszy: number) => `${(priceInGroszy / 100).toFixed(0)} zł`;
+  // Price is stored in PLN (not grosze)
+const formatPrice = (pricePln: number) => `${pricePln} zł`;
 
   const openBookingDetails = (booking: Booking) => {
     setSelectedBooking(booking);
@@ -567,15 +592,20 @@ export default function AppointmentsPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Usługa</label>
                 <select
-                  value={newBooking.service_type}
-                  onChange={(e) => setNewBooking({ ...newBooking, service_type: e.target.value })}
+                  value={newBooking.service_id}
+                  onChange={(e) => setNewBooking({ ...newBooking, service_id: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none appearance-none bg-white"
+                  required
                 >
-                  {SERVICES.map((s) => (
-                    <option key={s.name} value={s.name}>
-                      {s.name} ({s.duration} min) - {s.price / 100} zł
-                    </option>
-                  ))}
+                  {services.length === 0 ? (
+                    <option value="">Ładowanie usług...</option>
+                  ) : (
+                    services.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} ({s.durationMinutes} min) - {s.priceWeekday} zł
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 

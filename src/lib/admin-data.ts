@@ -55,6 +55,34 @@ function isProduction(): boolean {
   return process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
 }
 
+// Structured logging helper for Supabase errors
+// level: 'error' | 'warn' | 'info' - defaults to 'error'
+function logSupabaseError(
+  operation: string,
+  table: string,
+  error: unknown,
+  payload?: unknown,
+  level: 'error' | 'warn' | 'info' = 'error'
+): void {
+  const err = error as Record<string, unknown>;
+  const logData = {
+    message: err?.message || 'Unknown error',
+    code: err?.code || null,
+    details: err?.details || null,
+    hint: err?.hint || null,
+    payload: payload ? JSON.stringify(payload).slice(0, 500) : null,
+    env: {
+      isProduction: isProduction(),
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    },
+  };
+
+  const logFn = level === 'warn' ? console.warn : level === 'info' ? console.info : console.error;
+  logFn(`[admin-data] ${operation} on ${table} ${level === 'error' ? 'failed' : 'conflict'}:`, logData);
+}
+
 // ============================================
 // JSON FILE HELPERS
 // ============================================
@@ -374,8 +402,18 @@ export async function createBlockedSlot(slot: {
         created_at: now,
       };
     } catch (error) {
+      const err = error as Record<string, unknown>;
+      const errorCode = err?.code as string;
+
+      // 23P01 = exclusion constraint (overlap) - this is expected business logic, not a system error
+      // 23505 = duplicate key - also expected business logic
+      if (errorCode === '23P01' || errorCode === '23505') {
+        logSupabaseError('INSERT', 'blocked_slots', error, { id, ...slot }, 'warn');
+      } else {
+        logSupabaseError('INSERT', 'blocked_slots', error, { id, ...slot }, 'error');
+      }
+
       if (isProduction()) {
-        console.error('[createBlockedSlot] Supabase error in production:', error);
         throw error;
       }
       console.error('Supabase error, falling back to JSON:', error);
@@ -1048,30 +1086,45 @@ export async function getPageText(key: string): Promise<PageText | null> {
 export async function updatePageText(key: string, data: { title?: string; content?: string }): Promise<PageText | null> {
   const now = new Date().toISOString();
 
+  // Declare variables outside try block for error logging
+  let title: string | undefined;
+  let content: string | undefined;
+
   if (isSupabaseConfigured()) {
     try {
       const supabase = createServerSupabaseClient();
-      const { data: updated, error } = await supabase
+
+      // First get the existing text to merge data
+      const existing = await getPageText(key);
+      title = data.title ?? existing?.title ?? key;
+      content = data.content ?? existing?.content ?? '';
+
+      console.log('[updatePageText] Upserting:', { key, title, content: content.slice(0, 100) });
+
+      // Use upsert without .select() to avoid RLS issues
+      const { error } = await supabase
         .from('page_texts')
         .upsert({
           key,
-          title: data.title,
-          content: data.content,
+          title,
+          content,
           updated_at: now,
-        })
-        .select()
-        .single();
+        });
 
       if (error) throw error;
+
+      console.log('[updatePageText] Success:', { key });
+
+      // Return the merged result
       return {
-        key: updated.key,
-        title: updated.title,
-        content: updated.content,
-        updatedAt: updated.updated_at,
+        key,
+        title,
+        content,
+        updatedAt: now,
       };
     } catch (error) {
+      logSupabaseError('UPSERT', 'page_texts', error, { key, title, content: content?.slice(0, 100) });
       if (isProduction()) {
-        console.error('[updatePageText] Supabase error in production:', error);
         throw error;
       }
       console.error('Supabase error, falling back to JSON:', error);
@@ -1080,7 +1133,7 @@ export async function updatePageText(key: string, data: { title?: string; conten
 
   // Fallback to JSON (development only)
   if (isProduction()) {
-    throw new Error('Supabase is not configured for production');
+    throw new Error('Supabase is not configured for production. Ensure SUPABASE_SERVICE_ROLE_KEY is set.');
   }
 
   const texts = await readJsonFile<PageText[]>(PAGE_TEXTS_FILE, DEFAULT_PAGE_TEXTS);

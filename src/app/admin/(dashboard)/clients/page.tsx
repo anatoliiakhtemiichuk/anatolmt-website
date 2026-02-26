@@ -84,7 +84,8 @@ export default function ClientsPage() {
     }
   };
 
-  const formatPrice = (priceInGroszy: number) => `${(priceInGroszy / 100).toFixed(0)} zł`;
+  // Price is stored in PLN (not grosze) - standardized across all admin pages
+  const formatPrice = (pricePln: number) => `${pricePln} zł`;
   const formatTime = (time: string) => time.substring(0, 5);
 
   const totalClients = clients.length;

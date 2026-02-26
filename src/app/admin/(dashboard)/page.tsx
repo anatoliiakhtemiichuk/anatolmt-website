@@ -60,8 +60,9 @@ export default function AdminDashboard() {
     return time.substring(0, 5);
   };
 
-  const formatPrice = (priceInGroszy: number) => {
-    return `${(priceInGroszy / 100).toFixed(0)} zł`;
+  // Price is stored in PLN (not grosze) - standardized across all admin pages
+  const formatPrice = (pricePln: number) => {
+    return `${pricePln} zł`;
   };
 
   // Buffer time between appointments
