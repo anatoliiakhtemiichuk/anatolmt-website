@@ -8,10 +8,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getBookings, createBooking, validateBookingSlot, BookingFilters } from '@/lib/admin-data';
+import { getBookings, createBooking, validateBookingSlot, hasExistingBookings, BookingFilters } from '@/lib/admin-data';
 import { BookingStatus } from '@/types/admin';
 import { getSiteSettings } from '@/lib/site-settings';
 import { Service } from '@/types/site-settings';
+
+/**
+ * First-time client discount percentage
+ */
+const FIRST_TIME_DISCOUNT_PERCENT = 10;
 
 /**
  * Check if a date is a weekend (Saturday = 6, Sunday = 0)
@@ -156,18 +161,38 @@ export async function POST(request: NextRequest) {
     }
 
     // ===========================================
-    // STEP 5: Create booking with server-calculated price
+    // STEP 5: Check if client is first-time (for discount)
+    // ===========================================
+    const emailLower = body.email.toLowerCase();
+    const isReturningClient = await hasExistingBookings(emailLower);
+    const discountPercent = isReturningClient ? 0 : FIRST_TIME_DISCOUNT_PERCENT;
+    const finalPrice = discountPercent > 0
+      ? Math.round(calculatedPrice * (100 - discountPercent) / 100)
+      : calculatedPrice;
+
+    console.log('[admin/bookings] Discount calculation:', {
+      email: emailLower,
+      isReturningClient,
+      discountPercent,
+      originalPrice: calculatedPrice,
+      finalPrice,
+    });
+
+    // ===========================================
+    // STEP 6: Create booking with server-calculated price
     // ===========================================
     const booking = await createBooking({
       service_type: service.name,
       duration_minutes: service.durationMinutes,
-      price_pln: calculatedPrice,  // SERVER-CALCULATED
+      price_pln: calculatedPrice,           // Original price before discount
+      discount_percent: discountPercent,    // Discount applied (10% for first-time)
+      final_price_pln: finalPrice,          // Final price after discount
       date: body.date,
       time: body.time,
       first_name: body.first_name,
       last_name: body.last_name,
       phone: body.phone,
-      email: body.email,
+      email: emailLower,
       notes: body.notes || null,
       status: body.status || 'confirmed',
     });
@@ -176,6 +201,8 @@ export async function POST(request: NextRequest) {
       booking_id: booking.id,
       service: service.name,
       price_pln: calculatedPrice,
+      discount_percent: discountPercent,
+      final_price_pln: finalPrice,
     });
 
     return NextResponse.json({

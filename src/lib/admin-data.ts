@@ -520,6 +520,31 @@ export async function getClientBookings(email: string): Promise<Booking[]> {
     });
 }
 
+/**
+ * Check if a client with given email has any existing bookings
+ * Used to determine if client is eligible for first-time discount
+ */
+export async function hasExistingBookings(email: string): Promise<boolean> {
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createServerSupabaseClient();
+      const { count, error } = await supabase
+        .from('bookings')
+        .select('*', { count: 'exact', head: true })
+        .eq('email', email.toLowerCase());
+
+      if (error) throw error;
+      return (count ?? 0) > 0;
+    } catch (error) {
+      console.error('Supabase error checking existing bookings:', error);
+    }
+  }
+
+  // Fallback to JSON
+  const bookings = await readJsonFile<Booking[]>(BOOKINGS_FILE, []);
+  return bookings.some((b) => b.email.toLowerCase() === email.toLowerCase());
+}
+
 // ============================================
 // DASHBOARD STATS
 // ============================================

@@ -35,6 +35,8 @@ export interface Booking {
   service_type: string;
   duration_minutes: number;
   price_pln: number;
+  discount_percent: number;
+  final_price_pln: number;
   date: string;
   time: string;
   first_name: string;
