@@ -1,6 +1,9 @@
 /**
- * Next.js Middleware
+ * Next.js Proxy (formerly Middleware)
  * Handles admin route protection with PIN-based cookie authentication
+ *
+ * Migrated from middleware.ts to proxy.ts for Next.js 16 compatibility
+ * See: https://nextjs.org/docs/messages/middleware-to-proxy
  */
 
 import { NextResponse } from 'next/server';
@@ -9,7 +12,7 @@ import type { NextRequest } from 'next/server';
 const ADMIN_COOKIE_NAME = 'admin_session';
 const ADMIN_COOKIE_VALUE = 'authenticated';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Only protect /admin routes (except /admin/login)

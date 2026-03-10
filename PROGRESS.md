@@ -167,6 +167,58 @@ git log --oneline
 
 ---
 
+## Milestone 7: Admin Panel Fixes & RLS Security
+**Date:** 2026-02-27
+**Status:** Completed
+
+### What was done:
+
+#### Blocked Slots (23P01/23505 Error Handling):
+- Changed 23P01 (overlap constraint) from system error to business logic
+- Return HTTP 409 Conflict instead of 500 for overlap/duplicate errors
+- Use `console.warn` instead of `console.error` for expected conflicts
+- Added `isConflict: true` flag in API response for frontend handling
+- Frontend shows inline error message instead of browser alert()
+- Added proactive validation for full-day blocks before submission
+
+#### Page Texts (Treści) RLS Fix:
+- Created migration 011_fix_page_texts_rls.sql
+- Fixed RLS policy to allow service role writes (service role bypasses RLS)
+- Only SELECT policy needed for frontend reads
+- Added user-friendly error messages for common Postgres errors (42501, 23505, PGRST301)
+
+#### Generated Column Fix:
+- Fixed `slot` column formula to use `time_start, time_end` instead of `start_at, end_at`
+- Exclusion constraint now works correctly with GiST index
+
+#### Vercel Deployment:
+- Linked to correct project: `anatolmt-website-m5ci`
+- Deployed all fixes to production
+- Configured domain alias: `anatolmt.pl`
+
+### Files modified:
+- `src/app/api/admin/blocked-slots/route.ts` (23P01/23505 handling with 409 status)
+- `src/lib/admin-data.ts` (logSupabaseError with level parameter)
+- `src/app/admin/(dashboard)/availability/page.tsx` (inline error display, proactive validation)
+- `src/app/api/admin/content/route.ts` (TypeScript fix, user-friendly errors)
+
+### Database migrations:
+- `supabase/migrations/011_fix_page_texts_rls.sql` (RLS for page_texts)
+
+### How to test:
+```bash
+# Test blocked slots overlap handling
+# 1. Go to Admin → Dostępność
+# 2. Create a blocked slot
+# 3. Try to create overlapping slot - should show inline red error, not alert
+
+# Test page texts editing
+# 1. Go to Admin → Treści
+# 2. Edit any text and save - should work without errors
+```
+
+---
+
 ## How to Add New Milestones
 
 After completing a milestone, add an entry following this template:
