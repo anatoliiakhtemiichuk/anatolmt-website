@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 /**
  * Admin Layout
  * Prevents search engine indexing of admin pages
+ * Migrated to Next.js 16 proxy-based authentication
  */
 export const metadata: Metadata = {
   title: {
