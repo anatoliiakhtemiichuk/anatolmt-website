@@ -35,7 +35,6 @@ export default async function PricesPage() {
         <Container>
           <div className="max-w-3xl">
             <h1 className="text-4xl lg:text-5xl font-bold mb-4">Cennik</h1>
-            {/* Deploy marker: v871b895 */}
             <p className="text-lg text-gray-300">
               Przejrzyste ceny bez ukrytych kosztów. Wybierz usługę dopasowaną do Twoich potrzeb.
             </p>
