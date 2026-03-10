@@ -43,6 +43,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const body: UpdateBookingData = await request.json();
 
+    console.log('[PATCH /api/admin/bookings/:id] Request:', { id, body });
+
     // Only allow updating specific fields
     const allowedFields: (keyof UpdateBookingData)[] = ['status', 'date', 'time', 'notes'];
     const updateData: Partial<UpdateBookingData> = {};
@@ -54,6 +56,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     if (Object.keys(updateData).length === 0) {
+      console.log('[PATCH] No valid fields to update');
       return NextResponse.json(
         { success: false, error: 'Brak danych do aktualizacji' },
         { status: 400 }
@@ -63,6 +66,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // Get current booking to check duration and validate reschedule
     const currentBooking = await getBookingById(id);
     if (!currentBooking) {
+      console.log('[PATCH] Booking not found:', id);
       return NextResponse.json(
         { success: false, error: 'Rezerwacja nie istnieje' },
         { status: 404 }
@@ -74,6 +78,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       const newDate = updateData.date || currentBooking.date;
       const newTime = updateData.time || currentBooking.time;
 
+      console.log('[PATCH] Reschedule validation:', {
+        currentDate: currentBooking.date,
+        currentTime: currentBooking.time,
+        newDate,
+        newTime,
+        duration: currentBooking.duration_minutes,
+      });
+
       // Only validate if actual change
       if (newDate !== currentBooking.date || newTime !== currentBooking.time) {
         // Validate the new slot (exclude current booking from collision check)
@@ -83,6 +95,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           currentBooking.duration_minutes,
           id // exclude this booking from collision check
         );
+
+        console.log('[PATCH] Slot validation result:', validation);
 
         if (!validation.valid) {
           return NextResponse.json(
@@ -96,18 +110,21 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const booking = await updateBooking(id, updateData);
 
     if (!booking) {
+      console.log('[PATCH] Update failed for booking:', id);
       return NextResponse.json(
         { success: false, error: 'Nie udało się zaktualizować rezerwacji' },
         { status: 500 }
       );
     }
 
+    console.log('[PATCH] Update successful:', { id, updateData });
+
     return NextResponse.json({
       success: true,
       data: booking,
     });
   } catch (error) {
-    console.error('Error updating booking:', error);
+    console.error('[PATCH] Error updating booking:', error);
     return NextResponse.json(
       { success: false, error: 'Wystąpił błąd podczas aktualizacji rezerwacji' },
       { status: 500 }

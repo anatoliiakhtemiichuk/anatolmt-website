@@ -6,6 +6,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EventInput, EventDropArg, EventClickArg } from '@fullcalendar/core';
+import type { EventResizeDoneArg } from '@fullcalendar/interaction';
+import plLocale from '@fullcalendar/core/locales/pl';
 import { Booking, BookingStatus } from '@/types/admin';
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
@@ -81,19 +83,29 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
       const dateFrom = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       const dateTo = new Date(today.getFullYear(), today.getMonth() + 3, 0);
 
+      const dateFromStr = format(dateFrom, 'yyyy-MM-dd');
+      const dateToStr = format(dateTo, 'yyyy-MM-dd');
+
+      console.log('[Calendar] Fetching bookings:', { dateFrom: dateFromStr, dateTo: dateToStr });
+
       const params = new URLSearchParams({
-        date_from: format(dateFrom, 'yyyy-MM-dd'),
-        date_to: format(dateTo, 'yyyy-MM-dd'),
+        date_from: dateFromStr,
+        date_to: dateToStr,
       });
 
       const response = await fetch(`/api/admin/bookings?${params}`);
       const result = await response.json();
 
+      console.log('[Calendar] Fetch result:', { success: result.success, count: result.data?.length || 0 });
+
       if (result.success) {
-        setBookings(result.data);
+        setBookings(result.data || []);
+      } else {
+        console.error('[Calendar] Fetch failed:', result.error);
+        setError(result.error || 'Nie udało się pobrać rezerwacji');
       }
     } catch (error) {
-      console.error('Error fetching bookings:', error);
+      console.error('[Calendar] Error fetching bookings:', error);
       setError('Nie udało się pobrać rezerwacji');
     } finally {
       setIsLoading(false);
@@ -104,24 +116,36 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
     fetchBookings();
   }, []);
 
+  // Normalize time format (handle both HH:mm and HH:mm:ss)
+  const normalizeTime = (time: string): string => {
+    if (!time) return '00:00';
+    // Take only HH:mm part
+    return time.substring(0, 5);
+  };
+
   // Convert bookings to FullCalendar events
   const events: EventInput[] = bookings.map((booking) => {
     const colors = STATUS_COLORS[booking.status];
-    const endTime = calculateEndTime(booking.time, booking.duration_minutes);
+    const normalizedTime = normalizeTime(booking.time);
+    const endTime = calculateEndTime(normalizedTime, booking.duration_minutes);
 
     return {
       id: booking.id,
       title: `${booking.first_name} ${booking.last_name}`,
-      start: `${booking.date}T${booking.time}`,
-      end: `${booking.date}T${endTime}`,
+      start: `${booking.date}T${normalizedTime}:00`,
+      end: `${booking.date}T${endTime}:00`,
       backgroundColor: colors.bg,
       borderColor: colors.border,
       textColor: colors.text,
+      // Only allow dragging confirmed bookings
+      editable: booking.status === 'confirmed',
       extendedProps: {
         booking,
       },
     };
   });
+
+  console.log('[Calendar] Loaded events:', events.length, 'bookings');
 
   // Handle event click (open details modal)
   const handleEventClick = (info: EventClickArg) => {
@@ -137,8 +161,25 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
   // Handle event drop (drag and drop reschedule)
   const handleEventDrop = async (info: EventDropArg) => {
     const booking = info.event.extendedProps.booking as Booking;
-    const newDate = format(info.event.start!, 'yyyy-MM-dd');
-    const newTime = format(info.event.start!, 'HH:mm');
+
+    // Safety check for event start
+    if (!info.event.start) {
+      console.error('[Calendar] Event drop failed: no start date');
+      info.revert();
+      setError('Błąd: brak daty docelowej');
+      return;
+    }
+
+    const newDate = format(info.event.start, 'yyyy-MM-dd');
+    const newTime = format(info.event.start, 'HH:mm');
+
+    console.log('[Calendar] Event drop:', {
+      bookingId: booking.id,
+      oldDate: booking.date,
+      oldTime: booking.time,
+      newDate,
+      newTime,
+    });
 
     // Don't allow rescheduling cancelled or completed bookings
     if (booking.status === 'cancelled' || booking.status === 'completed') {
@@ -155,6 +196,7 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
       });
 
       const result = await response.json();
+      console.log('[Calendar] PATCH response:', result);
 
       if (!result.success) {
         info.revert();
@@ -166,12 +208,20 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
       setBookings(bookings.map(b =>
         b.id === booking.id ? { ...b, date: newDate, time: newTime } : b
       ));
+      setError(null); // Clear any previous errors
       onBookingUpdate?.();
     } catch (error) {
-      console.error('Error rescheduling booking:', error);
+      console.error('[Calendar] Error rescheduling booking:', error);
       info.revert();
       setError('Wystąpił błąd podczas przenoszenia wizyty');
     }
+  };
+
+  // Handle event resize (not allowed - we don't change duration)
+  const handleEventResize = (info: EventResizeDoneArg) => {
+    // Revert resize - we don't allow changing booking duration from calendar
+    info.revert();
+    setError('Zmiana czasu trwania wizyty nie jest obsługiwana. Użyj edycji wizyty.');
   };
 
   // Handle manual date/time edit
@@ -181,6 +231,14 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
     setIsUpdating(true);
     setError(null);
 
+    console.log('[Calendar] Saving edit:', {
+      bookingId: selectedBooking.id,
+      oldDate: selectedBooking.date,
+      oldTime: selectedBooking.time,
+      newDate: editDate,
+      newTime: editTime,
+    });
+
     try {
       const response = await fetch(`/api/admin/bookings/${selectedBooking.id}`, {
         method: 'PATCH',
@@ -189,6 +247,7 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
       });
 
       const result = await response.json();
+      console.log('[Calendar] Edit PATCH response:', result);
 
       if (!result.success) {
         setError(result.error || 'Nie udało się zaktualizować wizyty');
@@ -203,7 +262,7 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
       setIsEditMode(false);
       onBookingUpdate?.();
     } catch (error) {
-      console.error('Error updating booking:', error);
+      console.error('[Calendar] Error updating booking:', error);
       setError('Wystąpił błąd podczas aktualizacji wizyty');
     } finally {
       setIsUpdating(false);
@@ -217,6 +276,12 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
     setIsUpdating(true);
     setError(null);
 
+    console.log('[Calendar] Updating status:', {
+      bookingId: selectedBooking.id,
+      oldStatus: selectedBooking.status,
+      newStatus,
+    });
+
     try {
       const response = await fetch(`/api/admin/bookings/${selectedBooking.id}`, {
         method: 'PATCH',
@@ -225,6 +290,7 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
       });
 
       const result = await response.json();
+      console.log('[Calendar] Status PATCH response:', result);
 
       if (!result.success) {
         setError(result.error || 'Nie udało się zaktualizować statusu');
@@ -238,7 +304,7 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
       setSelectedBooking({ ...selectedBooking, status: newStatus });
       onBookingUpdate?.();
     } catch (error) {
-      console.error('Error updating booking status:', error);
+      console.error('[Calendar] Error updating booking status:', error);
       setError('Wystąpił błąd podczas aktualizacji statusu');
     } finally {
       setIsUpdating(false);
@@ -288,7 +354,7 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
           }}
-          locale="pl"
+          locale={plLocale}
           firstDay={1}
           slotMinTime="08:00:00"
           slotMaxTime="23:00:00"
@@ -296,17 +362,13 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
           allDaySlot={false}
           events={events}
           editable={true}
-          droppable={true}
+          eventResizableFromStart={false}
           eventDrop={handleEventDrop}
+          eventResize={handleEventResize}
           eventClick={handleEventClick}
           height="auto"
           aspectRatio={1.8}
-          buttonText={{
-            today: 'Dziś',
-            month: 'Miesiąc',
-            week: 'Tydzień',
-            day: 'Dzień',
-          }}
+          nowIndicator={true}
           eventContent={(eventInfo) => {
             const booking = eventInfo.event.extendedProps.booking as Booking;
             return (
@@ -328,10 +390,9 @@ export default function BookingCalendar({ onBookingUpdate }: BookingCalendarProp
         {(Object.keys(STATUS_COLORS) as BookingStatus[]).map((status) => (
           <div key={status} className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded"
+              className="w-4 h-4 rounded border-2"
               style={{
                 backgroundColor: STATUS_COLORS[status].bg,
-                borderWidth: 2,
                 borderColor: STATUS_COLORS[status].border,
               }}
             />
