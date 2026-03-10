@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard,
   Calendar,
+  CalendarDays,
   CalendarOff,
   Users,
   Settings,
@@ -26,6 +27,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
   { href: '/admin/appointments', label: 'Wizyty', icon: <Calendar className="w-5 h-5" /> },
+  { href: '/admin/calendar', label: 'Kalendarz', icon: <CalendarDays className="w-5 h-5" /> },
   { href: '/admin/availability', label: 'Dostępność', icon: <CalendarOff className="w-5 h-5" /> },
   { href: '/admin/clients', label: 'Klienci', icon: <Users className="w-5 h-5" /> },
   { href: '/admin/videos', label: 'Filmy', icon: <Video className="w-5 h-5" /> },

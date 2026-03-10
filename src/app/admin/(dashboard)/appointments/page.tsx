@@ -6,6 +6,7 @@ import { format, addDays } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import {
   Calendar,
+  CalendarDays,
   Clock,
   Phone,
   Mail,
@@ -21,6 +22,7 @@ import {
   Plus,
   Timer,
 } from 'lucide-react';
+import Link from 'next/link';
 import { Service } from '@/types/site-settings';
 
 // Buffer time between appointments (must match server constant)
@@ -245,13 +247,22 @@ const formatPrice = (pricePln: number) => `${pricePln} zł`;
           <h1 className="text-2xl font-bold text-[#0F172A]">Wizyty</h1>
           <p className="text-gray-500 mt-1">Zarządzaj wszystkimi rezerwacjami</p>
         </div>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-colors font-medium"
-        >
-          <Plus className="w-5 h-5" />
-          Dodaj wizytę
-        </button>
+        <div className="flex gap-3">
+          <Link
+            href="/admin/calendar"
+            className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+          >
+            <CalendarDays className="w-5 h-5" />
+            Kalendarz
+          </Link>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#2563EB] text-white rounded-lg hover:bg-[#1D4ED8] transition-colors font-medium"
+          >
+            <Plus className="w-5 h-5" />
+            Dodaj wizytę
+          </button>
+        </div>
       </div>
 
       {/* Filters */}

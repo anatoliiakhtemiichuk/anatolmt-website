@@ -1,12 +1,12 @@
 /**
  * Admin Booking by ID API
  * GET /api/admin/bookings/[id] - Get booking details
- * PATCH /api/admin/bookings/[id] - Update booking
+ * PATCH /api/admin/bookings/[id] - Update booking (with slot validation for reschedule)
  * DELETE /api/admin/bookings/[id] - Delete booking
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getBookingById, updateBooking, deleteBooking } from '@/lib/admin-data';
+import { getBookingById, updateBooking, deleteBooking, validateBookingSlot } from '@/lib/admin-data';
 import { UpdateBookingData } from '@/types/admin';
 
 interface RouteParams {
@@ -60,12 +60,45 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    // Get current booking to check duration and validate reschedule
+    const currentBooking = await getBookingById(id);
+    if (!currentBooking) {
+      return NextResponse.json(
+        { success: false, error: 'Rezerwacja nie istnieje' },
+        { status: 404 }
+      );
+    }
+
+    // If date or time is being changed, validate the new slot
+    if (updateData.date || updateData.time) {
+      const newDate = updateData.date || currentBooking.date;
+      const newTime = updateData.time || currentBooking.time;
+
+      // Only validate if actual change
+      if (newDate !== currentBooking.date || newTime !== currentBooking.time) {
+        // Validate the new slot (exclude current booking from collision check)
+        const validation = await validateBookingSlot(
+          newDate,
+          newTime,
+          currentBooking.duration_minutes,
+          id // exclude this booking from collision check
+        );
+
+        if (!validation.valid) {
+          return NextResponse.json(
+            { success: false, error: validation.error || 'Termin jest niedostępny' },
+            { status: 409 }
+          );
+        }
+      }
+    }
+
     const booking = await updateBooking(id, updateData);
 
     if (!booking) {
       return NextResponse.json(
-        { success: false, error: 'Rezerwacja nie istnieje' },
-        { status: 404 }
+        { success: false, error: 'Nie udało się zaktualizować rezerwacji' },
+        { status: 500 }
       );
     }
 
