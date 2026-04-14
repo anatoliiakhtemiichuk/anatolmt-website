@@ -5,6 +5,9 @@ import { Container, Card, CardContent } from '@/components/ui';
 import { getSiteSettings } from '@/lib/site-settings';
 import type { Service } from '@/types/site-settings';
 
+// External booking URL (Booksy) - temporary redirect while internal booking is disabled
+const BOOKSY_URL = 'https://anatolmt.booksy.com/a/';
+
 export const metadata: Metadata = {
   title: 'Cennik',
   description: 'Cennik usług terapii manualnej i masażu. Sprawdź ceny wizyt w dni robocze i weekendy.',
@@ -118,16 +121,22 @@ export default async function PricesPage() {
             <h2 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-4">
               Gotowy na wizytę?
             </h2>
-            <p className="text-gray-600 mb-8 max-w-xl mx-auto">
+            <p className="text-gray-600 mb-4 max-w-xl mx-auto">
               {settings.texts.bookingInfoText}
             </p>
-            <Link
-              href="/booking"
+            <p className="text-sm text-gray-500 mb-8">
+              Rezerwacja online odbywa się przez Booksy
+            </p>
+            {/* CTA redirects to Booksy */}
+            <a
+              href={BOOKSY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl"
             >
               <Calendar className="w-5 h-5" />
               Umów wizytę
-            </Link>
+            </a>
           </div>
         </Container>
       </section>

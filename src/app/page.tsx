@@ -11,6 +11,9 @@ import {
 import { Container, Card, CardContent } from '@/components/ui';
 import { getSiteSettings } from '@/lib/site-settings';
 
+// External booking URL (Booksy) - temporary redirect while internal booking is disabled
+const BOOKSY_URL = 'https://anatolmt.booksy.com/a/';
+
 // SEO Metadata for homepage
 export const metadata: Metadata = {
   title: 'Terapeuta manualny Warszawa | M&T Anatol',
@@ -90,13 +93,16 @@ export default async function HomePage() {
                 {settings.texts.heroSubtitle || 'Doświadczony terapeuta, wsparcie w dolegliwościach bólowych kręgosłupa, napięciach mięśniowych oraz powrocie do sprawności po urazach.'}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  href="/booking"
+                {/* CTA redirects to Booksy */}
+                <a
+                  href={BOOKSY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20"
                 >
                   <Calendar className="w-5 h-5" />
                   Umów wizytę
-                </Link>
+                </a>
                 <Link
                   href="/prices"
                   className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
@@ -170,13 +176,16 @@ export default async function HomePage() {
                       {service.name}
                     </h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
-                    <Link
-                      href="/booking"
+                    {/* Service booking redirects to Booksy */}
+                    <a
+                      href={BOOKSY_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center text-[#2563EB] font-medium hover:underline"
                     >
                       Zarezerwuj
                       <ArrowRight className="w-4 h-4 ml-1" />
-                    </Link>
+                    </a>
                   </CardContent>
                 </Card>
               );
@@ -205,13 +214,16 @@ export default async function HomePage() {
               {settings.texts.bookingInfoText || 'Umów się na wizytę online w kilka minut. Wybierz dogodny termin i zacznij swoją drogę do lepszego samopoczucia.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/booking"
+              {/* CTA redirects to Booksy */}
+              <a
+                href={BOOKSY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-white text-[#2563EB] px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-gray-100 hover:shadow-xl"
               >
                 <Calendar className="w-5 h-5" />
                 Zarezerwuj termin
-              </Link>
+              </a>
               <Link
                 href="/contact"
                 className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10"

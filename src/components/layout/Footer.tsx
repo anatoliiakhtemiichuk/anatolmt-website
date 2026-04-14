@@ -11,13 +11,16 @@ const FacebookIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// External booking URL (Booksy) - temporary redirect while internal booking is disabled
+const BOOKSY_URL = 'https://anatolmt.booksy.com/a/';
+
 const navigation = {
   main: [
-    { name: 'Strona główna', href: '/' },
-    { name: 'Rezerwacja', href: '/booking' },
-    { name: 'Wideo Pomoc', href: '/video-pomoc' },
-    { name: 'Cennik', href: '/prices' },
-    { name: 'Kontakt', href: '/contact' },
+    { name: 'Strona główna', href: '/', external: false },
+    { name: 'Rezerwacja', href: BOOKSY_URL, external: true },
+    { name: 'Wideo Pomoc', href: '/video-pomoc', external: false },
+    { name: 'Cennik', href: '/prices', external: false },
+    { name: 'Kontakt', href: '/contact', external: false },
   ],
 };
 
@@ -106,12 +109,23 @@ export async function Footer() {
               <ul className="space-y-3">
                 {navigation.main.map((item) => (
                   <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
-                    >
-                      {item.name}
-                    </Link>
+                    {item.external ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                      >
+                        {item.name}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                      >
+                        {item.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

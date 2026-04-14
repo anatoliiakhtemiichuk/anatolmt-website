@@ -7,12 +7,15 @@ import { Menu, X, Calendar } from 'lucide-react';
 import { Container } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
+// External booking URL (Booksy) - temporary redirect while internal booking is disabled
+const BOOKSY_URL = 'https://anatolmt.booksy.com/a/';
+
 const navigation = [
-  { name: 'Strona główna', href: '/' },
-  { name: 'Rezerwacja', href: '/booking' },
-  { name: 'Wideo Pomoc', href: '/video-pomoc' },
-  { name: 'Cennik', href: '/prices' },
-  { name: 'Kontakt', href: '/contact' },
+  { name: 'Strona główna', href: '/', external: false },
+  { name: 'Rezerwacja', href: BOOKSY_URL, external: true },
+  { name: 'Wideo Pomoc', href: '/video-pomoc', external: false },
+  { name: 'Cennik', href: '/prices', external: false },
+  { name: 'Kontakt', href: '/contact', external: false },
 ];
 
 export function Header() {
@@ -45,33 +48,47 @@ export function Header() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'text-sm font-medium transition-colors duration-200 relative py-2',
-                  isActive(item.href)
-                    ? 'text-[#2563EB]'
-                    : 'text-gray-600 hover:text-[#0F172A]'
-                )}
-              >
-                {item.name}
-                {isActive(item.href) && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2563EB] rounded-full" />
-                )}
-              </Link>
+              item.external ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium transition-colors duration-200 relative py-2 text-gray-600 hover:text-[#0F172A]"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    'text-sm font-medium transition-colors duration-200 relative py-2',
+                    isActive(item.href)
+                      ? 'text-[#2563EB]'
+                      : 'text-gray-600 hover:text-[#0F172A]'
+                  )}
+                >
+                  {item.name}
+                  {isActive(item.href) && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2563EB] rounded-full" />
+                  )}
+                </Link>
+              )
             ))}
           </div>
 
-          {/* CTA Button - Desktop */}
+          {/* CTA Button - Desktop (redirects to Booksy) */}
           <div className="hidden lg:block">
-            <Link
-              href="/booking"
+            <a
+              href={BOOKSY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-lg"
             >
               <Calendar className="w-4 h-4" />
               Umów wizytę
-            </Link>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -98,28 +115,44 @@ export function Header() {
         >
           <div className="flex flex-col gap-1 pt-2">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  'px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200',
-                  isActive(item.href)
-                    ? 'bg-[#2563EB]/10 text-[#2563EB]'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]'
-                )}
-              >
-                {item.name}
-              </Link>
+              item.external ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200',
+                    isActive(item.href)
+                      ? 'bg-[#2563EB]/10 text-[#2563EB]'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]'
+                  )}
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
-            <Link
-              href="/booking"
+            {/* Mobile CTA - redirects to Booksy */}
+            <a
+              href={BOOKSY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => setMobileMenuOpen(false)}
               className="mt-2 mx-4 flex items-center justify-center gap-2 bg-[#2563EB] text-white px-5 py-3 rounded-lg font-medium text-sm transition-all duration-200 hover:bg-[#1D4ED8]"
             >
               <Calendar className="w-4 h-4" />
               Umów wizytę
-            </Link>
+            </a>
           </div>
         </div>
       </Container>
