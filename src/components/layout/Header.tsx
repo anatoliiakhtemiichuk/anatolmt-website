@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Calendar } from 'lucide-react';
+import { Menu, X, Calendar, Phone } from 'lucide-react';
 import { Container } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
@@ -91,19 +91,31 @@ export function Header() {
             </a>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            type="button"
-            className="lg:hidden p-2 -mr-2 text-gray-600 hover:text-[#0F172A] transition-colors"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'}
-          >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+          {/* Mobile Actions */}
+          <div className="lg:hidden flex items-center gap-2">
+            {/* Phone Button - Mobile Only */}
+            <a
+              href="tel:+48884844191"
+              className="p-2 text-[#2563EB] hover:bg-[#2563EB]/10 rounded-lg transition-colors"
+              aria-label="Zadzwoń"
+            >
+              <Phone className="w-5 h-5" />
+            </a>
+
+            {/* Mobile Menu Button */}
+            <button
+              type="button"
+              className="p-2 -mr-2 text-gray-600 hover:text-[#0F172A] transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
         </nav>
 
         {/* Mobile Navigation */}

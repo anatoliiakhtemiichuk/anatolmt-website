@@ -2,11 +2,16 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import {
   Calendar,
-  Clock,
   Award,
   Heart,
   ArrowRight,
   CheckCircle,
+  User,
+  Shield,
+  ClipboardCheck,
+  Clock,
+  Star,
+  Sparkles,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
 import { getSiteSettings } from '@/lib/site-settings';
@@ -18,35 +23,92 @@ const BOOKSY_URL = 'https://anatolmt.booksy.com/a/';
 export const metadata: Metadata = {
   title: 'Terapeuta manualny Warszawa | M&T Anatol',
   description:
-    'Wsparcie w dolegliwościach bólowych kręgosłupa i napięciach mięśniowych w Warszawie. Umów wizytę u M&T Anatol.',
+    'Pozbądź się bólu pleców i napięcia mięśniowego. Profesjonalna terapia manualna w Warszawie – indywidualne podejście i skuteczne wsparcie.',
   openGraph: {
     title: 'Terapeuta manualny Warszawa | M&T Anatol',
     description:
-      'Wsparcie w dolegliwościach bólowych kręgosłupa i napięciach mięśniowych w Warszawie. Umów wizytę u M&T Anatol.',
+      'Pozbądź się bólu pleców i napięcia mięśniowego. Profesjonalna terapia manualna w Warszawie – indywidualne podejście i skuteczne wsparcie.',
   },
 };
 
-// Features/benefits (static)
-const features = [
+// Conditions treated
+const conditions = [
+  'Ból kręgosłupa',
+  'Napięcia szyi i barków',
+  'Praca siedząca i stres',
+  'Dolegliwości mięśni pośladkowych',
+  'Rwa kulszowa',
+  'Kontuzje sportowe',
+  'Zamrożony bark',
+  'Łokieć tenisisty',
+  'Bruksizm i napięcia twarzy',
+];
+
+// Services offered
+const servicesOffered = [
   {
-    icon: Award,
-    title: 'Doświadczenie',
-    description: 'Wieloletnia praktyka w terapii manualnej',
+    title: 'Terapia manualna',
+    description: 'Praca z napięciami mięśniowymi i ograniczeniami ruchomości',
   },
   {
-    icon: Heart,
+    title: 'Terapia czaszkowo-krzyżowa',
+    description: 'Delikatna technika wspierająca naturalne mechanizmy regulacyjne organizmu',
+  },
+  {
+    title: 'Praca z twarzą i stawem skroniowo-żuchwowym',
+    description: 'Wsparcie w napięciach twarzy, bruksizmie i dysfunkcjach stawu',
+  },
+  {
+    title: 'Masaż liftingujący twarzy',
+    description: 'Technika wspierająca napięcie i elastyczność tkanek twarzy',
+  },
+  {
+    title: 'Wsparcie po urazach',
+    description: 'Bezpieczna praca wspierająca powrót do sprawności',
+  },
+  {
+    title: 'Praca ze sportowcami',
+    description: 'Wsparcie w przeciążeniach i regeneracji po aktywności fizycznej',
+  },
+];
+
+// Benefits
+const benefits = [
+  {
+    icon: User,
     title: 'Indywidualne podejście',
-    description: 'Każdy pacjent traktowany jest indywidualnie',
+    description: 'Każda sesja dostosowana do Twoich potrzeb i możliwości',
   },
   {
-    icon: Clock,
-    title: 'Elastyczne godziny',
-    description: 'Wizyty również w weekendy',
+    icon: ClipboardCheck,
+    title: 'Dokładny wywiad i ocena funkcjonalna',
+    description: 'Zrozumienie przyczyn dolegliwości przed rozpoczęciem terapii',
+  },
+  {
+    icon: Shield,
+    title: 'Bezpieczna praca z ciałem',
+    description: 'Techniki dobierane z uwzględnieniem bezpieczeństwa i komfortu',
   },
   {
     icon: Calendar,
-    title: 'Łatwa rezerwacja',
-    description: 'Wygodny system rezerwacji online',
+    title: 'Możliwość rezerwacji online',
+    description: 'Wygodna rezerwacja terminu 24/7 przez internet',
+  },
+];
+
+// Testimonials
+const testimonials = [
+  {
+    text: 'Profesjonalne podejście i duża ulga po wizycie.',
+    author: 'Klient gabinetu',
+  },
+  {
+    text: 'Świetna atmosfera, dokładny wywiad i skuteczna terapia.',
+    author: 'Klient gabinetu',
+  },
+  {
+    text: 'Polecam każdemu, kto ma napięcia po pracy przy komputerze.',
+    author: 'Klient gabinetu',
   },
 ];
 
@@ -81,28 +143,34 @@ export default async function HomePage() {
         <Container>
           <div className="relative py-20 lg:py-32">
             <div className="max-w-3xl">
-              {/* Brand name */}
-              <p className="text-[#2563EB] text-xl font-semibold mb-3">
-                {settings.texts.footerText || 'M&T ANATOL'}
-              </p>
+              {/* Promo Badge */}
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2 rounded-full mb-6 shadow-lg">
+                <Sparkles className="w-4 h-4 text-yellow-300" />
+                <span className="text-sm font-semibold text-white">
+                  -10% na pierwszą wizytę dla nowych klientów
+                </span>
+              </div>
+
               {/* Main H1 for SEO */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                Terapeuta manualny w Warszawie
+                Pozbądź się bólu pleców i napięcia mięśniowego
               </h1>
               <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
-                {settings.texts.heroSubtitle || 'Doświadczony terapeuta, wsparcie w dolegliwościach bólowych kręgosłupa, napięciach mięśniowych oraz powrocie do sprawności po urazach.'}
+                Profesjonalna terapia manualna w Warszawie – indywidualne podejście,
+                skuteczne wsparcie i bezpieczny powrót do sprawności.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                {/* CTA redirects to Booksy */}
+                {/* Primary CTA */}
                 <a
                   href={BOOKSY_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20"
+                  className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
                 >
                   <Calendar className="w-5 h-5" />
-                  Umów wizytę
+                  Umów wizytę teraz
                 </a>
+                {/* Secondary CTA */}
                 <Link
                   href="/prices"
                   className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
@@ -116,20 +184,148 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Features Section */}
+      {/* Dla kogo jest terapia Section */}
       <section className="py-16 lg:py-24 bg-gray-50">
         <Container>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {features.map((feature) => (
-              <Card key={feature.title} hover className="text-center">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              Dla kogo jest terapia?
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Wspieram osoby zmagające się z różnorodnymi dolegliwościami i napięciami
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+            {conditions.map((condition, index) => (
+              <Card key={index} hover className="group">
                 <CardContent>
-                  <div className="w-14 h-14 bg-[#2563EB]/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="w-7 h-7 text-[#2563EB]" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#2563EB]/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#2563EB]/20 transition-colors">
+                      <CheckCircle className="w-5 h-5 text-[#2563EB]" />
+                    </div>
+                    <h3 className="font-semibold text-[#0F172A]">{condition}</h3>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* W czym mogę pomóc Section */}
+      <section className="py-16 lg:py-24">
+        <Container>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              W czym mogę pomóc?
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Oferuję szeroki zakres technik i metod dostosowanych do indywidualnych potrzeb
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {servicesOffered.map((service, index) => (
+              <Card key={index} hover variant="bordered" padding="lg">
+                <CardContent>
+                  <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center mb-4">
+                    <Heart className="w-6 h-6 text-[#2563EB]" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
+                    {service.title}
+                  </h3>
+                  <p className="text-gray-600">{service.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* O mnie Section */}
+      <section className="py-16 lg:py-24 bg-gray-50">
+        <Container>
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+              {/* Photo Placeholder */}
+              <div className="lg:col-span-1">
+                <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center border-2 border-[#2563EB]/20 shadow-lg">
+                  <User className="w-24 h-24 text-[#2563EB]/40" />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="lg:col-span-2">
+                <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-6">
+                  O mnie
+                </h2>
+                <div className="space-y-4 text-gray-700 leading-relaxed text-lg">
+                  <p>
+                    Jestem dyplomowanym terapeutą manualnym z doświadczeniem w pracy
+                    z osobami zmagającymi się z bólem kręgosłupa, napięciami mięśniowymi,
+                    dolegliwościami barków, kolan oraz przeciążeniami po aktywności fizycznej.
+                  </p>
+                  <p>
+                    Pracuję indywidualnie, dobierając techniki do potrzeb i możliwości każdej osoby.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Dlaczego warto Section */}
+      <section className="py-16 lg:py-24">
+        <Container>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              Dlaczego warto?
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Profesjonalne podejście, które stawia na Twoje bezpieczeństwo i komfort
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {benefits.map((benefit, index) => (
+              <Card key={index} hover className="text-center group">
+                <CardContent>
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#2563EB] to-[#3B82F6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+                    <benefit.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="font-semibold text-lg text-[#0F172A] mb-2">
-                    {feature.title}
+                    {benefit.title}
                   </h3>
-                  <p className="text-gray-600 text-sm">{feature.description}</p>
+                  <p className="text-gray-600 text-sm">{benefit.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-16 lg:py-24 bg-gray-50">
+        <Container>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              Co mówią klienci?
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} hover padding="lg">
+                <CardContent>
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-700 mb-4 italic">"{testimonial.text}"</p>
+                  <p className="text-sm text-gray-500 font-medium">— {testimonial.author}</p>
                 </CardContent>
               </Card>
             ))}
@@ -203,100 +399,73 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 lg:py-24 bg-[#2563EB]">
+      {/* Final CTA Section */}
+      <section className="py-16 lg:py-24 bg-gradient-to-br from-[#0F172A] to-[#1E293B] relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
+        </div>
+
         <Container>
-          <div className="text-center text-white">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Gotowy na wizytę?
+          <div className="relative text-center text-white">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2 rounded-full mb-6 shadow-lg">
+              <Sparkles className="w-4 h-4 text-yellow-300" />
+              <span className="text-sm font-semibold">-10% na pierwszą wizytę</span>
+            </div>
+
+            <h2 className="text-3xl lg:text-5xl font-bold mb-4">
+              Gotowy na pierwszą wizytę?
             </h2>
-            <p className="text-blue-100 max-w-2xl mx-auto mb-8 text-lg">
-              {settings.texts.bookingInfoText || 'Umów się na wizytę online w kilka minut. Wybierz dogodny termin i zacznij swoją drogę do lepszego samopoczucia.'}
+            <p className="text-gray-300 max-w-2xl mx-auto mb-8 text-lg">
+              Zarezerwuj termin online w mniej niż 2 minuty i skorzystaj z -10% na pierwszą wizytę.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* CTA redirects to Booksy */}
               <a
                 href={BOOKSY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-white text-[#2563EB] px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-gray-100 hover:shadow-xl"
+                className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
               >
                 <Calendar className="w-5 h-5" />
-                Zarezerwuj termin
+                Sprawdź dostępne terminy
               </a>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10"
+                className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
               >
-                Skontaktuj się
+                Zadaj pytanie
               </Link>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* SEO Content Section */}
-      <section className="py-16 lg:py-20 bg-gray-50">
-        <Container>
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-8 text-center">
-              Terapeuta manualny Warszawa – kiedy warto się zgłosić?
-            </h2>
-
-            <div className="space-y-6 text-gray-700 leading-relaxed">
-              <p>
-                Ból kręgosłupa to jedna z najczęstszych dolegliwości, z którą zgłaszają się pacjenci
-                do gabinetu terapii manualnej w Warszawie. Może być wynikiem przeciążeń, nieprawidłowej
-                postawy ciała lub długotrwałego stresu. Profesjonalna terapia manualna pomaga zmniejszyć
-                napięcie mięśniowe i przywrócić prawidłową ruchomość kręgosłupa.
-              </p>
-
-              <p>
-                Napięcia szyi i barków często towarzyszą osobom pracującym przy komputerze lub
-                spędzającym wiele godzin w jednej pozycji. Objawy takie jak sztywność karku, bóle głowy
-                czy ograniczona ruchomość mogą znacząco wpływać na codzienne funkcjonowanie.
-                Regularne wizyty u terapeuty manualnego pomagają zapobiegać narastaniu dolegliwości.
-              </p>
-
-              <p>
-                Siedzący tryb pracy to wyzwanie dla współczesnego organizmu. Długie godziny spędzone
-                przy biurku prowadzą do osłabienia mięśni stabilizujących, przykurczów i zaburzeń
-                postawy. Terapia manualna w połączeniu z odpowiednimi ćwiczeniami może skutecznie
-                przeciwdziałać tym negatywnym skutkom.
-              </p>
-
-              <p>
-                Powrót do sprawności po urazach wymaga odpowiedniego wsparcia specjalisty. Niezależnie
-                od tego, czy mierzysz się z kontuzją sportową, czy skutkami przeciążenia, terapeuta
-                manualny pomoże Ci bezpiecznie odzyskać pełną funkcjonalność ciała i zapobiec
-                nawrotom dolegliwości.
-              </p>
-
-              <p>
-                W gabinecie M&T Anatol w Warszawie każdy pacjent traktowany jest indywidualnie.
-                Przed rozpoczęciem terapii przeprowadzamy dokładny wywiad i ocenę funkcjonalną,
-                aby dobrać odpowiednie techniki do Twoich potrzeb i celów.
-              </p>
-            </div>
-          </div>
-        </Container>
-      </section>
-
       {/* Trust Indicators */}
-      <section className="py-12 border-t border-gray-100">
+      <section className="py-12 bg-white border-t border-gray-100">
         <Container>
-          <div className="flex flex-wrap justify-center items-center gap-8 text-gray-500">
+          <div className="flex flex-wrap justify-center items-center gap-8 text-gray-600">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm">Dyplomowany terapeuta manualny</span>
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="text-sm font-medium">Dyplomowany terapeuta</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm">Indywidualne podejście do każdego pacjenta</span>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-[#2563EB]" />
+              </div>
+              <span className="text-sm font-medium">Indywidualne podejście</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm">Rezerwacja online 24/7</span>
+              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-purple-600" />
+              </div>
+              <span className="text-sm font-medium">Rezerwacja online 24/7</span>
             </div>
           </div>
         </Container>
