@@ -12,6 +12,8 @@ import {
   Clock,
   Star,
   Sparkles,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
 import { getSiteSettings } from '@/lib/site-settings';
@@ -333,68 +335,145 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Services Preview Section */}
-      <section className="py-16 lg:py-24">
+      {/* Services Preview Section - Premium Layout */}
+      <section className="py-16 lg:py-24 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
+        </div>
+
         <Container>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
-              Usługi terapii manualnej w Warszawie
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Oferujemy szeroki zakres usług terapeutycznych dostosowanych do
-              Twoich indywidualnych potrzeb
-            </p>
-          </div>
+          <div className="relative">
+            {/* Trust Element */}
+            <div className="flex items-center justify-center gap-2 mb-8">
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full">
+                <Users className="w-4 h-4 text-[#3B82F6]" />
+                <span className="text-sm font-medium text-white">
+                  Indywidualna terapia dopasowana do Ciebie
+                </span>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {activeServices.map((service) => {
-              const hasWeekendPrice = service.priceWeekend !== null;
-              const priceDisplay = hasWeekendPrice
-                ? `od ${formatPrice(service.priceWeekday)} PLN`
-                : `${formatPrice(service.priceWeekday)} PLN`;
+            {/* Section Header */}
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+                Wybierz rodzaj wizyty
+              </h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                Wszystkie usługi dostosowane do Twoich indywidualnych potrzeb
+              </p>
+            </div>
 
-              return (
-                <Card key={service.id} hover variant="bordered" padding="lg">
-                  <CardContent>
-                    <div className="flex items-center justify-between mb-4">
-                      {service.showDuration ? (
-                        <span className="text-sm font-medium text-[#2563EB] bg-[#2563EB]/10 px-3 py-1 rounded-full">
-                          {service.durationMinutes} min
-                        </span>
-                      ) : (
-                        <span />
-                      )}
-                      <span className="text-lg font-bold text-[#0F172A]">
-                        {priceDisplay}
-                      </span>
+            {/* Two-Column Layout: Image + Services */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+              {/* Left: Image with Overlay */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl order-2 lg:order-1">
+                {/* Placeholder for therapy image */}
+                <div className="aspect-[4/3] bg-gradient-to-br from-[#2563EB]/30 via-[#3B82F6]/20 to-[#1E293B]/40 backdrop-blur-xl border-2 border-white/10">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center space-y-4">
+                      <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto backdrop-blur-sm border border-white/20">
+                        <Heart className="w-10 h-10 text-white/80" />
+                      </div>
+                      <p className="text-white/70 text-sm px-6">
+                        Profesjonalna terapia manualna
+                      </p>
                     </div>
-                    <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
-                      {service.name}
-                    </h3>
-                    <p className="text-gray-600 mb-4">{service.description}</p>
-                    {/* Service booking redirects to Booksy */}
-                    <a
-                      href={BOOKSY_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-[#2563EB] font-medium hover:underline"
-                    >
-                      Zarezerwuj
-                      <ArrowRight className="w-4 h-4 ml-1" />
-                    </a>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                  </div>
+                </div>
+              </div>
 
-          <div className="text-center mt-10">
-            <Link
-              href="/prices"
-              className="inline-flex items-center justify-center gap-2 border-2 border-[#2563EB] text-[#2563EB] px-7 py-3.5 rounded-lg font-medium text-lg transition-all duration-200 hover:bg-[#2563EB] hover:text-white"
-            >
-              Zobacz pełny cennik
-            </Link>
+              {/* Right: Services List (Stacked) */}
+              <div className="space-y-4 order-1 lg:order-2">
+                {activeServices.map((service, index) => {
+                  const hasWeekendPrice = service.priceWeekend !== null;
+                  const priceDisplay = hasWeekendPrice
+                    ? `od ${formatPrice(service.priceWeekday)} PLN`
+                    : `${formatPrice(service.priceWeekday)} PLN`;
+
+                  // Check if this is the primary service (usually "Wizyta standardowa")
+                  const isPrimary = service.name.toLowerCase().includes('standardowa');
+
+                  return (
+                    <div
+                      key={service.id}
+                      className={cn(
+                        'relative group bg-white/95 backdrop-blur-sm rounded-xl p-6 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl',
+                        isPrimary && 'ring-2 ring-[#2563EB] shadow-xl shadow-blue-500/20'
+                      )}
+                    >
+                      {/* Primary Badge */}
+                      {isPrimary && (
+                        <div className="absolute -top-3 left-6">
+                          <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                            <TrendingUp className="w-3.5 h-3.5" />
+                            Najczęściej wybierana
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-3">
+                            <h3 className={cn(
+                              'text-xl font-bold text-[#0F172A]',
+                              isPrimary && 'text-2xl'
+                            )}>
+                              {service.name}
+                            </h3>
+                            {service.showDuration && (
+                              <span className="text-xs font-medium text-[#2563EB] bg-[#2563EB]/10 px-2.5 py-1 rounded-full whitespace-nowrap">
+                                {service.durationMinutes} min
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+                            {service.description}
+                          </p>
+                          <div className="flex items-center justify-between gap-4">
+                            <div>
+                              <p className="text-2xl font-bold text-[#0F172A]">
+                                {priceDisplay}
+                              </p>
+                            </div>
+                            <a
+                              href={BOOKSY_URL}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={cn(
+                                'inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200',
+                                isPrimary
+                                  ? 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] hover:shadow-lg hover:shadow-blue-500/30'
+                                  : 'bg-gray-100 text-[#0F172A] hover:bg-gray-200'
+                              )}
+                            >
+                              <Calendar className="w-4 h-4" />
+                              Zarezerwuj termin
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* View Full Pricing CTA */}
+            <div className="text-center mt-12">
+              <Link
+                href="/prices"
+                className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50 hover:scale-105"
+              >
+                Zobacz pełny cennik
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
           </div>
         </Container>
       </section>
