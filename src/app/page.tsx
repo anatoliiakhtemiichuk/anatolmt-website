@@ -2,18 +2,19 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import {
   Calendar,
-  Award,
   Heart,
   ArrowRight,
   CheckCircle,
   User,
   Shield,
   ClipboardCheck,
-  Clock,
   Star,
   Sparkles,
-  TrendingUp,
   Users,
+  MessageCircle,
+  Search,
+  Stethoscope,
+  FileText,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
 import { getSiteSettings } from '@/lib/site-settings';
@@ -117,16 +118,32 @@ const testimonials = [
 // Revalidate every 60 seconds to pick up settings changes
 export const revalidate = 60;
 
-function formatPrice(price: number | null | undefined): string {
-  if (price === null || price === undefined || isNaN(price)) {
-    return '—';
-  }
-  return `${price}`;
-}
+// First visit steps
+const visitSteps = [
+  {
+    icon: MessageCircle,
+    title: 'Krótki wywiad',
+    description: 'Rozmawiamy o Twoich dolegliwościach i stylu życia',
+  },
+  {
+    icon: Search,
+    title: 'Ocena ciała',
+    description: 'Sprawdzam napięcia, zakres ruchu i źródło problemu',
+  },
+  {
+    icon: Stethoscope,
+    title: 'Terapia manualna',
+    description: 'Indywidualnie dobrana praca z ciałem',
+  },
+  {
+    icon: FileText,
+    title: 'Zalecenia',
+    description: 'Otrzymujesz wskazówki do dalszej pracy',
+  },
+];
 
 export default async function HomePage() {
   const settings = await getSiteSettings();
-  const activeServices = settings.services.filter(s => s.isActive);
 
   return (
     <>
@@ -335,144 +352,96 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Services Preview Section - Premium Layout */}
-      <section className="py-16 lg:py-24 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
+      {/* First Visit Experience Section */}
+      <section className="py-16 lg:py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
+        {/* Subtle Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.03]">
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563EB' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             }}
           />
         </div>
 
         <Container>
-          <div className="relative">
+          <div className="relative max-w-5xl mx-auto">
             {/* Trust Element */}
-            <div className="flex items-center justify-center gap-2 mb-8">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full">
-                <Users className="w-4 h-4 text-[#3B82F6]" />
-                <span className="text-sm font-medium text-white">
-                  Indywidualna terapia dopasowana do Ciebie
+            <div className="flex items-center justify-center mb-8">
+              <div className="inline-flex items-center gap-2 bg-[#2563EB]/5 border border-[#2563EB]/10 px-4 py-2 rounded-full">
+                <Heart className="w-4 h-4 text-[#2563EB]" />
+                <span className="text-sm font-medium text-gray-700">
+                  Indywidualne podejście do każdego pacjenta
                 </span>
               </div>
             </div>
 
             {/* Section Header */}
-            <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                Wybierz rodzaj wizyty
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-5xl font-bold text-[#0F172A] mb-4">
+                Jak wygląda pierwsza wizyta?
               </h2>
-              <p className="text-gray-300 max-w-2xl mx-auto">
-                Wszystkie usługi dostosowane do Twoich indywidualnych potrzeb
+              <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+                Poznaj proces, który pomoże Ci wrócić do pełnej sprawności
               </p>
             </div>
 
-            {/* Two-Column Layout: Image + Services */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-              {/* Left: Image with Overlay */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl order-2 lg:order-1">
-                {/* Placeholder for therapy image */}
-                <div className="aspect-[4/3] bg-gradient-to-br from-[#2563EB]/30 via-[#3B82F6]/20 to-[#1E293B]/40 backdrop-blur-xl border-2 border-white/10">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center space-y-4">
-                      <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto backdrop-blur-sm border border-white/20">
-                        <Heart className="w-10 h-10 text-white/80" />
-                      </div>
-                      <p className="text-white/70 text-sm px-6">
-                        Profesjonalna terapia manualna
-                      </p>
-                    </div>
+            {/* Steps Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 mb-16">
+              {visitSteps.map((step, index) => (
+                <div
+                  key={index}
+                  className="relative group"
+                >
+                  {/* Step Number Badge */}
+                  <div className="absolute -top-3 -left-3 w-10 h-10 bg-gradient-to-br from-[#2563EB] to-[#3B82F6] rounded-full flex items-center justify-center shadow-lg z-10">
+                    <span className="text-white font-bold text-lg">{index + 1}</span>
                   </div>
-                </div>
-              </div>
 
-              {/* Right: Services List (Stacked) */}
-              <div className="space-y-4 order-1 lg:order-2">
-                {activeServices.map((service, index) => {
-                  const hasWeekendPrice = service.priceWeekend !== null;
-                  const priceDisplay = hasWeekendPrice
-                    ? `od ${formatPrice(service.priceWeekday)} PLN`
-                    : `${formatPrice(service.priceWeekday)} PLN`;
-
-                  // Check if this is the primary service (usually "Wizyta standardowa")
-                  const isPrimary = service.name.toLowerCase().includes('standardowa');
-
-                  return (
-                    <div
-                      key={service.id}
-                      className={cn(
-                        'relative group bg-white/95 backdrop-blur-sm rounded-xl p-6 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl',
-                        isPrimary && 'ring-2 ring-[#2563EB] shadow-xl shadow-blue-500/20'
-                      )}
-                    >
-                      {/* Primary Badge */}
-                      {isPrimary && (
-                        <div className="absolute -top-3 left-6">
-                          <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                            <TrendingUp className="w-3.5 h-3.5" />
-                            Najczęściej wybierana
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <h3 className={cn(
-                              'text-xl font-bold text-[#0F172A]',
-                              isPrimary && 'text-2xl'
-                            )}>
-                              {service.name}
-                            </h3>
-                            {service.showDuration && (
-                              <span className="text-xs font-medium text-[#2563EB] bg-[#2563EB]/10 px-2.5 py-1 rounded-full whitespace-nowrap">
-                                {service.durationMinutes} min
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                            {service.description}
-                          </p>
-                          <div className="flex items-center justify-between gap-4">
-                            <div>
-                              <p className="text-2xl font-bold text-[#0F172A]">
-                                {priceDisplay}
-                              </p>
-                            </div>
-                            <a
-                              href={BOOKSY_URL}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={cn(
-                                'inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200',
-                                isPrimary
-                                  ? 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] hover:shadow-lg hover:shadow-blue-500/30'
-                                  : 'bg-gray-100 text-[#0F172A] hover:bg-gray-200'
-                              )}
-                            >
-                              <Calendar className="w-4 h-4" />
-                              Zarezerwuj termin
-                            </a>
-                          </div>
-                        </div>
+                  {/* Card */}
+                  <Card hover className="h-full transition-all duration-300 group-hover:shadow-xl group-hover:scale-[1.02]">
+                    <CardContent className="pt-8">
+                      {/* Icon */}
+                      <div className="w-16 h-16 bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <step.icon className="w-8 h-8 text-[#2563EB]" />
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+
+                      {/* Content */}
+                      <h3 className="text-2xl font-bold text-[#0F172A] mb-3">
+                        {step.title}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        {step.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
             </div>
 
-            {/* View Full Pricing CTA */}
-            <div className="text-center mt-12">
-              <Link
-                href="/prices"
-                className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50 hover:scale-105"
-              >
-                Zobacz pełny cennik
-                <ArrowRight className="w-5 h-5" />
-              </Link>
+            {/* CTA Section */}
+            <div className="text-center bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl p-10 lg:p-12 shadow-2xl">
+              <p className="text-gray-300 text-lg mb-6 max-w-xl mx-auto">
+                Umów wizytę i sprawdź dostępne terminy
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href={BOOKSY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105"
+                >
+                  <Calendar className="w-5 h-5" />
+                  Zarezerwuj termin
+                </a>
+                <Link
+                  href="/prices"
+                  className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
+                >
+                  Zobacz cennik
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
             </div>
           </div>
         </Container>
