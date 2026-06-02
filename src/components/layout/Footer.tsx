@@ -20,6 +20,7 @@ const navigation = {
     { name: 'Rezerwacja', href: BOOKSY_URL, external: true },
     { name: 'Wideo Pomoc', href: '/video-pomoc', external: false },
     { name: 'Cennik', href: '/prices', external: false },
+    { name: 'Dla firm', href: '/dla-firm', external: false },
     { name: 'Kontakt', href: '/contact', external: false },
   ],
 };
