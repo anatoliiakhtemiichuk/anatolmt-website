@@ -99,20 +99,47 @@ export default function DlaFirmPage() {
 
     setIsSubmitting(true);
 
-    // Simulate form submission (same as /contact page)
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formType: 'b2b',
+          companyName: formData.companyName,
+          contactPerson: formData.contactPerson,
+          email: formData.email,
+          phone: formData.phone,
+          employeeCount: formData.employeeCount,
+          message: formData.message,
+        }),
+      });
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({
-      companyName: '',
-      contactPerson: '',
-      email: '',
-      phone: '',
-      employeeCount: '',
-      message: '',
-      rodoConsent: false,
-    });
+      const result = await response.json();
+
+      if (!result.success) {
+        alert(result.error || 'Wystąpił błąd. Spróbuj ponownie.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      setIsSubmitted(true);
+      setFormData({
+        companyName: '',
+        contactPerson: '',
+        email: '',
+        phone: '',
+        employeeCount: '',
+        message: '',
+        rodoConsent: false,
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Wystąpił błąd. Spróbuj ponownie.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

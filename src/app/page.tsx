@@ -99,19 +99,21 @@ const benefits = [
   },
 ];
 
-// Testimonials
-const testimonials = [
+// Review platforms
+const reviewPlatforms = [
   {
-    text: 'Profesjonalne podejście i duża ulga po wizycie.',
-    author: 'Klient gabinetu',
+    name: 'Google',
+    url: 'https://maps.app.goo.gl/cUQFbaBuvnUoHX1U6',
+    icon: Star,
+    bgColor: 'bg-gradient-to-br from-blue-500 to-blue-600',
+    hoverColor: 'hover:from-blue-600 hover:to-blue-700',
   },
   {
-    text: 'Świetna atmosfera, dokładny wywiad i skuteczna terapia.',
-    author: 'Klient gabinetu',
-  },
-  {
-    text: 'Polecam każdemu, kto ma napięcia po pracy przy komputerze.',
-    author: 'Klient gabinetu',
+    name: 'Booksy',
+    url: 'https://booksy.com/pl-pl/217565_anatol-m-t_fizjoterapia_3_warszawa#reviews-section',
+    icon: Star,
+    bgColor: 'bg-gradient-to-br from-purple-500 to-purple-600',
+    hoverColor: 'hover:from-purple-600 hover:to-purple-700',
   },
 ];
 
@@ -325,28 +327,31 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Reviews Section */}
       <section className="py-16 lg:py-24 bg-gray-50">
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
               Co mówią klienci?
             </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Zobacz prawdziwe opinie pacjentów
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} hover padding="lg">
-                <CardContent>
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-gray-700 mb-4 italic">"{testimonial.text}"</p>
-                  <p className="text-sm text-gray-500 font-medium">— {testimonial.author}</p>
-                </CardContent>
-              </Card>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-2xl mx-auto">
+            {reviewPlatforms.map((platform, index) => (
+              <a
+                key={index}
+                href={platform.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group flex items-center justify-center gap-3 ${platform.bgColor} ${platform.hoverColor} text-white px-8 py-6 rounded-xl font-semibold text-lg transition-all duration-200 hover:shadow-xl hover:scale-105 w-full sm:w-auto min-w-[200px]`}
+              >
+                <platform.icon className="w-6 h-6 fill-white" />
+                <span>Opinie {platform.name}</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </a>
             ))}
           </div>
         </Container>
