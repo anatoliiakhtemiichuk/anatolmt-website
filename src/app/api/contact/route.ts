@@ -92,9 +92,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email via Resend
+    // TODO: Change 'to' back to 'anatolmt.kontakt@gmail.com' once anatolmt.pl domain is verified in Resend
+    // TEMPORARY: Using account owner's email because onboarding@resend.dev can only send to verified addresses
     const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'anatolmt.kontakt@gmail.com',
+      to: 'anatoliiakhtemiichuk@gmail.com',
       replyTo: body.email,
       subject: subject,
       html: htmlContent,
