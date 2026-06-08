@@ -376,7 +376,7 @@ export default function DlaFirmPage() {
                     <div>
                       <h4 className="font-semibold text-[#0F172A] mb-1">Ustalamy podział kosztu</h4>
                       <p className="text-sm text-gray-600">
-                        Podpisujemy proste warunki współpracy i ustalamy, ile firma dofinansowuje do każdej wizyty
+                        Ustalamy zasady współpracy oraz wysokość dofinansowania do każdej wizyty
                       </p>
                     </div>
                   </div>
