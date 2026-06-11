@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import {
   Calendar,
@@ -269,10 +270,17 @@ export default async function HomePage() {
         <Container>
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
-              {/* Photo Placeholder */}
+              {/* Photo */}
               <div className="lg:col-span-1">
-                <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center border-2 border-[#2563EB]/20 shadow-lg">
-                  <User className="w-24 h-24 text-[#2563EB]/40" />
+                <div className="aspect-square rounded-2xl overflow-hidden shadow-lg">
+                  <Image
+                    src="/anatol.jpeg"
+                    alt="Anatol — terapeuta manualny"
+                    width={400}
+                    height={400}
+                    className="w-full h-full object-cover"
+                    priority
+                  />
                 </div>
               </div>
 
