@@ -25,11 +25,11 @@ const BOOKSY_URL = 'https://anatolmt.booksy.com/a/';
 
 // SEO Metadata for homepage
 export const metadata: Metadata = {
-  title: 'Terapeuta manualny Warszawa | M&T Anatol',
+  title: 'Anatol M&T | Masaż terapeutyczny i terapia manualna Warszawa',
   description:
     'Pozbądź się bólu pleców i napięcia mięśniowego. Profesjonalna terapia manualna w Warszawie – indywidualne podejście i skuteczne wsparcie.',
   openGraph: {
-    title: 'Terapeuta manualny Warszawa | M&T Anatol',
+    title: 'Anatol M&T | Masaż terapeutyczny i terapia manualna Warszawa',
     description:
       'Pozbądź się bólu pleców i napięcia mięśniowego. Profesjonalna terapia manualna w Warszawie – indywidualne podejście i skuteczne wsparcie.',
   },
@@ -41,9 +41,9 @@ const conditions = [
   'Napięcia szyi i barków',
   'Praca siedząca i stres',
   'Dolegliwości mięśni pośladkowych',
-  'Rwa kulszowa',
+  'Dolegliwości bólowe towarzyszące rwie kulszowej',
   'Kontuzje sportowe',
-  'Zamrożony bark',
+  'Napięcia i ograniczenia ruchomości przy zamrożonym barku',
   'Łokieć tenisisty',
   'Bruksizm i napięcia twarzy',
 ];

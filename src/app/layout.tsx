@@ -26,12 +26,11 @@ export const metadata: Metadata = {
     'Profesjonalna terapia manualna i masaż. Umów wizytę online. Doświadczony terapeuta, indywidualne podejście do każdego pacjenta.',
   keywords: [
     'terapia manualna',
-    'masaż',
-    'fizjoterapia',
-    'terapia',
-    'Polska',
+    'masaż terapeutyczny',
+    'masaż Warszawa',
+    'terapia manualna Warszawa',
     'rezerwacja online',
-    'M&T ANATOL',
+    'ANATOL M&T',
   ],
   authors: [{ name: 'M&T ANATOL' }],
   alternates: {
