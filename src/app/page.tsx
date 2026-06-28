@@ -265,12 +265,13 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* O mnie Section */}
+      {/* O mnie Section - TEMPORARILY HIDDEN */}
+      {/*
       <section className="py-16 lg:py-24 bg-gray-50">
         <Container>
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
-              {/* Photo */}
+              {/* Photo *\}
               <div className="lg:col-span-1">
                 <div className="aspect-square rounded-2xl overflow-hidden shadow-lg">
                   <Image
@@ -284,7 +285,7 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              {/* Content */}
+              {/* Content *\}
               <div className="lg:col-span-2">
                 <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-6">
                   O mnie
@@ -304,6 +305,7 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
+      */}
 
       {/* Dlaczego warto Section */}
       <section className="py-16 lg:py-24">
