@@ -18,6 +18,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
+import { Reveal } from '@/components/animations';
 import { getSiteSettings } from '@/lib/site-settings';
 
 // External booking URL (Booksy) - temporary redirect while internal booking is disabled
@@ -209,14 +210,16 @@ export default async function HomePage() {
       {/* Dla kogo jest terapia Section */}
       <section className="py-16 lg:py-24 bg-gray-50">
         <Container>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
-              Dla kogo jest terapia?
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Wspieram osoby zmagające się z różnorodnymi dolegliwościami i napięciami
-            </p>
-          </div>
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+                Dla kogo jest terapia?
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Wspieram osoby zmagające się z różnorodnymi dolegliwościami i napięciami
+              </p>
+            </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
             {conditions.map((condition, index) => (
@@ -238,14 +241,16 @@ export default async function HomePage() {
       {/* W czym mogę pomóc Section */}
       <section className="py-16 lg:py-24">
         <Container>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
-              W czym mogę pomóc?
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Oferuję szeroki zakres technik i metod dostosowanych do indywidualnych potrzeb
-            </p>
-          </div>
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+                W czym mogę pomóc?
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Oferuję szeroki zakres technik i metod dostosowanych do indywidualnych potrzeb
+              </p>
+            </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {servicesOffered.map((service, index) => (
@@ -310,14 +315,16 @@ export default async function HomePage() {
       {/* Dlaczego warto Section */}
       <section className="py-16 lg:py-24">
         <Container>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
-              Dlaczego warto?
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Profesjonalne podejście, które stawia na Twoje bezpieczeństwo i komfort
-            </p>
-          </div>
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+                Dlaczego warto?
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Profesjonalne podejście, które stawia na Twoje bezpieczeństwo i komfort
+              </p>
+            </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {benefits.map((benefit, index) => (
@@ -340,30 +347,32 @@ export default async function HomePage() {
       {/* Reviews Section */}
       <section className="py-16 lg:py-24 bg-gray-50">
         <Container>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
-              Co mówią klienci?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Zobacz prawdziwe opinie pacjentów
-            </p>
-          </div>
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+                Co mówią klienci?
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Zobacz prawdziwe opinie pacjentów
+              </p>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-2xl mx-auto">
-            {reviewPlatforms.map((platform, index) => (
-              <a
-                key={index}
-                href={platform.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group flex items-center justify-center gap-3 ${platform.bgColor} ${platform.hoverColor} text-white px-8 py-6 rounded-xl font-semibold text-lg transition-all duration-200 hover:shadow-xl hover:scale-105 w-full sm:w-auto min-w-[200px]`}
-              >
-                <platform.icon className="w-6 h-6 fill-white" />
-                <span>Opinie {platform.name}</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
-            ))}
-          </div>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-2xl mx-auto">
+              {reviewPlatforms.map((platform, index) => (
+                <a
+                  key={index}
+                  href={platform.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group flex items-center justify-center gap-3 ${platform.bgColor} ${platform.hoverColor} text-white px-8 py-6 rounded-xl font-semibold text-lg transition-all duration-200 hover:shadow-xl hover:scale-105 w-full sm:w-auto min-w-[200px]`}
+                >
+                  <platform.icon className="w-6 h-6 fill-white" />
+                  <span>Opinie {platform.name}</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </a>
+              ))}
+            </div>
+          </Reveal>
         </Container>
       </section>
 
@@ -382,24 +391,26 @@ export default async function HomePage() {
         <Container>
           <div className="relative max-w-5xl mx-auto">
             {/* Trust Element */}
-            <div className="flex items-center justify-center mb-8">
-              <div className="inline-flex items-center gap-2 bg-[#2563EB]/5 border border-[#2563EB]/10 px-4 py-2 rounded-full">
-                <Heart className="w-4 h-4 text-[#2563EB]" />
-                <span className="text-sm font-medium text-gray-700">
-                  Indywidualne podejście do każdego pacjenta
-                </span>
+            <Reveal>
+              <div className="flex items-center justify-center mb-8">
+                <div className="inline-flex items-center gap-2 bg-[#2563EB]/5 border border-[#2563EB]/10 px-4 py-2 rounded-full">
+                  <Heart className="w-4 h-4 text-[#2563EB]" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Indywidualne podejście do każdego pacjenta
+                  </span>
+                </div>
               </div>
-            </div>
 
-            {/* Section Header */}
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-5xl font-bold text-[#0F172A] mb-4">
-                Jak wygląda pierwsza wizyta?
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-                Poznaj proces, który pomoże Ci wrócić do pełnej sprawności
-              </p>
-            </div>
+              {/* Section Header */}
+              <div className="text-center mb-16">
+                <h2 className="text-3xl lg:text-5xl font-bold text-[#0F172A] mb-4">
+                  Jak wygląda pierwsza wizyta?
+                </h2>
+                <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+                  Poznaj proces, który pomoże Ci wrócić do pełnej sprawności
+                </p>
+              </div>
+            </Reveal>
 
             {/* Steps Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 mb-16">
@@ -475,62 +486,66 @@ export default async function HomePage() {
         </div>
 
         <Container>
-          <div className="relative text-center text-white">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2 rounded-full mb-6 shadow-lg">
-              <Sparkles className="w-4 h-4 text-yellow-300" />
-              <span className="text-sm font-semibold">-10% na pierwszą wizytę</span>
-            </div>
+          <Reveal>
+            <div className="relative text-center text-white">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2 rounded-full mb-6 shadow-lg">
+                <Sparkles className="w-4 h-4 text-yellow-300" />
+                <span className="text-sm font-semibold">-10% na pierwszą wizytę</span>
+              </div>
 
-            <h2 className="text-3xl lg:text-5xl font-bold mb-4">
-              Gotowy na pierwszą wizytę?
-            </h2>
-            <p className="text-gray-300 max-w-2xl mx-auto mb-8 text-lg">
-              Zarezerwuj termin online w mniej niż 2 minuty i skorzystaj z -10% na pierwszą wizytę.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href={BOOKSY_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
-              >
-                <Calendar className="w-5 h-5" />
-                Sprawdź dostępne terminy
-              </a>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
-              >
-                Zadaj pytanie
-              </Link>
+              <h2 className="text-3xl lg:text-5xl font-bold mb-4">
+                Gotowy na pierwszą wizytę?
+              </h2>
+              <p className="text-gray-300 max-w-2xl mx-auto mb-8 text-lg">
+                Zarezerwuj termin online w mniej niż 2 minuty i skorzystaj z -10% na pierwszą wizytę.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href={BOOKSY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
+                >
+                  <Calendar className="w-5 h-5" />
+                  Sprawdź dostępne terminy
+                </a>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
+                >
+                  Zadaj pytanie
+                </Link>
+              </div>
             </div>
-          </div>
+          </Reveal>
         </Container>
       </section>
 
       {/* Trust Indicators */}
       <section className="py-12 bg-white border-t border-gray-100">
         <Container>
-          <div className="flex flex-wrap justify-center items-center gap-8 text-gray-600">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-green-600" />
+          <Reveal>
+            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-600">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                </div>
+                <span className="text-sm font-medium">Dyplomowany terapeuta</span>
               </div>
-              <span className="text-sm font-medium">Dyplomowany terapeuta</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-[#2563EB]" />
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-[#2563EB]" />
+                </div>
+                <span className="text-sm font-medium">Indywidualne podejście</span>
               </div>
-              <span className="text-sm font-medium">Indywidualne podejście</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-purple-600" />
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-purple-600" />
+                </div>
+                <span className="text-sm font-medium">Rezerwacja online 24/7</span>
               </div>
-              <span className="text-sm font-medium">Rezerwacja online 24/7</span>
             </div>
-          </div>
+          </Reveal>
         </Container>
       </section>
     </>
