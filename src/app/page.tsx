@@ -11,14 +11,9 @@ import {
   ClipboardCheck,
   Star,
   Sparkles,
-  Users,
-  MessageCircle,
-  Search,
-  Stethoscope,
-  FileText,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
-import { Reveal, StaggerGrid, StaggerItem, FadeIn } from '@/components/animations';
+import { Reveal, StaggerGrid, StaggerItem, FadeIn, FirstVisitTimeline } from '@/components/animations';
 import { getSiteSettings } from '@/lib/site-settings';
 
 // External booking URL (Booksy) - temporary redirect while internal booking is disabled
@@ -121,30 +116,6 @@ const reviewPlatforms = [
 
 // Revalidate every 60 seconds to pick up settings changes
 export const revalidate = 60;
-
-// First visit steps
-const visitSteps = [
-  {
-    icon: MessageCircle,
-    title: 'Krótki wywiad',
-    description: 'Rozmawiamy o Twoich dolegliwościach i stylu życia',
-  },
-  {
-    icon: Search,
-    title: 'Ocena ciała',
-    description: 'Sprawdzam napięcia, zakres ruchu i źródło problemu',
-  },
-  {
-    icon: Stethoscope,
-    title: 'Terapia manualna',
-    description: 'Indywidualnie dobrana praca z ciałem',
-  },
-  {
-    icon: FileText,
-    title: 'Zalecenia',
-    description: 'Otrzymujesz wskazówki do dalszej pracy',
-  },
-];
 
 export default async function HomePage() {
   const settings = await getSiteSettings();
@@ -428,38 +399,8 @@ export default async function HomePage() {
               </div>
             </Reveal>
 
-            {/* Steps Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 mb-16">
-              {visitSteps.map((step, index) => (
-                <div
-                  key={index}
-                  className="relative group"
-                >
-                  {/* Step Number Badge */}
-                  <div className="absolute -top-3 -left-3 w-10 h-10 bg-gradient-to-br from-[#2563EB] to-[#3B82F6] rounded-full flex items-center justify-center shadow-lg z-10">
-                    <span className="text-white font-bold text-lg">{index + 1}</span>
-                  </div>
-
-                  {/* Card */}
-                  <Card hover className="h-full transition-all duration-300 group-hover:shadow-xl group-hover:scale-[1.02]">
-                    <CardContent className="pt-8">
-                      {/* Icon */}
-                      <div className="w-16 h-16 bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <step.icon className="w-8 h-8 text-[#2563EB]" />
-                      </div>
-
-                      {/* Content */}
-                      <h3 className="text-2xl font-bold text-[#0F172A] mb-3">
-                        {step.title}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {step.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
+            {/* Animated Timeline */}
+            <FirstVisitTimeline className="mb-16" />
 
             {/* CTA Section */}
             <div className="text-center bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl p-10 lg:p-12 shadow-2xl">
