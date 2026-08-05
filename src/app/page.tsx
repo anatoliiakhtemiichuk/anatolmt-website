@@ -18,7 +18,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
-import { Reveal, StaggerGrid, StaggerItem } from '@/components/animations';
+import { Reveal, StaggerGrid, StaggerItem, FadeIn } from '@/components/animations';
 import { getSiteSettings } from '@/lib/site-settings';
 
 // External booking URL (Booksy) - temporary redirect while internal booking is disabled
@@ -167,41 +167,51 @@ export default async function HomePage() {
           <div className="relative py-20 lg:py-32">
             <div className="max-w-3xl">
               {/* Promo Badge */}
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2 rounded-full mb-6 shadow-lg">
-                <Sparkles className="w-4 h-4 text-yellow-300" />
-                <span className="text-sm font-semibold text-white">
-                  -10% na pierwszą wizytę dla nowych klientów
-                </span>
-              </div>
+              <FadeIn delay={0.1}>
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2 rounded-full mb-6 shadow-lg">
+                  <Sparkles className="w-4 h-4 text-yellow-300" />
+                  <span className="text-sm font-semibold text-white">
+                    -10% na pierwszą wizytę dla nowych klientów
+                  </span>
+                </div>
+              </FadeIn>
 
               {/* Main H1 for SEO */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                Pozbądź się bólu pleców i napięcia mięśniowego
-              </h1>
-              <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
-                Profesjonalna terapia manualna w Warszawie – indywidualne podejście,
-                skuteczne wsparcie i bezpieczny powrót do sprawności.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                {/* Primary CTA */}
-                <a
-                  href={BOOKSY_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
-                >
-                  <Calendar className="w-5 h-5" />
-                  Umów wizytę teraz
-                </a>
-                {/* Secondary CTA */}
-                <Link
-                  href="/prices"
-                  className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
-                >
-                  Zobacz cennik
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </div>
+              <FadeIn delay={0.2}>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                  Pozbądź się bólu pleców i napięcia mięśniowego
+                </h1>
+              </FadeIn>
+
+              <FadeIn delay={0.3}>
+                <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
+                  Profesjonalna terapia manualna w Warszawie – indywidualne podejście,
+                  skuteczne wsparcie i bezpieczny powrót do sprawności.
+                </p>
+              </FadeIn>
+
+              <FadeIn delay={0.4}>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {/* Primary CTA */}
+                  <a
+                    href={BOOKSY_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    Umów wizytę teraz
+                  </a>
+                  {/* Secondary CTA */}
+                  <Link
+                    href="/prices"
+                    className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
+                  >
+                    Zobacz cennik
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </div>
+              </FadeIn>
             </div>
           </div>
         </Container>
