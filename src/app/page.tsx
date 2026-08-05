@@ -13,7 +13,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
-import { Reveal, StaggerGrid, StaggerItem, FadeIn, FirstVisitTimeline, AuroraBackground, MagneticButton } from '@/components/animations';
+import { Reveal, StaggerGrid, StaggerItem, FadeIn, FirstVisitTimeline, AuroraBackground, MagneticButton, TextReveal } from '@/components/animations';
 import { getSiteSettings } from '@/lib/site-settings';
 
 // External booking URL (Booksy) - temporary redirect while internal booking is disabled
@@ -141,11 +141,11 @@ export default async function HomePage() {
               </FadeIn>
 
               {/* Main H1 for SEO */}
-              <FadeIn delay={0.2}>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                <TextReveal delay={0.2} staggerDelay={0.06}>
                   Pozbądź się bólu pleców i napięcia mięśniowego
-                </h1>
-              </FadeIn>
+                </TextReveal>
+              </h1>
 
               <FadeIn delay={0.3}>
                 <p className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed">
