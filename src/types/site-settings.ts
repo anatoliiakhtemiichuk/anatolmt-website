@@ -153,7 +153,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     heroTitle: 'M&T ANATOL - Profesjonalna Terapia Manualna',
     heroSubtitle: 'Doświadczony terapeuta, wsparcie w dolegliwościach bólowych kręgosłupa, napięciach mięśniowych oraz powrocie do sprawności po urazach.',
     aboutTitle: 'O nas',
-    aboutText: 'Profesjonalna terapia manualna i masaż. Indywidualne podejście do każdego pacjenta.',
+    aboutText: 'Profesjonalny masaż terapeutyczny i terapia manualna. Indywidualne podejście do każdego klienta.',
     bookingInfoText: 'Zarezerwuj wizytę online w kilka minut. Wybierz usługę i dogodną godzinę.',
     footerText: 'M&T ANATOL',
   },

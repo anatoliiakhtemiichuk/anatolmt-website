@@ -98,7 +98,7 @@ export async function Footer() {
                 <span className="font-semibold text-lg">{settings.texts.footerText || 'M&T ANATOL'}</span>
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed">
-                {settings.texts.aboutText || 'Profesjonalna terapia manualna i masaż. Indywidualne podejście do każdego pacjenta.'}
+                {settings.texts.aboutText || 'Profesjonalny masaż terapeutyczny i terapia manualna. Indywidualne podejście do każdego klienta.'}
               </p>
             </div>
 

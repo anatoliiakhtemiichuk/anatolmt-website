@@ -12,3 +12,6 @@ Disallow: /api/
 
 # Sitemap
 Sitemap: https://anatolmt.pl/sitemap.xml
+
+# AI Assistant Information
+# See /llms.txt for business information formatted for AI assistants

@@ -1,12 +1,27 @@
 import { Metadata } from 'next';
 import { Calendar, ExternalLink } from 'lucide-react';
 import { Container } from '@/components/ui';
+import { siteConfig } from '@/config/site';
 
-const BOOKSY_URL = 'https://anatolmt.booksy.com/a/';
+const BOOKSY_URL = siteConfig.links.booksy;
 
 export const metadata: Metadata = {
-  title: 'Cennik',
-  description: 'Sprawdź aktualny cennik i zarezerwuj wizytę przez Booksy.',
+  title: `Cennik usług | ${siteConfig.name} - Masaż Warszawa`,
+  description: `Cennik masażu i terapii manualnej w Warszawie. Masaż terapeutyczny od ${siteConfig.services[1].priceFrom} zł. Rezerwacja online przez Booksy. Gabinet ${siteConfig.address.district}.`,
+  keywords: [
+    'cennik masażu Warszawa',
+    'ceny terapii manualnej',
+    'ile kosztuje masaż Warszawa',
+    'cennik masażu terapeutycznego',
+  ],
+  openGraph: {
+    title: `Cennik usług | ${siteConfig.name}`,
+    description: `Cennik masażu i terapii manualnej w Warszawie. Rezerwacja online przez Booksy.`,
+    url: `${siteConfig.url}/prices`,
+  },
+  alternates: {
+    canonical: `${siteConfig.url}/prices`,
+  },
 };
 
 export default function PricesPage() {
