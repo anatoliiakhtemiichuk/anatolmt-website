@@ -18,7 +18,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
-import { Reveal } from '@/components/animations';
+import { Reveal, StaggerGrid, StaggerItem } from '@/components/animations';
 import { getSiteSettings } from '@/lib/site-settings';
 
 // External booking URL (Booksy) - temporary redirect while internal booking is disabled
@@ -221,20 +221,22 @@ export default async function HomePage() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+          <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
             {conditions.map((condition, index) => (
-              <Card key={index} hover className="group">
-                <CardContent>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#2563EB]/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#2563EB]/20 transition-colors">
-                      <CheckCircle className="w-5 h-5 text-[#2563EB]" />
+              <StaggerItem key={index} index={index}>
+                <Card hover className="group h-full">
+                  <CardContent>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-[#2563EB]/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#2563EB]/20 transition-colors">
+                        <CheckCircle className="w-5 h-5 text-[#2563EB]" />
+                      </div>
+                      <h3 className="font-semibold text-[#0F172A]">{condition}</h3>
                     </div>
-                    <h3 className="font-semibold text-[#0F172A]">{condition}</h3>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGrid>
         </Container>
       </section>
 
@@ -252,21 +254,23 @@ export default async function HomePage() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {servicesOffered.map((service, index) => (
-              <Card key={index} hover variant="bordered" padding="lg">
-                <CardContent>
-                  <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center mb-4">
-                    <Heart className="w-6 h-6 text-[#2563EB]" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600">{service.description}</p>
-                </CardContent>
-              </Card>
+              <StaggerItem key={index} index={index}>
+                <Card hover variant="bordered" padding="lg" className="h-full">
+                  <CardContent>
+                    <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center mb-4">
+                      <Heart className="w-6 h-6 text-[#2563EB]" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
+                      {service.title}
+                    </h3>
+                    <p className="text-gray-600">{service.description}</p>
+                  </CardContent>
+                </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGrid>
         </Container>
       </section>
 
@@ -326,21 +330,23 @@ export default async function HomePage() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {benefits.map((benefit, index) => (
-              <Card key={index} hover className="text-center group">
-                <CardContent>
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#2563EB] to-[#3B82F6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                    <benefit.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-lg text-[#0F172A] mb-2">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm">{benefit.description}</p>
-                </CardContent>
-              </Card>
+              <StaggerItem key={index} index={index}>
+                <Card hover className="text-center group h-full">
+                  <CardContent>
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#2563EB] to-[#3B82F6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+                      <benefit.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-[#0F172A] mb-2">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm">{benefit.description}</p>
+                  </CardContent>
+                </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGrid>
         </Container>
       </section>
 
