@@ -48,7 +48,7 @@ export function Header() {
 
   return (
     <motion.header
-      className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100"
+      className="sticky top-0 z-[100] bg-white border-b border-gray-100"
       animate={{
         boxShadow: isScrolled
           ? '0 4px 20px -4px rgba(0, 0, 0, 0.1)'
@@ -169,8 +169,8 @@ export function Header() {
         {/* Mobile Navigation */}
         <div
           className={cn(
-            'lg:hidden overflow-hidden transition-all duration-300 ease-in-out',
-            mobileMenuOpen ? 'max-h-80 pb-4' : 'max-h-0'
+            'lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-white',
+            mobileMenuOpen ? 'max-h-[500px] pb-4' : 'max-h-0'
           )}
         >
           <div className="flex flex-col gap-1 pt-2">

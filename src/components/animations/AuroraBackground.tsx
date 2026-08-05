@@ -15,7 +15,7 @@ export function AuroraBackground({ className = '' }: AuroraBackgroundProps) {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <div className={`absolute inset-0 overflow-hidden ${className}`}>
+    <div className={`absolute inset-0 overflow-hidden z-0 ${className}`}>
       {/* Base gradient layer */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A]" />
 

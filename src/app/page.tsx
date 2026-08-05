@@ -123,12 +123,12 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative text-white overflow-hidden">
+      <section className="relative text-white overflow-hidden isolate">
         {/* Aurora Background */}
         <AuroraBackground />
 
         <Container>
-          <div className="relative py-20 lg:py-32">
+          <div className="relative z-10 py-20 lg:py-32">
             <div className="max-w-3xl">
               {/* Promo Badge */}
               <FadeIn delay={0.1}>
