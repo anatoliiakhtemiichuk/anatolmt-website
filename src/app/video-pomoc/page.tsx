@@ -383,7 +383,7 @@ function VideoPomocContent() {
                       Dla kogo są te materiały?
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      Materiały są przeznaczone dla pacjentów po wizycie terapeutycznej,
+                      Materiały są przeznaczone dla klientów po wizycie,
                       jako wsparcie w kontynuowaniu ćwiczeń w domu. Mają charakter
                       edukacyjny i nie zastępują konsultacji ze specjalistą.
                     </p>

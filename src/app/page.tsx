@@ -14,20 +14,37 @@ import {
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
 import { Reveal, StaggerGrid, StaggerItem, FadeIn, FirstVisitTimeline, AuroraBackground, MagneticButton, TextReveal } from '@/components/animations';
+import { LocalBusinessSchema, ServiceSchema, WebSiteSchema, FAQSchema } from '@/components/seo';
+import { siteConfig } from '@/config/site';
 import { getSiteSettings } from '@/lib/site-settings';
 
-// External booking URL (Booksy) - temporary redirect while internal booking is disabled
-const BOOKSY_URL = 'https://anatolmt.booksy.com/a/';
+// External booking URL (Booksy) - uses centralized config
+const BOOKSY_URL = siteConfig.links.booksy;
 
 // SEO Metadata for homepage
 export const metadata: Metadata = {
-  title: 'Anatol M&T | Masaż terapeutyczny i terapia manualna Warszawa',
-  description:
-    'Pozbądź się bólu pleców i napięcia mięśniowego. Profesjonalna terapia manualna w Warszawie – indywidualne podejście i skuteczne wsparcie.',
+  title: `${siteConfig.name} | Masaż terapeutyczny i terapia manualna ${siteConfig.address.city}`,
+  description: siteConfig.description,
+  keywords: [
+    'terapia manualna Warszawa',
+    'masaż terapeutyczny Warszawa',
+    'masaż Saska Kępa',
+    'ból kręgosłupa masaż',
+    'masaż Praga Południe',
+    'terapeuta manualny Warszawa',
+    'masaż na napięcia mięśniowe',
+    ...siteConfig.conditions,
+  ],
   openGraph: {
-    title: 'Anatol M&T | Masaż terapeutyczny i terapia manualna Warszawa',
-    description:
-      'Pozbądź się bólu pleców i napięcia mięśniowego. Profesjonalna terapia manualna w Warszawie – indywidualne podejście i skuteczne wsparcie.',
+    title: `${siteConfig.name} | Masaż terapeutyczny i terapia manualna ${siteConfig.address.city}`,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
+    type: 'website',
+  },
+  alternates: {
+    canonical: siteConfig.url,
   },
 };
 
@@ -122,6 +139,12 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* JSON-LD Structured Data */}
+      <LocalBusinessSchema />
+      <ServiceSchema />
+      <WebSiteSchema />
+      <FAQSchema faqs={siteConfig.faqs} />
+
       {/* Hero Section */}
       <section className="relative text-white overflow-hidden isolate">
         {/* Aurora Background */}
@@ -335,7 +358,7 @@ export default async function HomePage() {
                 Co mówią klienci?
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Zobacz prawdziwe opinie pacjentów
+                Zobacz prawdziwe opinie klientów
               </p>
             </div>
 
@@ -378,7 +401,7 @@ export default async function HomePage() {
                 <div className="inline-flex items-center gap-2 bg-[#2563EB]/5 border border-[#2563EB]/10 px-4 py-2 rounded-full">
                   <Heart className="w-4 h-4 text-[#2563EB]" />
                   <span className="text-sm font-medium text-gray-700">
-                    Indywidualne podejście do każdego pacjenta
+                    Indywidualne podejście do każdego klienta
                   </span>
                 </div>
               </div>
@@ -423,6 +446,39 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-24 bg-gray-50">
+        <Container>
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+                Najczęściej zadawane pytania
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Odpowiedzi na pytania, które najczęściej słyszę od klientów
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="max-w-3xl mx-auto">
+            <StaggerGrid className="space-y-4">
+              {siteConfig.faqs.map((faq, index) => (
+                <StaggerItem key={index} index={index}>
+                  <Card hover variant="bordered" className="bg-white">
+                    <CardContent>
+                      <h3 className="font-semibold text-[#0F172A] text-lg mb-2">
+                        {faq.question}
+                      </h3>
+                      <p className="text-gray-600">{faq.answer}</p>
+                    </CardContent>
+                  </Card>
+                </StaggerItem>
+              ))}
+            </StaggerGrid>
           </div>
         </Container>
       </section>

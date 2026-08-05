@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: '%s | M&T ANATOL',
   },
   description:
-    'Profesjonalna terapia manualna i masaż. Umów wizytę online. Doświadczony terapeuta, indywidualne podejście do każdego pacjenta.',
+    'Profesjonalny masaż terapeutyczny i terapia manualna. Umów wizytę online. Doświadczony terapeuta, indywidualne podejście do każdego klienta.',
   keywords: [
     'terapia manualna',
     'masaż terapeutyczny',

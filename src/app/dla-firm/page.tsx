@@ -455,7 +455,7 @@ export default function DlaFirmPage() {
                     </h3>
                     <p className="text-gray-600">
                       Specjalizuję się w bólu kręgosłupa, karku i przeciążeniach od pracy siedzącej.
-                      Indywidualne podejście do każdego pacjenta.
+                      Indywidualne podejście do każdego klienta.
                     </p>
                   </div>
                 </div>
@@ -509,7 +509,7 @@ export default function DlaFirmPage() {
                       </a>
                     </h3>
                     <p className="text-gray-600">
-                      Sprawdź sam opinie zadowolonych pacjentów, którzy polecają moje usługi.
+                      Sprawdź sam opinie zadowolonych klientów, którzy polecają moje usługi.
                     </p>
                   </div>
                 </div>
