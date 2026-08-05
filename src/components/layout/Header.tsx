@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Calendar, Phone } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
@@ -21,7 +22,22 @@ const navigation = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
+
+  // Track scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    // Check initial scroll position
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -31,14 +47,45 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+    <motion.header
+      className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100"
+      animate={{
+        boxShadow: isScrolled
+          ? '0 4px 20px -4px rgba(0, 0, 0, 0.1)'
+          : '0 0 0 0 rgba(0, 0, 0, 0)',
+      }}
+      transition={{
+        duration: prefersReducedMotion ? 0 : 0.3,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
       <Container>
-        <nav className="flex items-center justify-between h-16 lg:h-20">
+        <motion.nav
+          className="flex items-center justify-between"
+          animate={{
+            height: isScrolled ? 56 : 64,
+          }}
+          transition={{
+            duration: prefersReducedMotion ? 0 : 0.3,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          style={{ minHeight: 56 }}
+        >
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
+            <motion.div
+              className="bg-[#2563EB] rounded-lg flex items-center justify-center transition-transform group-hover:scale-105"
+              animate={{
+                width: isScrolled ? 36 : 40,
+                height: isScrolled ? 36 : 40,
+              }}
+              transition={{
+                duration: prefersReducedMotion ? 0 : 0.3,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
               <span className="text-white font-bold text-sm">M&T</span>
-            </div>
+            </motion.div>
             <div className="hidden sm:block">
               <span className="font-semibold text-[#0F172A] text-lg">
                 M&T ANATOL
@@ -117,7 +164,7 @@ export function Header() {
               )}
             </button>
           </div>
-        </nav>
+        </motion.nav>
 
         {/* Mobile Navigation */}
         <div
@@ -169,6 +216,6 @@ export function Header() {
           </div>
         </div>
       </Container>
-    </header>
+    </motion.header>
   );
 }
