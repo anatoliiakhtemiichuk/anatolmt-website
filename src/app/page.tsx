@@ -13,7 +13,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
-import { Reveal, StaggerGrid, StaggerItem, FadeIn, FirstVisitTimeline, AuroraBackground } from '@/components/animations';
+import { Reveal, StaggerGrid, StaggerItem, FadeIn, FirstVisitTimeline, AuroraBackground, MagneticButton } from '@/components/animations';
 import { getSiteSettings } from '@/lib/site-settings';
 
 // External booking URL (Booksy) - temporary redirect while internal booking is disabled
@@ -157,15 +157,17 @@ export default async function HomePage() {
               <FadeIn delay={0.4}>
                 <div className="flex flex-col sm:flex-row gap-4">
                   {/* Primary CTA */}
-                  <a
-                    href={BOOKSY_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
-                  >
-                    <Calendar className="w-5 h-5" />
-                    Umów wizytę teraz
-                  </a>
+                  <MagneticButton>
+                    <a
+                      href={BOOKSY_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
+                    >
+                      <Calendar className="w-5 h-5" />
+                      Umów wizytę teraz
+                    </a>
+                  </MagneticButton>
                   {/* Secondary CTA */}
                   <Link
                     href="/prices"
@@ -401,15 +403,17 @@ export default async function HomePage() {
                 Umów wizytę i sprawdź dostępne terminy
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href={BOOKSY_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105"
-                >
-                  <Calendar className="w-5 h-5" />
-                  Zarezerwuj termin
-                </a>
+                <MagneticButton>
+                  <a
+                    href={BOOKSY_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    Zarezerwuj termin
+                  </a>
+                </MagneticButton>
                 <Link
                   href="/prices"
                   className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
@@ -450,15 +454,17 @@ export default async function HomePage() {
                 Zarezerwuj termin online w mniej niż 2 minuty i skorzystaj z -10% na pierwszą wizytę.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href={BOOKSY_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
-                >
-                  <Calendar className="w-5 h-5" />
-                  Sprawdź dostępne terminy
-                </a>
+                <MagneticButton>
+                  <a
+                    href={BOOKSY_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    Sprawdź dostępne terminy
+                  </a>
+                </MagneticButton>
                 <Link
                   href="/contact"
                   className="inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-white/10 hover:border-white/50"
