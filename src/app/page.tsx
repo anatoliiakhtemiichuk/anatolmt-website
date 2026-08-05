@@ -208,7 +208,7 @@ export default async function HomePage() {
                 <Card hover className="group h-full">
                   <CardContent>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-[#2563EB]/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#2563EB]/20 transition-colors">
+                      <div className="w-10 h-10 bg-[#2563EB]/10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-[#2563EB]/20 group-hover:scale-110">
                         <CheckCircle className="w-5 h-5 text-[#2563EB]" />
                       </div>
                       <h3 className="font-semibold text-[#0F172A]">{condition}</h3>
@@ -238,9 +238,9 @@ export default async function HomePage() {
           <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {servicesOffered.map((service, index) => (
               <StaggerItem key={index} index={index}>
-                <Card hover variant="bordered" padding="lg" className="h-full">
+                <Card hover variant="bordered" padding="lg" className="h-full group">
                   <CardContent>
-                    <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center mb-4 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-[#2563EB]/20 group-hover:scale-110">
                       <Heart className="w-6 h-6 text-[#2563EB]" />
                     </div>
                     <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
@@ -316,7 +316,7 @@ export default async function HomePage() {
               <StaggerItem key={index} index={index}>
                 <Card hover className="text-center group h-full">
                   <CardContent>
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#2563EB] to-[#3B82F6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#2563EB] to-[#3B82F6] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-blue-500/25">
                       <benefit.icon className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="font-semibold text-lg text-[#0F172A] mb-2">

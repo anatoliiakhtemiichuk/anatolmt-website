@@ -35,7 +35,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     };
 
     const hoverStyles = hover
-      ? 'transition-all duration-300 hover:shadow-xl hover:-translate-y-1'
+      ? 'transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.15)] hover:-translate-y-1'
       : '';
 
     return (
