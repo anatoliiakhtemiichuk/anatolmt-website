@@ -14,7 +14,8 @@ import {
   Star,
   TrendingDown,
   Target,
-  Clock
+  Clock,
+  ChevronDown
 } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
 
@@ -50,6 +51,11 @@ export default function DlaFirmPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<'test' | 'dofinansowanie' | null>(null);
+
+  const toggleCard = (card: 'test' | 'dofinansowanie') => {
+    setExpandedCard(expandedCard === card ? null : card);
+  };
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -267,168 +273,228 @@ export default function DlaFirmPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Card 1: Test bez ryzyka */}
-            <Card variant="bordered" hover className="flex flex-col">
-              <CardContent className="flex flex-col h-full">
-                {/* Badge */}
-                <span className="inline-flex items-center gap-2 bg-[#2563EB]/10 text-[#2563EB] px-3 py-1.5 rounded-full text-sm font-medium mb-6 self-start">
-                  Na start — sprawdź zainteresowanie
-                </span>
-
-                {/* Title */}
-                <h3 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-4">
-                  Test bez ryzyka
-                </h3>
-
-                {/* Description */}
-                <p className="text-gray-600 mb-6">
-                  Firma nic nie płaci z góry. Pracownicy dostają zniżkę na pierwszą wizytę przez dedykowany kod firmy.
-                </p>
-
-                {/* 3 Steps */}
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
-                      1
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[#0F172A] mb-1">Ustalamy kod firmy i zniżkę</h4>
-                      <p className="text-sm text-gray-600">
-                        Wspólnie tworzymy unikalny kod rabatowy dla Twojej firmy
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
-                      2
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[#0F172A] mb-1">Firma informuje pracowników</h4>
-                      <p className="text-sm text-gray-600">
-                        Przekazujesz kod zespołowi. Każdy pracownik może go użyć przy rezerwacji pierwszej wizyty
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
-                      3
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[#0F172A] mb-1">Sprawdzamy razem efekt</h4>
-                      <p className="text-sm text-gray-600">
-                        Po 2-4 tygodniach oceniamy zainteresowanie i decydujemy o dalszej współpracy
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Highlight Box */}
-                <div className="bg-[#2563EB]/5 border border-[#2563EB]/20 rounded-lg p-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-[#2563EB] flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-[#0F172A] font-medium text-sm">
-                        Zero zobowiązań finansowych na start
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Spacer */}
-                <div className="flex-grow" />
-
-                {/* CTA Button */}
+            <Card variant="bordered" className="flex flex-col overflow-hidden">
+              <CardContent className="flex flex-col h-full p-0">
+                {/* Clickable Header */}
                 <button
-                  onClick={scrollToForm}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-lg"
+                  onClick={() => toggleCard('test')}
+                  className="w-full text-left p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
                 >
-                  Umów rozmowę
-                  <ArrowDown className="w-5 h-5" />
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      {/* Badge */}
+                      <span className="inline-flex items-center gap-2 bg-[#2563EB]/10 text-[#2563EB] px-3 py-1.5 rounded-full text-sm font-medium mb-4">
+                        Na start - sprawdź zainteresowanie
+                      </span>
+
+                      {/* Title */}
+                      <h3 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-2">
+                        Test bez ryzyka
+                      </h3>
+
+                      {/* Short intro */}
+                      <p className="text-gray-600">
+                        Firma nic nie płaci z góry. Pracownicy dostają zniżkę na pierwszą wizytę.
+                      </p>
+                    </div>
+
+                    {/* Chevron */}
+                    <ChevronDown
+                      className={`w-6 h-6 text-gray-400 flex-shrink-0 mt-1 transition-transform duration-300 ${
+                        expandedCard === 'test' ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
                 </button>
+
+                {/* Collapsible Content */}
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    expandedCard === 'test'
+                      ? 'grid-rows-[1fr] opacity-100'
+                      : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-6 pb-6">
+                      {/* 3 Steps */}
+                      <div className="space-y-4 mb-6">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            1
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Ustalamy kod firmy i zniżkę</h4>
+                            <p className="text-sm text-gray-600">
+                              Wspólnie tworzymy unikalny kod rabatowy dla Twojej firmy
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            2
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Firma informuje pracowników</h4>
+                            <p className="text-sm text-gray-600">
+                              Przekazujesz kod zespołowi. Każdy pracownik może go użyć przy rezerwacji pierwszej wizyty
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            3
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Sprawdzamy razem efekt</h4>
+                            <p className="text-sm text-gray-600">
+                              Po 2-4 tygodniach oceniamy zainteresowanie i decydujemy o dalszej współpracy
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Highlight Box */}
+                      <div className="bg-[#2563EB]/5 border border-[#2563EB]/20 rounded-lg p-4 mb-6">
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-[#2563EB] flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-[#0F172A] font-medium text-sm">
+                              Zero zobowiązań finansowych na start
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* CTA Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          scrollToForm();
+                        }}
+                        className="w-full inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-lg"
+                      >
+                        Umów rozmowę
+                        <ArrowDown className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
             {/* Card 2: Dofinansowanie wizyt */}
-            <Card variant="bordered" hover className="flex flex-col">
-              <CardContent className="flex flex-col h-full">
-                {/* Badge */}
-                <span className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-medium mb-6 self-start">
-                  Stała współpraca — realny benefit dla zespołu
-                </span>
-
-                {/* Title */}
-                <h3 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-4">
-                  Dofinansowanie wizyt
-                </h3>
-
-                {/* Description */}
-                <p className="text-gray-600 mb-6">
-                  Firma dofinansowuje ustaloną część każdej wizyty, pracownik dopłaca resztę. Proste rozwiązanie z jedną fakturą miesięcznie.
-                </p>
-
-                {/* 3 Steps */}
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
-                      1
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[#0F172A] mb-1">Ustalamy podział kosztu</h4>
-                      <p className="text-sm text-gray-600">
-                        Ustalamy zasady współpracy oraz wysokość dofinansowania do każdej wizyty
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
-                      2
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[#0F172A] mb-1">Pracownicy rezerwują przez Booksy</h4>
-                      <p className="text-sm text-gray-600">
-                        Płacą swoją część na miejscu przez dedykowaną usługę partnerską danej firmy
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
-                      3
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[#0F172A] mb-1">Co miesiąc jedna faktura</h4>
-                      <p className="text-sm text-gray-600">
-                        Otrzymujesz jedną fakturę za faktyczną liczbę wizyt zespołu. Kwoty i szczegóły ustalamy indywidualnie
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Key Info Box */}
-                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-[#0F172A] font-medium text-sm">
-                        Realny benefit zdrowotny dla pracowników, prosty proces rozliczeń dla firmy
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Spacer */}
-                <div className="flex-grow" />
-
-                {/* CTA Button */}
+            <Card variant="bordered" className="flex flex-col overflow-hidden">
+              <CardContent className="flex flex-col h-full p-0">
+                {/* Clickable Header */}
                 <button
-                  onClick={scrollToForm}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-emerald-700 hover:shadow-lg"
+                  onClick={() => toggleCard('dofinansowanie')}
+                  className="w-full text-left p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
                 >
-                  Umów rozmowę
-                  <ArrowDown className="w-5 h-5" />
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      {/* Badge */}
+                      <span className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-medium mb-4">
+                        Stała współpraca - realny benefit dla zespołu
+                      </span>
+
+                      {/* Title */}
+                      <h3 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-2">
+                        Dofinansowanie wizyt
+                      </h3>
+
+                      {/* Short intro */}
+                      <p className="text-gray-600">
+                        Firma dofinansowuje ustaloną część każdej wizyty, pracownik dopłaca resztę.
+                      </p>
+                    </div>
+
+                    {/* Chevron */}
+                    <ChevronDown
+                      className={`w-6 h-6 text-gray-400 flex-shrink-0 mt-1 transition-transform duration-300 ${
+                        expandedCard === 'dofinansowanie' ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
                 </button>
+
+                {/* Collapsible Content */}
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    expandedCard === 'dofinansowanie'
+                      ? 'grid-rows-[1fr] opacity-100'
+                      : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-6 pb-6">
+                      {/* 3 Steps */}
+                      <div className="space-y-4 mb-6">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            1
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Ustalamy podział kosztu</h4>
+                            <p className="text-sm text-gray-600">
+                              Ustalamy zasady współpracy oraz wysokość dofinansowania do każdej wizyty
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            2
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Pracownicy rezerwują przez Booksy</h4>
+                            <p className="text-sm text-gray-600">
+                              Płacą swoją część na miejscu przez dedykowaną usługę partnerską danej firmy
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            3
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Co miesiąc jedna faktura</h4>
+                            <p className="text-sm text-gray-600">
+                              Otrzymujesz jedną fakturę za faktyczną liczbę wizyt zespołu. Kwoty i szczegóły ustalamy indywidualnie
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Key Info Box */}
+                      <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4 mb-6">
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-[#0F172A] font-medium text-sm">
+                              Realny benefit zdrowotny dla pracowników, prosty proces rozliczeń dla firmy
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* CTA Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          scrollToForm();
+                        }}
+                        className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-emerald-700 hover:shadow-lg"
+                      >
+                        Umów rozmowę
+                        <ArrowDown className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -473,7 +539,7 @@ export default function DlaFirmPage() {
                       Gabinet blisko biura
                     </h3>
                     <p className="text-gray-600">
-                      Saska Kępa, Plac Przymierza 2/3 — dogodna lokalizacja, łatwo dostępna
+                      Saska Kępa, Plac Przymierza 2/3 - dogodna lokalizacja, łatwo dostępna
                       komunikacją miejską i samochodem.
                     </p>
                   </div>
