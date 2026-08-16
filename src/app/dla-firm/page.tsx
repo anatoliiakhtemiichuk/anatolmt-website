@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowDown,
   CheckCircle,
@@ -18,6 +19,57 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
+
+// Staggered animation variants for accordion content
+const containerVariants = {
+  hidden: {
+    height: 0,
+    opacity: 0,
+  },
+  visible: {
+    height: 'auto',
+    opacity: 1,
+    transition: {
+      height: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as const },
+      opacity: { duration: 0.3, delay: 0.1 },
+      staggerChildren: 0.08,
+      delayChildren: 0.15,
+    },
+  },
+  exit: {
+    height: 0,
+    opacity: 0,
+    transition: {
+      height: { duration: 0.3, ease: [0.4, 0, 0.2, 1] as const },
+      opacity: { duration: 0.2 },
+      staggerChildren: 0.03,
+      staggerDirection: -1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 16,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: [0.4, 0, 0.2, 1] as const,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: {
+      duration: 0.2,
+      ease: [0.4, 0, 1, 1] as const,
+    },
+  },
+};
 
 interface FormData {
   companyName: string;
@@ -299,27 +351,28 @@ export default function DlaFirmPage() {
                     </div>
 
                     {/* Chevron */}
-                    <ChevronDown
-                      className={`w-6 h-6 text-gray-400 flex-shrink-0 mt-1 transition-transform duration-300 ${
-                        expandedCard === 'test' ? 'rotate-180' : ''
-                      }`}
-                    />
+                    <motion.div
+                      animate={{ rotate: expandedCard === 'test' ? 180 : 0 }}
+                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <ChevronDown className="w-6 h-6 text-gray-400 flex-shrink-0" />
+                    </motion.div>
                   </div>
                 </button>
 
                 {/* Collapsible Content */}
-                <div
-                  className={`grid transition-all duration-300 ease-in-out ${
-                    expandedCard === 'test'
-                      ? 'grid-rows-[1fr] opacity-100'
-                      : 'grid-rows-[0fr] opacity-0'
-                  }`}
-                >
-                  <div className="overflow-hidden">
-                    <div className="px-6 pb-6">
-                      {/* 3 Steps */}
-                      <div className="space-y-4 mb-6">
-                        <div className="flex items-start gap-3">
+                <AnimatePresence initial={false}>
+                  {expandedCard === 'test' && (
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6">
+                        {/* Step 1 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-4">
                           <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
                             1
                           </div>
@@ -329,9 +382,10 @@ export default function DlaFirmPage() {
                               Wspólnie tworzymy unikalny kod rabatowy dla Twojej firmy
                             </p>
                           </div>
-                        </div>
+                        </motion.div>
 
-                        <div className="flex items-start gap-3">
+                        {/* Step 2 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-4">
                           <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
                             2
                           </div>
@@ -341,9 +395,10 @@ export default function DlaFirmPage() {
                               Przekazujesz kod zespołowi. Każdy pracownik może go użyć przy rezerwacji pierwszej wizyty
                             </p>
                           </div>
-                        </div>
+                        </motion.div>
 
-                        <div className="flex items-start gap-3">
+                        {/* Step 3 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-6">
                           <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
                             3
                           </div>
@@ -353,35 +408,39 @@ export default function DlaFirmPage() {
                               Po 2-4 tygodniach oceniamy zainteresowanie i decydujemy o dalszej współpracy
                             </p>
                           </div>
-                        </div>
-                      </div>
+                        </motion.div>
 
-                      {/* Highlight Box */}
-                      <div className="bg-[#2563EB]/5 border border-[#2563EB]/20 rounded-lg p-4 mb-6">
-                        <div className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-[#2563EB] flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-[#0F172A] font-medium text-sm">
-                              Zero zobowiązań finansowych na start
-                            </p>
+                        {/* Highlight Box */}
+                        <motion.div
+                          variants={itemVariants}
+                          className="bg-[#2563EB]/5 border border-[#2563EB]/20 rounded-lg p-4 mb-6"
+                        >
+                          <div className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-[#2563EB] flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-[#0F172A] font-medium text-sm">
+                                Zero zobowiązań finansowych na start
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </div>
+                        </motion.div>
 
-                      {/* CTA Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          scrollToForm();
-                        }}
-                        className="w-full inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-lg"
-                      >
-                        Umów rozmowę
-                        <ArrowDown className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                        {/* CTA Button */}
+                        <motion.button
+                          variants={itemVariants}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            scrollToForm();
+                          }}
+                          className="w-full inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-lg"
+                        >
+                          Umów rozmowę
+                          <ArrowDown className="w-5 h-5" />
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </CardContent>
             </Card>
 
@@ -412,27 +471,28 @@ export default function DlaFirmPage() {
                     </div>
 
                     {/* Chevron */}
-                    <ChevronDown
-                      className={`w-6 h-6 text-gray-400 flex-shrink-0 mt-1 transition-transform duration-300 ${
-                        expandedCard === 'dofinansowanie' ? 'rotate-180' : ''
-                      }`}
-                    />
+                    <motion.div
+                      animate={{ rotate: expandedCard === 'dofinansowanie' ? 180 : 0 }}
+                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <ChevronDown className="w-6 h-6 text-gray-400 flex-shrink-0" />
+                    </motion.div>
                   </div>
                 </button>
 
                 {/* Collapsible Content */}
-                <div
-                  className={`grid transition-all duration-300 ease-in-out ${
-                    expandedCard === 'dofinansowanie'
-                      ? 'grid-rows-[1fr] opacity-100'
-                      : 'grid-rows-[0fr] opacity-0'
-                  }`}
-                >
-                  <div className="overflow-hidden">
-                    <div className="px-6 pb-6">
-                      {/* 3 Steps */}
-                      <div className="space-y-4 mb-6">
-                        <div className="flex items-start gap-3">
+                <AnimatePresence initial={false}>
+                  {expandedCard === 'dofinansowanie' && (
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6">
+                        {/* Step 1 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-4">
                           <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
                             1
                           </div>
@@ -442,9 +502,10 @@ export default function DlaFirmPage() {
                               Ustalamy zasady współpracy oraz wysokość dofinansowania do każdej wizyty
                             </p>
                           </div>
-                        </div>
+                        </motion.div>
 
-                        <div className="flex items-start gap-3">
+                        {/* Step 2 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-4">
                           <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
                             2
                           </div>
@@ -454,9 +515,10 @@ export default function DlaFirmPage() {
                               Płacą swoją część na miejscu przez dedykowaną usługę partnerską danej firmy
                             </p>
                           </div>
-                        </div>
+                        </motion.div>
 
-                        <div className="flex items-start gap-3">
+                        {/* Step 3 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-6">
                           <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
                             3
                           </div>
@@ -466,35 +528,39 @@ export default function DlaFirmPage() {
                               Otrzymujesz jedną fakturę za faktyczną liczbę wizyt zespołu. Kwoty i szczegóły ustalamy indywidualnie
                             </p>
                           </div>
-                        </div>
-                      </div>
+                        </motion.div>
 
-                      {/* Key Info Box */}
-                      <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4 mb-6">
-                        <div className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-[#0F172A] font-medium text-sm">
-                              Realny benefit zdrowotny dla pracowników, prosty proces rozliczeń dla firmy
-                            </p>
+                        {/* Key Info Box */}
+                        <motion.div
+                          variants={itemVariants}
+                          className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4 mb-6"
+                        >
+                          <div className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-[#0F172A] font-medium text-sm">
+                                Realny benefit zdrowotny dla pracowników, prosty proces rozliczeń dla firmy
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </div>
+                        </motion.div>
 
-                      {/* CTA Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          scrollToForm();
-                        }}
-                        className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-emerald-700 hover:shadow-lg"
-                      >
-                        Umów rozmowę
-                        <ArrowDown className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                        {/* CTA Button */}
+                        <motion.button
+                          variants={itemVariants}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            scrollToForm();
+                          }}
+                          className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-emerald-700 hover:shadow-lg"
+                        >
+                          Umów rozmowę
+                          <ArrowDown className="w-5 h-5" />
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </CardContent>
             </Card>
           </div>
