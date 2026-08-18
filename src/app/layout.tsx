@@ -24,12 +24,12 @@ export const metadata: Metadata = {
     template: '%s | M&T ANATOL',
   },
   description:
-    'Profesjonalny masaż terapeutyczny i masaż tkanek głębokich. Umów wizytę online. Doświadczony masażysta, indywidualne podejście do każdego klienta.',
+    'Profesjonalny masaż terapeutyczny i masaż powięziowy. Umów wizytę online. Doświadczony masażysta, indywidualne podejście do każdego klienta.',
   keywords: [
     'masaż leczniczy',
     'masaż terapeutyczny',
     'masaż Warszawa',
-    'masaż tkanek głębokich Warszawa',
+    'masaż powięziowy Warszawa',
     'rezerwacja online',
     'ANATOL M&T',
   ],
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: 'M&T ANATOL',
     title: 'M&T ANATOL',
     description:
-      'Profesjonalny masaż terapeutyczny i masaż tkanek głębokich. Umów wizytę online.',
+      'Profesjonalny masaż terapeutyczny i masaż powięziowy. Umów wizytę online.',
   },
 };
 

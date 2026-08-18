@@ -23,7 +23,7 @@ const BOOKSY_URL = siteConfig.links.booksy;
 
 // SEO Metadata for homepage
 export const metadata: Metadata = {
-  title: `${siteConfig.name} | Masaż terapeutyczny i masaż tkanek głębokich ${siteConfig.address.city}`,
+  title: `${siteConfig.name} | Masaż terapeutyczny i masaż powięziowy ${siteConfig.address.city}`,
   description: siteConfig.description,
   keywords: [
     'masaż leczniczy Warszawa',
@@ -31,12 +31,12 @@ export const metadata: Metadata = {
     'masaż Saska Kępa',
     'ból kręgosłupa masaż',
     'masaż Praga Południe',
-    'masaż tkanek głębokich Warszawa',
+    'masaż powięziowy Warszawa',
     'masaż na napięcia mięśniowe',
     ...siteConfig.conditions,
   ],
   openGraph: {
-    title: `${siteConfig.name} | Masaż terapeutyczny i masaż tkanek głębokich ${siteConfig.address.city}`,
+    title: `${siteConfig.name} | Masaż terapeutyczny i masaż powięziowy ${siteConfig.address.city}`,
     description: siteConfig.description,
     url: siteConfig.url,
     siteName: siteConfig.name,
@@ -64,7 +64,7 @@ const conditions = [
 // Services offered
 const servicesOffered = [
   {
-    title: 'Masaż tkanek głębokich',
+    title: 'Masaż powięziowy',
     description: 'Praca z napięciami mięśniowymi i ograniczeniami ruchomości',
   },
   {
