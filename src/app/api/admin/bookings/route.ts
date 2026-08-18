@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getBookings, createBooking, validateBookingSlot, hasExistingBookings, BookingFilters } from '@/lib/admin-data';
 import { BookingStatus } from '@/types/admin';
 import { getSiteSettings } from '@/lib/site-settings';
@@ -47,6 +48,15 @@ const MIN_PRICE_PLN = 50;
 
 export async function GET(request: NextRequest) {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
 
     // Parse filters
@@ -80,6 +90,15 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     // ===========================================

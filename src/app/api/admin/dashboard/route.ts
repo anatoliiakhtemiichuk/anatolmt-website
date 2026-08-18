@@ -4,10 +4,20 @@
  */
 
 import { NextResponse } from 'next/server';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getDashboardStats } from '@/lib/admin-data';
 
 export async function GET() {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const data = await getDashboardStats();
 
     return NextResponse.json({

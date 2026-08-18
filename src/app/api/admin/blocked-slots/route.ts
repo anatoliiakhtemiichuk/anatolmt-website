@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getBlockedSlots, createBlockedSlot } from '@/lib/admin-data';
 import { CreateBlockedSlotRequest } from '@/types/admin';
 
@@ -36,6 +37,15 @@ function isStartBeforeEnd(start: string, end: string): boolean {
 
 export async function GET(request: NextRequest) {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
 
     const dateFrom = searchParams.get('date_from') || undefined;
@@ -58,6 +68,15 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const body: CreateBlockedSlotRequest = await request.json();
 
     // ===========================================

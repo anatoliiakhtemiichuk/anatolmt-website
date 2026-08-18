@@ -8,9 +8,7 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-const ADMIN_COOKIE_NAME = 'admin_session';
-const ADMIN_COOKIE_VALUE = 'authenticated';
+import { ADMIN_COOKIE_NAME, ADMIN_COOKIE_VALUE } from '@/lib/admin-auth';
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

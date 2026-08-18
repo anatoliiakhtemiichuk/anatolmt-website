@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { deleteBlockedSlot } from '@/lib/admin-data';
 
 interface RouteParams {
@@ -15,6 +16,15 @@ interface RouteParams {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
 
     // Validate UUID format

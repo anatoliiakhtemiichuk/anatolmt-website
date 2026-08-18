@@ -9,6 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getSiteSettings, saveSiteSettings } from '@/lib/site-settings';
 import { validateSiteSettings, SiteSettings, DAY_ORDER, OpeningHoursMap } from '@/types/site-settings';
 
@@ -46,6 +47,15 @@ function validateOpeningHours(hours: OpeningHoursMap): string[] {
 
 export async function GET() {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const settings = await getSiteSettings();
 
     return NextResponse.json({
@@ -68,6 +78,22 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+  } catch {
+    return NextResponse.json(
+      { success: false, error: 'Brak autoryzacji' },
+      { status: 401 }
+    );
+  }
+
   // Diagnostic logging for Supabase env vars (temporary)
   console.log('[site-settings] Environment check:', {
     hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,

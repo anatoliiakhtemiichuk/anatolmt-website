@@ -5,10 +5,20 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isAdminAuthenticated } from '@/lib/admin-auth';
 import { getSettings, updateSettings } from '@/lib/admin-data';
 
 export async function GET() {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const settings = await getSettings();
 
     return NextResponse.json({
@@ -26,6 +36,15 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { success: false, error: 'Brak autoryzacji' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     const updated = await updateSettings(body);
