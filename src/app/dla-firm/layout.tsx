@@ -3,17 +3,17 @@ import { siteConfig } from '@/config/site';
 
 export const metadata: Metadata = {
   title: `Dla firm - Masaż dla pracowników | ${siteConfig.name}`,
-  description: `Masaż i terapia manualna jako benefit dla pracowników biurowych. Wsparcie przy napięciach od pracy siedzącej. Współpraca B2B z gabinetem w ${siteConfig.address.district}.`,
+  description: `Masaż terapeutyczny jako benefit dla pracowników biurowych. Wsparcie przy napięciach od pracy siedzącej. Współpraca B2B z gabinetem w ${siteConfig.address.district}.`,
   keywords: [
     'masaż dla firm Warszawa',
     'benefit pracowniczy masaż',
-    'terapia manualna dla pracowników',
+    'masaż terapeutyczny dla pracowników',
     'masaż biurowy Warszawa',
     'współpraca B2B masaż',
   ],
   openGraph: {
     title: `Dla firm - Masaż jako benefit pracowniczy | ${siteConfig.name}`,
-    description: `Terapia manualna jako benefit dla pracowników biurowych. Redukcja bólu kręgosłupa, mniej zwolnień.`,
+    description: `Masaż terapeutyczny jako benefit dla pracowników biurowych. Redukcja bólu kręgosłupa, mniej zwolnień.`,
     url: `${siteConfig.url}/dla-firm`,
   },
   alternates: {

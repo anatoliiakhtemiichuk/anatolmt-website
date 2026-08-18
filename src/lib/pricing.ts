@@ -16,7 +16,7 @@ export type ServiceType = 'consultation' | 'visit-1h' | 'visit-1.5h';
  */
 export function formatPLN(price: number | null | undefined): string {
   if (price === null || price === undefined || isNaN(price)) {
-    return '— zł';
+    return '- zł';
   }
   return `${price} zł`;
 }

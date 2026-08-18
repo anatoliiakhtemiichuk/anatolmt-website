@@ -13,7 +13,7 @@ export default function PolitykaPrywatnosciPage() {
             Polityka Prywatności
           </h1>
           <p className="text-[#111111]/60">
-            M&T ANATOL — obowiązuje od {new Date().toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}
+            M&T ANATOL - obowiązuje od {new Date().toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </header>
 
@@ -105,12 +105,12 @@ export default function PolitykaPrywatnosciPage() {
             <h2 className="text-xl font-bold mb-6">§ 6. Prawa użytkownika</h2>
             <p className="mb-4">Zgodnie z RODO przysługują Ci następujące prawa:</p>
             <ol className="list-decimal list-outside ml-6 space-y-4">
-              <li><strong>Prawo dostępu</strong> — uzyskanie informacji o przetwarzanych danych</li>
-              <li><strong>Prawo do sprostowania</strong> — poprawienie nieprawidłowych danych</li>
-              <li><strong>Prawo do usunięcia</strong> — żądanie usunięcia danych</li>
-              <li><strong>Prawo do ograniczenia</strong> — ograniczenie przetwarzania</li>
-              <li><strong>Prawo do przenoszenia</strong> — otrzymanie danych w ustrukturyzowanym formacie</li>
-              <li><strong>Prawo do sprzeciwu</strong> — sprzeciw wobec przetwarzania</li>
+              <li><strong>Prawo dostępu</strong> - uzyskanie informacji o przetwarzanych danych</li>
+              <li><strong>Prawo do sprostowania</strong> - poprawienie nieprawidłowych danych</li>
+              <li><strong>Prawo do usunięcia</strong> - żądanie usunięcia danych</li>
+              <li><strong>Prawo do ograniczenia</strong> - ograniczenie przetwarzania</li>
+              <li><strong>Prawo do przenoszenia</strong> - otrzymanie danych w ustrukturyzowanym formacie</li>
+              <li><strong>Prawo do sprzeciwu</strong> - sprzeciw wobec przetwarzania</li>
             </ol>
             <p className="mt-6">Kontakt: kontakt@mt-anatol.pl</p>
             <p className="mt-2">Prawo wniesienia skargi do PUODO (Prezes Urzędu Ochrony Danych Osobowych).</p>
@@ -123,8 +123,8 @@ export default function PolitykaPrywatnosciPage() {
               <li>Strona wykorzystuje pliki cookies do prawidłowego działania i analizy ruchu.</li>
               <li>Rodzaje cookies:
                 <ul className="list-disc list-outside ml-6 mt-2 space-y-1">
-                  <li>Niezbędne — wymagane do działania strony</li>
-                  <li>Analityczne — analiza sposobu korzystania ze strony</li>
+                  <li>Niezbędne - wymagane do działania strony</li>
+                  <li>Analityczne - analiza sposobu korzystania ze strony</li>
                 </ul>
               </li>
               <li>Zarządzanie cookies możliwe w ustawieniach przeglądarki.</li>

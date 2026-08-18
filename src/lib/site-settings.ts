@@ -351,7 +351,7 @@ export async function getBufferMinutes(): Promise<number> {
  */
 export function formatPrice(price: number | null | undefined): string {
   if (price === null || price === undefined || isNaN(price)) {
-    return '— zł';
+    return '- zł';
   }
   return `${price} zł`;
 }
@@ -440,7 +440,7 @@ export function convertLegacySettings(legacy: {
         id: 'visit_60',
         slug: 'wizyta-1h',
         name: 'Wizyta standardowa',
-        description: 'Pełna sesja terapii manualnej',
+        description: 'Pełna sesja masażu terapeutycznego',
         durationMinutes: 60,
         showDuration: true,
         priceWeekday: legacy.pricing.visit1hWeekday,

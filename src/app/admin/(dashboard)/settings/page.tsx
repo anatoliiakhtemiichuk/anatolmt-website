@@ -245,7 +245,7 @@ export default function SettingsPage() {
                             onChange={(e) => updateOpeningHours(day, 'open', e.target.value)}
                             className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
                           />
-                          <span className="text-gray-400">—</span>
+                          <span className="text-gray-400">-</span>
                           <input
                             type="time"
                             value={daySettings.close}

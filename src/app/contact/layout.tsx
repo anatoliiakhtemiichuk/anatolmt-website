@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { siteConfig } from '@/config/site';
 
 export const metadata: Metadata = {
-  title: `Kontakt | ${siteConfig.name} - Masaż i terapia manualna Warszawa`,
+  title: `Kontakt | ${siteConfig.name} - Masaż terapeutyczny Warszawa`,
   description: `Skontaktuj się z gabinetem ${siteConfig.name}. ${siteConfig.address.full}. Tel: ${siteConfig.contact.phone}. Rezerwacja wizyty online.`,
   keywords: [
     'kontakt masaż Warszawa',

@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Regulamin | M&T ANATOL',
-  description: 'Regulamin świadczenia usług M&T ANATOL - terapia manualna i masaż',
+  description: 'Regulamin świadczenia usług M&T ANATOL - masaż terapeutyczny',
 };
 
 export default function RegulaminPage() {
@@ -13,7 +13,7 @@ export default function RegulaminPage() {
             Regulamin świadczenia usług
           </h1>
           <p className="text-[#111111]/60">
-            M&T ANATOL — obowiązuje od {new Date().toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}
+            M&T ANATOL - obowiązuje od {new Date().toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </header>
 
@@ -24,8 +24,8 @@ export default function RegulaminPage() {
           <section className="py-8 border-b border-[#e5e5e5]">
             <h2 className="text-xl font-bold mb-6">§ 1. Postanowienia ogólne</h2>
             <ol className="list-decimal list-outside ml-6 space-y-4">
-              <li>Niniejszy Regulamin określa zasady korzystania z usług świadczonych przez M&T ANATOL (dalej: „Usługodawca") w zakresie terapii manualnej, masażu oraz materiałów edukacyjnych wideo.</li>
-              <li>Usługodawca prowadzi działalność w zakresie terapii manualnej i masażu, oferując usługi stacjonarne oraz cyfrowe materiały edukacyjne.</li>
+              <li>Niniejszy Regulamin określa zasady korzystania z usług świadczonych przez M&T ANATOL (dalej: „Usługodawca") w zakresie masażu terapeutycznego oraz materiałów edukacyjnych wideo.</li>
+              <li>Usługodawca prowadzi działalność w zakresie masażu terapeutycznego, oferując usługi stacjonarne oraz cyfrowe materiały edukacyjne.</li>
               <li>Korzystanie z usług Usługodawcy oznacza akceptację niniejszego Regulaminu.</li>
             </ol>
           </section>
@@ -46,7 +46,7 @@ export default function RegulaminPage() {
           <section className="py-8 border-b border-[#e5e5e5]">
             <h2 className="text-xl font-bold mb-6">§ 3. Usługi stacjonarne</h2>
             <ol className="list-decimal list-outside ml-6 space-y-4">
-              <li>Usługi terapii manualnej i masażu są świadczone przez wykwalifikowanych specjalistów w gabinecie Usługodawcy.</li>
+              <li>Usługi masażu terapeutycznego są świadczone przez wykwalifikowanych specjalistów w gabinecie Usługodawcy.</li>
               <li>Klient zobowiązany jest do poinformowania terapeuty o wszelkich przeciwwskazaniach zdrowotnych, urazach, chorobach przewlekłych oraz przyjmowanych lekach przed rozpoczęciem zabiegu.</li>
               <li>Usługodawca nie ponosi odpowiedzialności za skutki zatajenia informacji o stanie zdrowia przez Klienta. Klient ponosi pełną odpowiedzialność za zatajenie istotnych informacji o stanie zdrowia.</li>
               <li>Usługodawca zastrzega sobie prawo do odmowy wykonania usługi, jeżeli stwierdzi istnienie przeciwwskazań zdrowotnych lub innych okoliczności mogących zagrozić zdrowiu Klienta.</li>

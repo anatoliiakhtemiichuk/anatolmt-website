@@ -7,16 +7,16 @@ const BOOKSY_URL = siteConfig.links.booksy;
 
 export const metadata: Metadata = {
   title: `Cennik usług | ${siteConfig.name} - Masaż Warszawa`,
-  description: `Cennik masażu i terapii manualnej w Warszawie. Masaż terapeutyczny od ${siteConfig.services[1].priceFrom} zł. Rezerwacja online przez Booksy. Gabinet ${siteConfig.address.district}.`,
+  description: `Cennik masażu terapeutycznego w Warszawie. Masaż terapeutyczny od ${siteConfig.services[1].priceFrom} zł. Rezerwacja online przez Booksy. Gabinet ${siteConfig.address.district}.`,
   keywords: [
     'cennik masażu Warszawa',
-    'ceny terapii manualnej',
+    'ceny masażu terapeutycznego',
     'ile kosztuje masaż Warszawa',
     'cennik masażu terapeutycznego',
   ],
   openGraph: {
     title: `Cennik usług | ${siteConfig.name}`,
-    description: `Cennik masażu i terapii manualnej w Warszawie. Rezerwacja online przez Booksy.`,
+    description: `Cennik masażu terapeutycznego w Warszawie. Rezerwacja online przez Booksy.`,
     url: `${siteConfig.url}/prices`,
   },
   alternates: {

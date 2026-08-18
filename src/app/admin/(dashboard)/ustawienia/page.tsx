@@ -355,7 +355,7 @@ export default function UstawieniaPage() {
                                 updateService(service.id, 'priceWeekend', val === '' ? null : parseInt(val) || 0);
                               }}
                               disabled={service.id === 'consultation'}
-                              placeholder="—"
+                              placeholder="-"
                               className={`w-24 px-3 py-2 pr-8 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none ${
                                 service.id === 'consultation' ? 'bg-gray-100 cursor-not-allowed' : ''
                               }`}
@@ -428,7 +428,7 @@ export default function UstawieniaPage() {
                     value={settings.texts.heroTitle}
                     onChange={(e) => updateTexts('heroTitle', e.target.value)}
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
-                    placeholder="M&T ANATOL - Profesjonalna Terapia Manualna"
+                    placeholder="M&T ANATOL - Profesjonalny Masaż Terapeutyczny"
                   />
                 </div>
 
@@ -542,7 +542,7 @@ export default function UstawieniaPage() {
                                 onChange={(e) => updateOpeningHours(day, 'open', e.target.value)}
                                 className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none"
                               />
-                              <span className="text-gray-400">—</span>
+                              <span className="text-gray-400">-</span>
                               <input
                                 type="time"
                                 value={daySettings.close}

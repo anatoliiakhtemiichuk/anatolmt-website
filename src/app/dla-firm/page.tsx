@@ -232,7 +232,7 @@ export default function DlaFirmPage() {
               Mniej bólu pleców w zespole, mniej zwolnień
             </h1>
             <p className="text-lg lg:text-xl text-gray-300 mb-8">
-              Terapia manualna od sprawdzonego terapeuty z Saskiej Kępy jako benefit dla pracowników biurowych
+              Masaż terapeutyczny od doświadczonego terapeuty z Warszawy jako benefit dla pracowników biurowych
             </p>
             <button
               onClick={scrollToForm}
@@ -583,7 +583,7 @@ export default function DlaFirmPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
-                      Doświadczenie w terapii manualnej
+                      Doświadczenie w pracy z ciałem
                     </h3>
                     <p className="text-gray-600">
                       Specjalizuję się w bólu kręgosłupa, karku i przeciążeniach od pracy siedzącej.

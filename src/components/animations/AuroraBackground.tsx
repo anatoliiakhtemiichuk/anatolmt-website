@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface AuroraBackgroundProps {
   className?: string;
@@ -8,54 +8,93 @@ interface AuroraBackgroundProps {
 
 /**
  * AuroraBackground - Soft, slowly drifting light blobs
- * Creates a calm, hypnotic gradient animation
+ * Creates a calm, hypnotic gradient animation using Framer Motion
  * Respects prefers-reduced-motion (static gradient when set)
  */
 export function AuroraBackground({ className = '' }: AuroraBackgroundProps) {
   const prefersReducedMotion = useReducedMotion();
+
+  // Blob animation variants - slow, continuous drifting
+  const blob1Variants = {
+    animate: {
+      x: [0, 50, -30, 70, 0],
+      y: [0, -60, 30, -40, 0],
+      scale: [1, 1.1, 0.95, 1.05, 1],
+      transition: {
+        duration: 20,
+        ease: 'easeInOut',
+        repeat: Infinity,
+        repeatType: 'loop' as const,
+      },
+    },
+  };
+
+  const blob2Variants = {
+    animate: {
+      x: [0, -60, 40, -20, 0],
+      y: [0, 40, -50, 20, 0],
+      scale: [1, 0.95, 1.1, 1, 1],
+      transition: {
+        duration: 25,
+        ease: 'easeInOut',
+        repeat: Infinity,
+        repeatType: 'loop' as const,
+      },
+    },
+  };
+
+  const blob3Variants = {
+    animate: {
+      x: [0, 30, -50, 60, 0],
+      y: [0, 50, -30, 40, 0],
+      scale: [1, 1.05, 0.9, 1.1, 1],
+      transition: {
+        duration: 22,
+        ease: 'easeInOut',
+        repeat: Infinity,
+        repeatType: 'loop' as const,
+      },
+    },
+  };
 
   return (
     <div className={`absolute inset-0 overflow-hidden z-0 ${className}`}>
       {/* Base gradient layer */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A]" />
 
-      {/* Aurora blobs - only animate if motion is allowed */}
-      <div
-        className={`absolute inset-0 ${
-          prefersReducedMotion ? '' : 'animate-aurora'
-        }`}
-      >
+      {/* Aurora blobs - animate with Framer Motion if motion is allowed */}
+      <div className="absolute inset-0">
         {/* Primary blue blob */}
-        <div
-          className={`absolute w-[600px] h-[600px] rounded-full opacity-20 blur-[120px] bg-[#2563EB] ${
-            prefersReducedMotion ? '' : 'animate-blob-1'
-          }`}
+        <motion.div
+          className="absolute w-[600px] h-[600px] rounded-full opacity-20 blur-[120px] bg-[#2563EB]"
           style={{
             top: '10%',
             left: '20%',
           }}
+          variants={blob1Variants}
+          animate={prefersReducedMotion ? undefined : 'animate'}
         />
 
         {/* Secondary blue blob */}
-        <div
-          className={`absolute w-[500px] h-[500px] rounded-full opacity-15 blur-[100px] bg-[#3B82F6] ${
-            prefersReducedMotion ? '' : 'animate-blob-2'
-          }`}
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full opacity-15 blur-[100px] bg-[#3B82F6]"
           style={{
             top: '40%',
             right: '10%',
           }}
+          variants={blob2Variants}
+          animate={prefersReducedMotion ? undefined : 'animate'}
         />
 
         {/* Accent purple blob */}
-        <div
-          className={`absolute w-[400px] h-[400px] rounded-full opacity-10 blur-[80px] bg-[#6366F1] ${
-            prefersReducedMotion ? '' : 'animate-blob-3'
-          }`}
+        <motion.div
+          className="absolute w-[400px] h-[400px] rounded-full opacity-10 blur-[80px] bg-[#6366F1]"
           style={{
             bottom: '20%',
             left: '30%',
           }}
+          variants={blob3Variants}
+          animate={prefersReducedMotion ? undefined : 'animate'}
         />
       </div>
 

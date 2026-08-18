@@ -26,7 +26,7 @@ const visitSteps = [
   },
   {
     icon: Stethoscope,
-    title: 'Terapia manualna',
+    title: 'Masaż terapeutyczny',
     description: 'Indywidualnie dobrana praca z ciałem',
   },
   {

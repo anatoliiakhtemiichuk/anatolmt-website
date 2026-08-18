@@ -7,9 +7,9 @@ export const siteConfig = {
   // Basic Info
   name: 'Anatol M&T',
   legalName: 'Anatol M&T',
-  tagline: 'Masaż i Terapia Manualna w Warszawie',
+  tagline: 'Masaż terapeutyczny i masaż tkanek głębokich w Warszawie',
   description:
-    'Profesjonalny masaż terapeutyczny i terapia manualna w Warszawie. Praca z napięciami mięśniowymi, bólem kręgosłupa, regeneracja. Gabinet w Saskiej Kępie.',
+    'Profesjonalny masaż terapeutyczny i masaż tkanek głębokich w Warszawie. Praca z napięciami mięśniowo-powięziowymi, bólem kręgosłupa, regeneracja. Gabinet w Saskiej Kępie.',
   url: 'https://anatolmt.pl',
   locale: 'pl_PL',
   language: 'pl',
@@ -70,11 +70,11 @@ export const siteConfig = {
   // Services offered
   services: [
     {
-      id: 'terapia-manualna',
-      name: 'Terapia Manualna',
+      id: 'masaz-tkanek-glebokich',
+      name: 'Masaż tkanek głębokich',
       shortDescription: 'Praca z napięciami mięśniowymi i ograniczeniami ruchomości',
       description:
-        'Profesjonalna terapia manualna obejmująca ocenę funkcjonalną, mobilizacje stawów, techniki tkanek miękkich. Wspiera przy bólach kręgosłupa, stawów i napięciach mięśniowych.',
+        'Profesjonalny masaż tkanek głębokich obejmujący ocenę funkcjonalną, mobilizację tkanek miękkich i pracę z napięciami mięśniowo-powięziowymi. Wspiera przy bólach kręgosłupa, stawów i napięciach mięśniowych.',
       duration: '60-90 min',
       priceFrom: 200,
     },
