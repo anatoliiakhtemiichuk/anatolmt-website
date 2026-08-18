@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion, type Variants } from 'framer-motion';
 
 interface AuroraBackgroundProps {
   className?: string;
@@ -15,44 +15,44 @@ export function AuroraBackground({ className = '' }: AuroraBackgroundProps) {
   const prefersReducedMotion = useReducedMotion();
 
   // Blob animation variants - slow, continuous drifting
-  const blob1Variants = {
+  const blob1Variants: Variants = {
     animate: {
       x: [0, 50, -30, 70, 0],
       y: [0, -60, 30, -40, 0],
       scale: [1, 1.1, 0.95, 1.05, 1],
       transition: {
         duration: 20,
-        ease: 'easeInOut',
+        ease: [0.42, 0, 0.58, 1], // easeInOut as cubic bezier
         repeat: Infinity,
-        repeatType: 'loop' as const,
+        repeatType: 'loop',
       },
     },
   };
 
-  const blob2Variants = {
+  const blob2Variants: Variants = {
     animate: {
       x: [0, -60, 40, -20, 0],
       y: [0, 40, -50, 20, 0],
       scale: [1, 0.95, 1.1, 1, 1],
       transition: {
         duration: 25,
-        ease: 'easeInOut',
+        ease: [0.42, 0, 0.58, 1],
         repeat: Infinity,
-        repeatType: 'loop' as const,
+        repeatType: 'loop',
       },
     },
   };
 
-  const blob3Variants = {
+  const blob3Variants: Variants = {
     animate: {
       x: [0, 30, -50, 60, 0],
       y: [0, 50, -30, 40, 0],
       scale: [1, 1.05, 0.9, 1.1, 1],
       transition: {
         duration: 22,
-        ease: 'easeInOut',
+        ease: [0.42, 0, 0.58, 1],
         repeat: Infinity,
-        repeatType: 'loop' as const,
+        repeatType: 'loop',
       },
     },
   };
