@@ -6,13 +6,7 @@ import {
   ArrowDown,
   CheckCircle,
   Phone,
-  Mail,
-  Users,
-  TrendingDown,
-  Target,
-  Clock,
-  MapPin,
-  Star
+  Mail
 } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
 
@@ -185,72 +179,6 @@ export default function DlaFirmPage() {
         </Container>
       </section>
 
-      {/* Problem Section */}
-      <section className="py-16 lg:py-24 bg-gray-50">
-        <Container>
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-12 text-center">
-            Problem pracodawcy
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card variant="bordered" className="bg-white">
-              <CardContent>
-                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4">
-                  <TrendingDown className="w-6 h-6 text-red-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
-                  Absencja chorobowa
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Ból kręgosłupa i karku od pracy siedzącej prowadzi do zwolnień lekarskich
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card variant="bordered" className="bg-white">
-              <CardContent>
-                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-                  <Target className="w-6 h-6 text-orange-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
-                  Niższa produktywność
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Ból utrudnia koncentrację i obniża efektywność pracy zespołu
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card variant="bordered" className="bg-white">
-              <CardContent>
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
-                  Gorsze samopoczucie
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Przewlekły dyskomfort wpływa na morale i atmosferę w firmie
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card variant="bordered" className="bg-white">
-              <CardContent>
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                  <Clock className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
-                  Stała rotacja
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Brak wsparcia zdrowotnego może wpływać na retencję talentów
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </Container>
-      </section>
-
       {/* B2B Teaser Section */}
       <section className="py-16 lg:py-24">
         <Container size="md">
@@ -259,7 +187,7 @@ export default function DlaFirmPage() {
               Współpraca B2B - masaż i regeneracja jako benefit dla pracowników
             </h2>
             <p className="text-lg text-gray-600 mb-8">
-              Oferuję firmom gotowy model współpracy - masaż i terapia jako realny benefit zdrowotny dla zespołu. Elastyczne zasady, niskie ryzyko na start. Szczegóły przedstawiam indywidualnie podczas rozmowy.
+              Oferuję firmom gotowy model współpracy - masaż i regeneracja jako realny benefit zdrowotny dla zespołu. Elastyczne zasady, niskie ryzyko na start. Szczegóły przedstawiam indywidualnie podczas rozmowy.
             </p>
             <button
               onClick={scrollToForm}
@@ -272,83 +200,8 @@ export default function DlaFirmPage() {
         </Container>
       </section>
 
-      {/* Dlaczego ja Section */}
-      <section className="py-16 lg:py-24 bg-gray-50">
-        <Container size="sm">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-12 text-center">
-            Dlaczego ja
-          </h2>
-
-          <div className="space-y-6 mb-8">
-            <Card variant="bordered" className="bg-white">
-              <CardContent>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="w-6 h-6 text-[#2563EB]" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
-                      Doświadczenie w pracy z ciałem
-                    </h3>
-                    <p className="text-gray-600">
-                      Specjalizuję się w bólu kręgosłupa, karku i przeciążeniach od pracy siedzącej.
-                      Indywidualne podejście do każdego klienta.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card variant="bordered" className="bg-white">
-              <CardContent>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-[#2563EB]" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
-                      Gabinet blisko biura
-                    </h3>
-                    <p className="text-gray-600">
-                      Saska Kępa, Plac Przymierza 2/3 - dogodna lokalizacja, łatwo dostępna
-                      komunikacją miejską i samochodem.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card variant="bordered" className="bg-white">
-              <CardContent>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Star className="w-6 h-6 text-[#2563EB]" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
-                      Zobacz opinie na{' '}
-                      <a
-                        href="https://maps.app.goo.gl/cUQFbaBuvnUoHX1U6"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#2563EB] hover:underline"
-                      >
-                        Google
-                      </a>
-                    </h3>
-                    <p className="text-gray-600">
-                      Sprawdź sam opinie zadowolonych klientów, którzy polecają moje usługi.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </Container>
-      </section>
-
       {/* Contact Form Section */}
-      <section id="contact-form" className="py-16 lg:py-24 scroll-mt-20">
+      <section id="contact-form" className="py-16 lg:py-24 bg-gray-50 scroll-mt-20">
         <Container size="sm">
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
@@ -382,7 +235,7 @@ export default function DlaFirmPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card variant="bordered">
+            <Card variant="bordered" className="bg-white">
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Company Name */}
