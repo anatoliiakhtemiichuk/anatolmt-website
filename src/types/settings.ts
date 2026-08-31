@@ -60,10 +60,10 @@ export const DEFAULT_SETTINGS: ClinicSettings = {
     visit15hWeekend: 300,
   },
   contact: {
-    address: 'ul. Przykładowa 123',
-    city: 'Warszawa',
-    phone: '+48 123 456 789',
-    email: 'kontakt@mt-anatol.pl',
+    address: 'ul. gen. Bronisława Bohaterewicza 1A',
+    city: '03-982 Warszawa',
+    phone: '+48 884 844 191',
+    email: 'anatolmt.kontakt@gmail.com',
   },
   updatedAt: new Date().toISOString(),
 };

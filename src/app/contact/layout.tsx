@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   description: `Skontaktuj się z gabinetem ${siteConfig.name}. ${siteConfig.address.full}. Tel: ${siteConfig.contact.phone}. Rezerwacja wizyty online.`,
   keywords: [
     'kontakt masaż Warszawa',
-    'gabinet masażu Saska Kępa',
-    'terapeuta manualny Praga Południe',
+    'gabinet masażu Gocław',
+    'masaż Praga-Południe',
     'rezerwacja masażu Warszawa',
   ],
   openGraph: {

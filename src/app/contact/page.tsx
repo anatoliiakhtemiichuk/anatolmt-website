@@ -282,6 +282,13 @@ export default function ContactPage() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Friday home visits note */}
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  W piątki - wizyty z dojazdem dla osób, które nie mogą dotrzeć osobiście.
+                </p>
+              </div>
             </div>
 
             {/* Contact Form */}
@@ -396,19 +403,20 @@ export default function ContactPage() {
         <Container>
           <h2 className="text-2xl font-bold text-[#0F172A] mb-6 text-center">Lokalizacja</h2>
           <Card variant="bordered" padding="none" className="overflow-hidden">
-            <div className="bg-gray-200 h-[400px] flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 font-medium">Mapa Google</p>
-                <p className="text-gray-400 text-sm mt-1">
-                  {settings.contact.addressLine1}{settings.contact.addressLine2 && `, ${settings.contact.addressLine2}`}
-                </p>
-                <p className="text-gray-400 text-xs mt-4">
-                  (Miejsce na osadzenie mapy Google Maps)
-                </p>
-              </div>
-            </div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.8!2d21.0925175!3d52.2303212!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471ecd3c8e5b8a1d%3A0x0!2sul.+gen.+Bronis%C5%82awa+Bohaterewicza+1A%2C+03-982+Warszawa!5e0!3m2!1spl!2spl!4v1700000000000!5m2!1spl!2spl"
+              width="100%"
+              height="400"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Lokalizacja gabinetu Anatol M&T - Gocław, Warszawa"
+            />
           </Card>
+          <p className="text-center text-gray-600 mt-4">
+            ul. gen. Bronisława Bohaterewicza 1A, 03-982 Warszawa (Gocław, Praga-Południe)
+          </p>
         </Container>
       </section>
     </>

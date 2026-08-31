@@ -25,7 +25,7 @@ export default function PolitykaPrywatnosciPage() {
             <h2 className="text-xl font-bold mb-6">§ 1. Administrator danych</h2>
             <ol className="list-decimal list-outside ml-6 space-y-4">
               <li>Administratorem danych osobowych jest M&T ANATOL z siedzibą w Warszawie.</li>
-              <li>Kontakt w sprawach ochrony danych: kontakt@mt-anatol.pl</li>
+              <li>Kontakt w sprawach ochrony danych: anatolmt.kontakt@gmail.com</li>
             </ol>
           </section>
 
@@ -112,7 +112,7 @@ export default function PolitykaPrywatnosciPage() {
               <li><strong>Prawo do przenoszenia</strong> - otrzymanie danych w ustrukturyzowanym formacie</li>
               <li><strong>Prawo do sprzeciwu</strong> - sprzeciw wobec przetwarzania</li>
             </ol>
-            <p className="mt-6">Kontakt: kontakt@mt-anatol.pl</p>
+            <p className="mt-6">Kontakt: anatolmt.kontakt@gmail.com</p>
             <p className="mt-2">Prawo wniesienia skargi do PUODO (Prezes Urzędu Ochrony Danych Osobowych).</p>
           </section>
 
@@ -159,7 +159,7 @@ export default function PolitykaPrywatnosciPage() {
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t border-[#e5e5e5] text-[#111111]/50 text-sm">
           <p>M&T ANATOL</p>
-          <p>Kontakt: kontakt@mt-anatol.pl</p>
+          <p>Kontakt: anatolmt.kontakt@gmail.com</p>
         </footer>
       </article>
     </main>

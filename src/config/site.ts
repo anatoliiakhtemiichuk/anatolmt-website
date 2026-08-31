@@ -9,7 +9,7 @@ export const siteConfig = {
   legalName: 'Anatol M&T',
   tagline: 'Masaż terapeutyczny i masaż powięziowy w Warszawie',
   description:
-    'Profesjonalny masaż terapeutyczny i masaż powięziowy w Warszawie. Praca z napięciami mięśniowo-powięziowymi, bólem kręgosłupa, regeneracja. Gabinet w Saskiej Kępie.',
+    'Profesjonalny masaż terapeutyczny i masaż powięziowy w Warszawie. Praca z napięciami mięśniowo-powięziowymi, bólem kręgosłupa, regeneracja. Gabinet na Gocławiu.',
   url: 'https://anatolmt.pl',
   locale: 'pl_PL',
   language: 'pl',
@@ -23,20 +23,20 @@ export const siteConfig = {
 
   // Location
   address: {
-    street: 'Plac Przymierza 2/3',
-    postalCode: '03-944',
+    street: 'ul. gen. Bronisława Bohaterewicza 1A',
+    postalCode: '03-982',
     city: 'Warszawa',
-    district: 'Saska Kępa',
-    region: 'Praga Południe',
+    district: 'Gocław',
+    region: 'Praga-Południe',
     country: 'Polska',
     countryCode: 'PL',
-    full: 'Plac Przymierza 2/3, 03-944 Warszawa',
+    full: 'ul. gen. Bronisława Bohaterewicza 1A, 03-982 Warszawa',
   },
 
-  // Geo coordinates (Saska Kępa)
+  // Geo coordinates (Gocław)
   geo: {
-    latitude: 52.2394,
-    longitude: 21.0648,
+    latitude: 52.2303212,
+    longitude: 21.0925175,
   },
 
   // Business Hours (ISO 8601 format for schema.org)
@@ -63,7 +63,7 @@ export const siteConfig = {
   links: {
     booksy: 'https://anatolmt.booksy.com/a/',
     googleMaps:
-      'https://www.google.com/maps/place/Plac+Przymierza+2%2F3,+03-944+Warszawa',
+      'https://www.google.com/maps/place/ul.+gen.+Bronis%C5%82awa+Bohaterewicza+1A,+03-982+Warszawa',
     instagram: 'https://www.instagram.com/anatolmt/',
   },
 
@@ -151,10 +151,10 @@ export const siteConfig = {
   // Target areas
   areas: [
     'Warszawa',
-    'Saska Kępa',
-    'Praga Południe',
-    'Praga Północ',
     'Gocław',
+    'Praga-Południe',
+    'Saska Kępa',
+    'Praga Północ',
     'Grochów',
     'Kamionek',
   ],

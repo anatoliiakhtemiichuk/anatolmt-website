@@ -141,12 +141,12 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     sun: { open: '11:00', close: '15:00', closed: false },
   },
   contact: {
-    phone: '+48 123 456 789',
-    email: 'kontakt@mt-anatol.pl',
-    addressLine1: 'ul. Przykładowa 123',
-    addressLine2: '00-000 Warszawa',
-    googleMapsUrl: '',
-    instagramUrl: '',
+    phone: '+48 884 844 191',
+    email: 'anatolmt.kontakt@gmail.com',
+    addressLine1: 'ul. gen. Bronisława Bohaterewicza 1A',
+    addressLine2: '03-982 Warszawa',
+    googleMapsUrl: 'https://www.google.com/maps/place/ul.+gen.+Bronis%C5%82awa+Bohaterewicza+1A,+03-982+Warszawa',
+    instagramUrl: 'https://www.instagram.com/anatolmt/',
     facebookUrl: '',
   },
   texts: {

@@ -102,7 +102,7 @@ export default function RegulaminPage() {
           <section className="py-8 border-b border-[#e5e5e5]">
             <h2 className="text-xl font-bold mb-6">§ 8. Reklamacje</h2>
             <ol className="list-decimal list-outside ml-6 space-y-4">
-              <li>Reklamacje dotyczące świadczonych usług można składać drogą elektroniczną na adres e-mail: kontakt@mt-anatol.pl lub pisemnie na adres siedziby Usługodawcy.</li>
+              <li>Reklamacje dotyczące świadczonych usług można składać drogą elektroniczną na adres e-mail: anatolmt.kontakt@gmail.com lub pisemnie na adres siedziby Usługodawcy.</li>
               <li>Reklamacja powinna zawierać: dane kontaktowe Klienta, opis problemu oraz oczekiwany sposób rozwiązania.</li>
               <li>Usługodawca rozpatruje reklamacje w terminie 14 dni roboczych od dnia ich otrzymania.</li>
             </ol>
@@ -153,7 +153,7 @@ export default function RegulaminPage() {
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t border-[#e5e5e5] text-[#111111]/50 text-sm">
           <p>M&T ANATOL</p>
-          <p>Kontakt: kontakt@mt-anatol.pl</p>
+          <p>Kontakt: anatolmt.kontakt@gmail.com</p>
         </footer>
       </article>
     </main>
