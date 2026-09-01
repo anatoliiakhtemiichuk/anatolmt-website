@@ -140,11 +140,11 @@ export function Header() {
           </div>
 
           {/* Mobile Actions */}
-          <div className="lg:hidden flex items-center gap-2">
+          <div className="lg:hidden flex items-center gap-1">
             {/* Phone Button - Mobile Only */}
             <a
               href="tel:+48884844191"
-              className="p-2 text-[#2563EB] hover:bg-[#2563EB]/10 rounded-lg transition-colors"
+              className="p-3 text-[#2563EB] hover:bg-[#2563EB]/10 rounded-lg transition-colors"
               aria-label="Zadzwoń"
             >
               <Phone className="w-5 h-5" />
@@ -153,7 +153,7 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               type="button"
-              className="p-2 -mr-2 text-gray-600 hover:text-[#0F172A] transition-colors"
+              className="p-3 -mr-3 text-gray-600 hover:text-[#0F172A] transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'}
             >

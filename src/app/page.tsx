@@ -151,7 +151,7 @@ export default async function HomePage() {
         <AuroraBackground />
 
         <Container>
-          <div className="relative z-10 py-20 lg:py-32">
+          <div className="relative z-10 py-12 sm:py-20 lg:py-32">
             <div className="max-w-3xl">
               {/* Promo Badge */}
               <FadeIn delay={0.1}>
@@ -206,7 +206,7 @@ export default async function HomePage() {
               </FadeIn>
 
               {/* Scroll Indicator */}
-              <div className="mt-12 lg:mt-16">
+              <div className="mt-8 sm:mt-12 lg:mt-16">
                 <ScrollIndicator />
               </div>
             </div>

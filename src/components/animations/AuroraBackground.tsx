@@ -63,10 +63,11 @@ export function AuroraBackground({ className = '' }: AuroraBackgroundProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A]" />
 
       {/* Aurora blobs - animate with Framer Motion if motion is allowed */}
+      {/* Mobile: smaller blobs with less blur for better performance */}
       <div className="absolute inset-0">
         {/* Primary blue blob */}
         <motion.div
-          className="absolute w-[600px] h-[600px] rounded-full opacity-20 blur-[120px] bg-[#2563EB]"
+          className="absolute w-[280px] h-[280px] md:w-[600px] md:h-[600px] rounded-full opacity-20 blur-[50px] md:blur-[120px] bg-[#2563EB]"
           style={{
             top: '10%',
             left: '20%',
@@ -77,7 +78,7 @@ export function AuroraBackground({ className = '' }: AuroraBackgroundProps) {
 
         {/* Secondary blue blob */}
         <motion.div
-          className="absolute w-[500px] h-[500px] rounded-full opacity-15 blur-[100px] bg-[#3B82F6]"
+          className="absolute w-[220px] h-[220px] md:w-[500px] md:h-[500px] rounded-full opacity-15 blur-[40px] md:blur-[100px] bg-[#3B82F6]"
           style={{
             top: '40%',
             right: '10%',
@@ -88,7 +89,7 @@ export function AuroraBackground({ className = '' }: AuroraBackgroundProps) {
 
         {/* Accent purple blob */}
         <motion.div
-          className="absolute w-[400px] h-[400px] rounded-full opacity-10 blur-[80px] bg-[#6366F1]"
+          className="absolute w-[180px] h-[180px] md:w-[400px] md:h-[400px] rounded-full opacity-10 blur-[30px] md:blur-[80px] bg-[#6366F1]"
           style={{
             bottom: '20%',
             left: '30%',
