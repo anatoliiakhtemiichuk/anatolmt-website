@@ -205,8 +205,8 @@ export default async function HomePage() {
                 </div>
               </FadeIn>
 
-              {/* Scroll Indicator */}
-              <div className="mt-8 sm:mt-12 lg:mt-16">
+              {/* Scroll Indicator - hidden on very small screens */}
+              <div className="hidden sm:block mt-8 sm:mt-12 lg:mt-16">
                 <ScrollIndicator />
               </div>
             </div>
@@ -415,7 +415,7 @@ export default async function HomePage() {
               </div>
 
               {/* Section Header */}
-              <div className="text-center mb-16">
+              <div className="text-center mb-8 lg:mb-16">
                 <h2 className="text-3xl lg:text-5xl font-bold text-[#0F172A] mb-4">
                   Jak wygląda pierwsza wizyta?
                 </h2>
@@ -429,7 +429,7 @@ export default async function HomePage() {
             <FirstVisitTimeline className="mb-16" />
 
             {/* CTA Section */}
-            <div className="text-center bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl p-10 lg:p-12 shadow-2xl">
+            <div className="text-center bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl p-6 sm:p-10 lg:p-12 shadow-2xl">
               <p className="text-gray-300 text-lg mb-6 max-w-xl mx-auto">
                 Umów wizytę i sprawdź dostępne terminy
               </p>

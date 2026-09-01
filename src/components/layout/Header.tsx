@@ -182,7 +182,7 @@ export function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]"
+                  className="px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]"
                 >
                   {item.name}
                 </a>
@@ -192,7 +192,7 @@ export function Header() {
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    'px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200',
+                    'px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200',
                     isActive(item.href)
                       ? 'bg-[#2563EB]/10 text-[#2563EB]'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]'
