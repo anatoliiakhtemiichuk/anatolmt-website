@@ -219,7 +219,7 @@ export default async function HomePage() {
         <Container>
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
                 Dla kogo jest terapia?
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -252,7 +252,7 @@ export default async function HomePage() {
         <Container>
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
                 W czym mogę pomóc?
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -303,7 +303,7 @@ export default async function HomePage() {
 
               {/* Content *\}
               <div className="lg:col-span-2">
-                <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-6">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-6">
                   O mnie
                 </h2>
                 <div className="space-y-4 text-gray-700 leading-relaxed text-lg">
@@ -328,7 +328,7 @@ export default async function HomePage() {
         <Container>
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
                 Dlaczego warto?
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -362,7 +362,7 @@ export default async function HomePage() {
         <Container>
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
                 Co mówią klienci?
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -377,7 +377,7 @@ export default async function HomePage() {
                   href={platform.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`group flex items-center justify-center gap-3 ${platform.bgColor} ${platform.hoverColor} text-white px-8 py-6 rounded-xl font-semibold text-lg transition-all duration-200 hover:shadow-xl hover:scale-105 w-full sm:w-auto min-w-[200px]`}
+                  className={`group flex items-center justify-center gap-3 ${platform.bgColor} ${platform.hoverColor} text-white px-8 py-6 rounded-xl font-semibold text-lg transition-all duration-200 hover:shadow-xl hover:scale-105 w-full sm:w-auto min-w-[180px] sm:min-w-[200px]`}
                 >
                   <platform.icon className="w-6 h-6 fill-white" />
                   <span>Opinie {platform.name}</span>
@@ -463,7 +463,7 @@ export default async function HomePage() {
         <Container>
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
                 Najczęściej zadawane pytania
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -545,7 +545,7 @@ export default async function HomePage() {
       <section className="py-12 bg-white border-t border-gray-100">
         <Container>
           <Reveal>
-            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-600">
+            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 text-gray-600">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-green-600" />
