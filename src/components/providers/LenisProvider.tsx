@@ -33,7 +33,7 @@ export function LenisProvider({ children }: LenisProviderProps) {
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5, // Reduced from 2 for more natural mobile scrolling
     });
 
     lenisRef.current = lenis;
