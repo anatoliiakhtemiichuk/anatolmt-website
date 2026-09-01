@@ -153,7 +153,6 @@ export const siteConfig = {
     'Warszawa',
     'Gocław',
     'Praga-Południe',
-    'Saska Kępa',
     'Praga Północ',
     'Grochów',
     'Kamionek',

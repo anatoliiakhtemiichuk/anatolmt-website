@@ -259,7 +259,7 @@ CREATE POLICY "Service role full access to blocked_slots" ON blocked_slots
 INSERT INTO bookings (service_type, duration_minutes, price_pln, date, time, first_name, last_name, phone, email, notes, status)
 VALUES
     ('Masaż klasyczny', 60, 18000, CURRENT_DATE, '10:00', 'Jan', 'Kowalski', '+48 123 456 789', 'jan@example.com', 'Pierwsza wizyta', 'confirmed'),
-    ('Terapia manualna', 45, 15000, CURRENT_DATE, '14:00', 'Anna', 'Nowak', '+48 987 654 321', 'anna@example.com', NULL, 'confirmed'),
+    ('Masaż terapeutyczny', 45, 15000, CURRENT_DATE, '14:00', 'Anna', 'Nowak', '+48 987 654 321', 'anna@example.com', NULL, 'confirmed'),
     ('Masaż sportowy', 90, 25000, CURRENT_DATE + INTERVAL '1 day', '09:00', 'Piotr', 'Wiśniewski', '+48 555 666 777', 'piotr@example.com', 'Ból pleców', 'confirmed'),
     ('Fizjoterapia', 60, 20000, CURRENT_DATE + INTERVAL '2 days', '11:00', 'Maria', 'Kowalczyk', '+48 111 222 333', 'maria@example.com', NULL, 'confirmed'),
     ('Masaż relaksacyjny', 60, 18000, CURRENT_DATE + INTERVAL '3 days', '16:00', 'Tomasz', 'Zieliński', '+48 444 555 666', 'tomasz@example.com', 'Stres w pracy', 'confirmed'),

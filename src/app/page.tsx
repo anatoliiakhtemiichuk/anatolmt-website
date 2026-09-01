@@ -550,7 +550,7 @@ export default async function HomePage() {
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-green-600" />
                 </div>
-                <span className="text-sm font-medium">Dyplomowany terapeuta</span>
+                <span className="text-sm font-medium">Dyplomowany masażysta</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">

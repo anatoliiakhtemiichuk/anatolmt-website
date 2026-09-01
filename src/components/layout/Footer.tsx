@@ -35,6 +35,10 @@ export async function Footer() {
     const dayName = DAY_NAMES_PL[day];
 
     if (daySettings.closed) {
+      // Friday: show home visits message instead of "Zamknięte"
+      if (day === 'fri') {
+        return { day: dayName, hours: 'Wizyty z dojazdem', isClosed: false, isHomeVisit: true };
+      }
       return { day: dayName, hours: 'Zamknięte', isClosed: true };
     }
     return {
