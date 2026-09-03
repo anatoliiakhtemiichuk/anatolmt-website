@@ -18,6 +18,22 @@ export const metadata: Metadata = {
     title: `Cennik usług | ${siteConfig.name}`,
     description: `Cennik masażu terapeutycznego w Warszawie. Rezerwacja online przez Booksy.`,
     url: `${siteConfig.url}/prices`,
+    siteName: 'Anatol M&T',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Anatol M&T - Cennik masażu Warszawa',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Cennik usług | ${siteConfig.name}`,
+    description: `Cennik masażu terapeutycznego w Warszawie. Rezerwacja online przez Booksy.`,
+    images: ['/og-image.jpg'],
   },
   alternates: {
     canonical: `${siteConfig.url}/prices`,

@@ -15,6 +15,22 @@ export const metadata: Metadata = {
     title: `Dla firm - Masaż jako benefit pracowniczy | ${siteConfig.name}`,
     description: `Masaż terapeutyczny jako benefit dla pracowników biurowych. Redukcja bólu kręgosłupa, mniej zwolnień.`,
     url: `${siteConfig.url}/dla-firm`,
+    siteName: 'Anatol M&T',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Anatol M&T - Masaż dla firm',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Dla firm - Masaż jako benefit pracowniczy | ${siteConfig.name}`,
+    description: `Masaż terapeutyczny jako benefit dla pracowników biurowych. Redukcja bólu kręgosłupa, mniej zwolnień.`,
+    images: ['/og-image.jpg'],
   },
   alternates: {
     canonical: `${siteConfig.url}/dla-firm`,

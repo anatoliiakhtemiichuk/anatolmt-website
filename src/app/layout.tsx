@@ -35,16 +35,31 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'M&T ANATOL' }],
   alternates: {
-    canonical: '/',
+    canonical: siteUrl,
   },
   openGraph: {
     type: 'website',
     locale: 'pl_PL',
     url: siteUrl,
-    siteName: 'M&T ANATOL',
-    title: 'M&T ANATOL',
+    siteName: 'Anatol M&T',
+    title: 'Anatol M&T - Masaż terapeutyczny Warszawa',
     description:
       'Profesjonalny masaż terapeutyczny i masaż powięziowy. Umów wizytę online.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Anatol M&T - Masaż terapeutyczny Warszawa (Gocław)',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Anatol M&T - Masaż terapeutyczny Warszawa',
+    description:
+      'Profesjonalny masaż terapeutyczny i masaż powięziowy. Umów wizytę online.',
+    images: ['/og-image.jpg'],
   },
 };
 
