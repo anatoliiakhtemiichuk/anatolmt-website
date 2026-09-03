@@ -15,9 +15,9 @@ const navigation = [
   { name: 'Strona główna', href: '/', external: false },
   { name: 'Rezerwacja', href: BOOKSY_URL, external: true },
   { name: 'Wideo Pomoc', href: '/video-pomoc', external: false },
-  { name: 'Cennik', href: '/prices', external: false },
+  { name: 'Cennik', href: '/cennik', external: false },
   { name: 'Dla firm', href: '/dla-firm', external: false },
-  { name: 'Kontakt', href: '/contact', external: false },
+  { name: 'Kontakt', href: '/kontakt', external: false },
 ];
 
 export function Header() {

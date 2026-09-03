@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `Kontakt | ${siteConfig.name}`,
     description: `Skontaktuj się z gabinetem ${siteConfig.name}. ${siteConfig.address.full}. Tel: ${siteConfig.contact.phone}.`,
-    url: `${siteConfig.url}/contact`,
+    url: `${siteConfig.url}/kontakt`,
     siteName: 'Anatol M&T',
     type: 'website',
     images: [
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     images: ['/og-image.jpg'],
   },
   alternates: {
-    canonical: `${siteConfig.url}/contact`,
+    canonical: `${siteConfig.url}/kontakt`,
   },
 };
 

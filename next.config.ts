@@ -7,6 +7,21 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  // Redirects from old English URLs to Polish URLs
+  async redirects() {
+    return [
+      {
+        source: '/prices',
+        destination: '/cennik',
+        permanent: true,
+      },
+      {
+        source: '/contact',
+        destination: '/kontakt',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

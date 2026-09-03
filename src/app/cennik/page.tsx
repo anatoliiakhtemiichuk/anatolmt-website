@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `Cennik usług | ${siteConfig.name}`,
     description: `Cennik masażu terapeutycznego w Warszawie. Rezerwacja online przez Booksy.`,
-    url: `${siteConfig.url}/prices`,
+    url: `${siteConfig.url}/cennik`,
     siteName: 'Anatol M&T',
     type: 'website',
     images: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     images: ['/og-image.jpg'],
   },
   alternates: {
-    canonical: `${siteConfig.url}/prices`,
+    canonical: `${siteConfig.url}/cennik`,
   },
 };
 

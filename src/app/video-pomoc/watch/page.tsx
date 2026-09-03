@@ -118,7 +118,7 @@ function WatchContent() {
 
                 <p className="text-sm text-gray-500">
                   Masz pytania?{' '}
-                  <Link href="/contact" className="text-[#2563EB] hover:underline">
+                  <Link href="/kontakt" className="text-[#2563EB] hover:underline">
                     Skontaktuj się z nami
                   </Link>
                 </p>
