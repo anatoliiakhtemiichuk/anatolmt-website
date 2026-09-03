@@ -34,6 +34,9 @@ export const metadata: Metadata = {
     'ANATOL M&T',
   ],
   authors: [{ name: 'M&T ANATOL' }],
+  verification: {
+    google: 'google79c03bcbf3808796',
+  },
   alternates: {
     canonical: siteUrl,
   },
