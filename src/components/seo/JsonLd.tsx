@@ -195,6 +195,55 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
 }
 
 /**
+ * BlogPosting JSON-LD Schema
+ * For individual blog posts
+ */
+interface BlogPostingSchemaProps {
+  title: string;
+  description: string;
+  datePublished: string;
+  slug: string;
+}
+
+export function BlogPostingSchema({
+  title,
+  description,
+  datePublished,
+  slug,
+}: BlogPostingSchemaProps) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description: description,
+    datePublished: datePublished,
+    dateModified: datePublished,
+    url: `${siteConfig.url}/blog/${slug}`,
+    author: {
+      '@type': 'Person',
+      name: 'Anatol Akhtemiichuk',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${siteConfig.url}/blog/${slug}`,
+    },
+    inLanguage: siteConfig.language,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+/**
  * WebSite JSON-LD Schema
  * For sitelinks searchbox
  */

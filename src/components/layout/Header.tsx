@@ -17,6 +17,7 @@ const navigation = [
   { name: 'Wideo Pomoc', href: '/video-pomoc', external: false },
   { name: 'Cennik', href: '/cennik', external: false },
   { name: 'Dla firm', href: '/dla-firm', external: false },
+  { name: 'Blog', href: '/blog', external: false },
   { name: 'Kontakt', href: '/kontakt', external: false },
 ];
 
