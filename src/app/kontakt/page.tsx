@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, ExternalLink } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
 import type { SiteSettings } from '@/types/site-settings';
 import { DAY_NAMES_PL, DAY_ORDER, DEFAULT_SITE_SETTINGS } from '@/types/site-settings';
@@ -402,21 +402,28 @@ export default function ContactPage() {
       <section className="py-16 bg-gray-50">
         <Container>
           <h2 className="text-2xl font-bold text-[#0F172A] mb-6 text-center">Lokalizacja</h2>
-          <Card variant="bordered" padding="none" className="overflow-hidden">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.8!2d21.0925175!3d52.2303212!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471ecd3c8e5b8a1d%3A0x0!2sul.+gen.+Bronis%C5%82awa+Bohaterewicza+1A%2C+03-982+Warszawa!5e0!3m2!1spl!2spl!4v1700000000000!5m2!1spl!2spl"
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Lokalizacja gabinetu Anatol M&T - Gocław, Warszawa"
-            />
+          <Card variant="bordered" className="text-center py-12">
+            <CardContent>
+              <div className="w-16 h-16 bg-[#2563EB]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <MapPin className="w-8 h-8 text-[#2563EB]" />
+              </div>
+              <p className="text-lg text-[#0F172A] font-medium mb-2">
+                ul. gen. Bronisława Bohaterewicza 1A
+              </p>
+              <p className="text-gray-600 mb-6">
+                03-982 Warszawa (Gocław, Praga-Południe)
+              </p>
+              <a
+                href="https://www.google.com/maps/place/ul.+gen.+Bronis%C5%82awa+Bohaterewicza+1A,+03-982+Warszawa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-lg"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Otwórz w Google Maps
+              </a>
+            </CardContent>
           </Card>
-          <p className="text-center text-gray-600 mt-4">
-            ul. gen. Bronisława Bohaterewicza 1A, 03-982 Warszawa (Gocław, Praga-Południe)
-          </p>
         </Container>
       </section>
     </>
