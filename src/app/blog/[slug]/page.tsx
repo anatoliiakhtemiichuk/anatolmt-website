@@ -136,7 +136,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       {/* Article Content */}
       <section className={post.image ? 'py-8 lg:py-12' : 'py-16 lg:py-24'}>
         <Container>
-          <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:text-[#0F172A] prose-a:text-[#2563EB] prose-a:no-underline hover:prose-a:underline">
+          <article className="max-w-3xl mx-auto blog-content text-lg">
             <div dangerouslySetInnerHTML={{ __html: parseMarkdown(post.content) }} />
           </article>
         </Container>
@@ -173,8 +173,14 @@ function parseMarkdown(content: string): string {
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-  // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  // Links - external links open in new tab
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+    const isExternal = url.startsWith('http://') || url.startsWith('https://');
+    if (isExternal) {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    }
+    return `<a href="${url}">${text}</a>`;
+  });
 
   // Lists
   html = html.replace(/^\- (.*$)/gm, '<li>$1</li>');

@@ -234,3 +234,64 @@ html {
 .animate-blob-3 {
   animation: blob-3 18s ease-in-out infinite;
 }
+
+/* Blog Article Content Styles */
+.blog-content {
+  color: #334155;
+  line-height: 1.75;
+}
+
+.blog-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.blog-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0F172A;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-content p {
+  margin-bottom: 1.25rem;
+}
+
+.blog-content strong {
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.blog-content a {
+  color: #2563EB;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-content a:hover {
+  color: #1D4ED8;
+}
+
+.blog-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.blog-content ul li {
+  margin-bottom: 0.5rem;
+}
+
+.blog-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.blog-content ol li {
+  margin-bottom: 0.5rem;
+}
