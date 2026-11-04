@@ -7,6 +7,7 @@ export interface BlogPost {
   title: string;
   description: string;
   date: string;
+  image?: string;
   content: string;
 }
 
@@ -15,6 +16,7 @@ export interface BlogPostMeta {
   title: string;
   description: string;
   date: string;
+  image?: string;
 }
 
 const postsDirectory = path.join(process.cwd(), 'content/blog');
@@ -38,6 +40,7 @@ export function getAllPosts(): BlogPostMeta[] {
         title: data.title || '',
         description: data.description || '',
         date: data.date || '',
+        image: data.image || undefined,
       };
     })
     .sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
@@ -67,6 +70,7 @@ export function getPostBySlug(slug: string): BlogPost | null {
         title: data.title || '',
         description: data.description || '',
         date: data.date || '',
+        image: data.image || undefined,
         content,
       };
     }

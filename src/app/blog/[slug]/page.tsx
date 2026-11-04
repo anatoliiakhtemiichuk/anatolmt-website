@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import { Container } from '@/components/ui';
 import { getAllSlugs, getPostBySlug } from '@/lib/blog';
@@ -41,6 +42,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: 'article',
       publishedTime: post.date,
       authors: ['Anatol Akhtemiichuk'],
+      ...(post.image && {
+        images: [
+          {
+            url: post.image,
+            width: 1200,
+            height: 800,
+            alt: post.title,
+          },
+        ],
+      }),
     },
   };
 }
@@ -102,8 +113,28 @@ export default async function BlogPostPage({ params }: PageProps) {
         </Container>
       </section>
 
+      {/* Featured Image */}
+      {post.image && (
+        <section className="pt-8 lg:pt-12">
+          <Container>
+            <div className="max-w-3xl mx-auto">
+              <div className="relative aspect-[3/2] rounded-xl overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 768px"
+                  priority
+                />
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
+
       {/* Article Content */}
-      <section className="py-16 lg:py-24">
+      <section className={post.image ? 'py-8 lg:py-12' : 'py-16 lg:py-24'}>
         <Container>
           <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:text-[#0F172A] prose-a:text-[#2563EB] prose-a:no-underline hover:prose-a:underline">
             <div dangerouslySetInnerHTML={{ __html: parseMarkdown(post.content) }} />

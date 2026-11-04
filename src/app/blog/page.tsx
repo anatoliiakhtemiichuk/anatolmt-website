@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Calendar } from 'lucide-react';
+import Image from 'next/image';
+import { Calendar, ArrowRight } from 'lucide-react';
 import { Container, Card, CardContent } from '@/components/ui';
 import { getAllPosts } from '@/lib/blog';
 import { siteConfig } from '@/config/site';
@@ -65,8 +66,19 @@ export default function BlogPage() {
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => (
-                <Link key={post.slug} href={`/blog/${post.slug}`}>
-                  <Card variant="bordered" className="h-full hover:shadow-lg transition-shadow">
+                <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
+                  <Card variant="bordered" className="h-full hover:shadow-lg transition-shadow overflow-hidden">
+                    {post.image && (
+                      <div className="relative aspect-[3/2]">
+                        <Image
+                          src={post.image}
+                          alt={post.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      </div>
+                    )}
                     <CardContent>
                       <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
                         <Calendar className="w-4 h-4" />
@@ -75,7 +87,10 @@ export default function BlogPage() {
                       <h2 className="text-xl font-semibold text-[#0F172A] mb-2 group-hover:text-[#2563EB] transition-colors">
                         {post.title}
                       </h2>
-                      <p className="text-gray-600 line-clamp-3">{post.description}</p>
+                      <p className="text-gray-600 line-clamp-3 mb-4">{post.description}</p>
+                      <span className="inline-flex items-center gap-1 text-[#2563EB] font-medium group-hover:gap-2 transition-all">
+                        Czytaj więcej <ArrowRight className="w-4 h-4" />
+                      </span>
                     </CardContent>
                   </Card>
                 </Link>
