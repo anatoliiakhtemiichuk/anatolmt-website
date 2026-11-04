@@ -95,6 +95,7 @@ export async function createVideoCheckoutSession(options: {
   customerEmail?: string;
   successUrl: string;
   cancelUrl: string;
+  metadata?: Record<string, string>;
 }): Promise<Stripe.Checkout.Session | null> {
   const client = getStripeClient();
   if (!client) {
@@ -102,7 +103,7 @@ export async function createVideoCheckoutSession(options: {
     return null;
   }
 
-  const { productType, videoSlug, videoTitle, customerEmail, successUrl, cancelUrl } = options;
+  const { productType, videoSlug, videoTitle, customerEmail, successUrl, cancelUrl, metadata: additionalMetadata } = options;
 
   const product = VIDEO_PRODUCTS[productType];
   const price = VIDEO_PRICES[productType];
@@ -112,9 +113,10 @@ export async function createVideoCheckoutSession(options: {
     ? `${product.name}: ${videoTitle}`
     : product.name;
 
-  // Metadata for webhook processing
+  // Metadata for webhook processing (including consent data)
   const metadata: Record<string, string> = {
     product_type: productType,
+    ...additionalMetadata,
   };
 
   if (videoSlug) {

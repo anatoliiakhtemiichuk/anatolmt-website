@@ -17,10 +17,18 @@ import { getVideoBySlug } from '@/data/videos';
 import { VIDEO_PRICES, ProductType } from '@/types/video';
 import { getSiteUrl } from '@/lib/config';
 
+interface ConsentData {
+  terms_accepted: boolean;
+  terms_accepted_at: string;
+  withdrawal_accepted: boolean;
+  withdrawal_accepted_at: string;
+}
+
 interface CheckoutRequestBody {
   product_type: ProductType;
   video_slug?: string;
   customer_email?: string;
+  consents?: ConsentData;
 }
 
 export async function POST(request: NextRequest) {
@@ -34,7 +42,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body: CheckoutRequestBody = await request.json();
-    const { product_type, video_slug, customer_email } = body;
+    const { product_type, video_slug, customer_email, consents } = body;
+
+    // Validate consents are provided
+    if (!consents?.terms_accepted || !consents?.withdrawal_accepted) {
+      return NextResponse.json(
+        { error: 'Wymagana jest akceptacja regulaminu i zgoda na dostarczenie treści' },
+        { status: 400 }
+      );
+    }
 
     // Validate product type
     if (!product_type || !['single', 'standard', 'full'].includes(product_type)) {
@@ -75,7 +91,7 @@ export async function POST(request: NextRequest) {
     // Get base URL
     const baseUrl = getSiteUrl();
 
-    // Create Stripe checkout session
+    // Create Stripe checkout session with consent metadata
     const session = await createVideoCheckoutSession({
       productType: product_type,
       videoSlug: video_slug,
@@ -83,6 +99,12 @@ export async function POST(request: NextRequest) {
       customerEmail: customer_email,
       successUrl: `${baseUrl}/video-pomoc/success?token=${accessToken}&session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${baseUrl}/video-pomoc${video_slug ? `/${video_slug}` : ''}?canceled=true`,
+      metadata: {
+        terms_accepted: 'true',
+        terms_accepted_at: consents.terms_accepted_at,
+        withdrawal_accepted: 'true',
+        withdrawal_accepted_at: consents.withdrawal_accepted_at,
+      },
     });
 
     if (!session) {

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { ShoppingCart, Loader2, CreditCard, Package } from 'lucide-react';
+import { Loader2, CreditCard, Package } from 'lucide-react';
 import { ProductType, VIDEO_PRICES } from '@/types/video';
 
 interface PurchaseButtonProps {
@@ -17,7 +18,7 @@ interface PurchaseButtonProps {
 
 /**
  * Purchase button component for video products
- * Initiates Stripe checkout flow
+ * Includes required consent checkboxes before payment
  */
 export function PurchaseButton({
   productType,
@@ -29,6 +30,8 @@ export function PurchaseButton({
   className,
 }: PurchaseButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [withdrawalAccepted, setWithdrawalAccepted] = useState(false);
 
   const price = VIDEO_PRICES[productType];
   const priceFormatted = (price / 100).toFixed(0);
@@ -40,10 +43,16 @@ export function PurchaseButton({
   };
   const defaultLabel = defaultLabels[productType];
 
+  const canPurchase = termsAccepted && withdrawalAccepted;
+
   const handlePurchase = async () => {
+    if (!canPurchase) return;
+
     setIsLoading(true);
 
     try {
+      const consentTimestamp = new Date().toISOString();
+
       const response = await fetch('/api/video/checkout', {
         method: 'POST',
         headers: {
@@ -52,13 +61,18 @@ export function PurchaseButton({
         body: JSON.stringify({
           product_type: productType,
           video_slug: videoSlug,
+          consents: {
+            terms_accepted: true,
+            terms_accepted_at: consentTimestamp,
+            withdrawal_accepted: true,
+            withdrawal_accepted_at: consentTimestamp,
+          },
         }),
       });
 
       const data = await response.json();
 
       if (data.checkout_url) {
-        // Redirect to Stripe checkout
         window.location.href = data.checkout_url;
       } else {
         console.error('Checkout error:', data.error);
@@ -93,29 +107,80 @@ export function PurchaseButton({
   const Icon = productType === 'full' ? Package : CreditCard;
 
   return (
-    <button
-      onClick={handlePurchase}
-      disabled={isLoading}
-      className={cn(
-        baseStyles,
-        variants[variant],
-        sizes[size],
-        fullWidth && 'w-full',
-        className
-      )}
-    >
-      {isLoading ? (
-        <>
-          <Loader2 className="w-5 h-5 animate-spin" />
-          Przekierowanie...
-        </>
-      ) : (
-        <>
-          <Icon className="w-5 h-5" />
-          {label || defaultLabel}
-        </>
-      )}
-    </button>
+    <div className={cn('space-y-4', fullWidth && 'w-full')}>
+      {/* Consent checkboxes */}
+      <div className="space-y-3">
+        <label className="flex items-start gap-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={termsAccepted}
+            onChange={(e) => setTermsAccepted(e.target.checked)}
+            className="mt-0.5 w-4 h-4 text-[#2563EB] border-gray-300 rounded focus:ring-[#2563EB] focus:ring-2 cursor-pointer"
+          />
+          <span className="text-sm text-gray-600 group-hover:text-gray-900">
+            Akceptuję{' '}
+            <Link
+              href="/regulamin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#2563EB] underline hover:no-underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Regulamin
+            </Link>{' '}
+            i{' '}
+            <Link
+              href="/polityka-prywatnosci"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#2563EB] underline hover:no-underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Politykę prywatności
+            </Link>
+            .
+          </span>
+        </label>
+
+        <label className="flex items-start gap-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={withdrawalAccepted}
+            onChange={(e) => setWithdrawalAccepted(e.target.checked)}
+            className="mt-0.5 w-4 h-4 text-[#2563EB] border-gray-300 rounded focus:ring-[#2563EB] focus:ring-2 cursor-pointer"
+          />
+          <span className="text-sm text-gray-600 group-hover:text-gray-900">
+            Wyrażam zgodę na dostarczenie materiału wideo przed upływem 14 dni na odstąpienie od
+            umowy i przyjmuję do wiadomości, że tracę prawo odstąpienia.
+          </span>
+        </label>
+      </div>
+
+      {/* Purchase button */}
+      <button
+        onClick={handlePurchase}
+        disabled={isLoading || !canPurchase}
+        className={cn(
+          baseStyles,
+          variants[variant],
+          sizes[size],
+          fullWidth && 'w-full',
+          className
+        )}
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Przekierowanie...
+          </>
+        ) : (
+          <>
+            <Icon className="w-5 h-5" />
+            {label || defaultLabel}
+          </>
+        )}
+      </button>
+    </div>
   );
 }
 
@@ -210,7 +275,7 @@ export function PurchaseCard({
         </li>
       </ul>
 
-      {/* Button */}
+      {/* Button with consents */}
       <PurchaseButton
         productType={productType}
         videoSlug={videoSlug}

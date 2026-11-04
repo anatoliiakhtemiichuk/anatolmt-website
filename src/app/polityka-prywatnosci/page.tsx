@@ -120,14 +120,10 @@ export default function PolitykaPrywatnosciPage() {
           <section className="py-8 border-b border-[#e5e5e5]">
             <h2 className="text-xl font-bold mb-6">§ 7. Pliki cookies</h2>
             <ol className="list-decimal list-outside ml-6 space-y-4">
-              <li>Strona wykorzystuje pliki cookies do prawidłowego działania i analizy ruchu.</li>
-              <li>Rodzaje cookies:
-                <ul className="list-disc list-outside ml-6 mt-2 space-y-1">
-                  <li>Niezbędne - wymagane do działania strony</li>
-                  <li>Analityczne - analiza sposobu korzystania ze strony</li>
-                </ul>
-              </li>
-              <li>Zarządzanie cookies możliwe w ustawieniach przeglądarki.</li>
+              <li>Strona wykorzystuje wyłącznie niezbędne pliki cookies, wymagane do jej prawidłowego działania (np. utrzymanie sesji w panelu administracyjnym).</li>
+              <li>Strona nie wykorzystuje plików cookies analitycznych ani marketingowych.</li>
+              <li>Linki do zewnętrznych serwisów (np. Booksy, Google Maps) przenoszą na strony, które stosują własne zasady dotyczące plików cookies.</li>
+              <li>Zarządzanie plikami cookies jest możliwe w ustawieniach przeglądarki.</li>
             </ol>
           </section>
 
