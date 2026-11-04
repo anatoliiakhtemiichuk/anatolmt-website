@@ -22,12 +22,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!post) {
     return {
-      title: 'Nie znaleziono artykułu | Anatol M&T',
+      title: 'Nie znaleziono artykułu',
     };
   }
 
   return {
-    title: `${post.title} | Blog | Anatol M&T`,
+    title: `${post.title} | Blog`,
     description: post.description,
     alternates: {
       canonical: `${siteConfig.url}/blog/${post.slug}`,

@@ -7,14 +7,14 @@ import { siteConfig } from '@/config/site';
 import { BreadcrumbSchema } from '@/components/seo/JsonLd';
 
 export const metadata: Metadata = {
-  title: 'Blog | Anatol M&T',
-  description: 'Artykuły i porady dotyczące zdrowia, masażu i pracy z ciałem. Blog Anatol M&T Warszawa.',
+  title: 'Blog',
+  description: 'Artykuły o masażu, napięciu mięśni i pracy z ciałem. Blog Anatol M&T Warszawa.',
   alternates: {
     canonical: `${siteConfig.url}/blog`,
   },
   openGraph: {
-    title: 'Blog | Anatol M&T',
-    description: 'Artykuły i porady dotyczące zdrowia, masażu i pracy z ciałem.',
+    title: 'Blog | M&T ANATOL',
+    description: 'Artykuły o masażu, napięciu mięśni i pracy z ciałem.',
     url: `${siteConfig.url}/blog`,
     siteName: siteConfig.name,
     locale: siteConfig.locale,
@@ -49,7 +49,7 @@ export default function BlogPage() {
           <div className="max-w-3xl">
             <h1 className="text-4xl lg:text-5xl font-bold mb-4">Blog</h1>
             <p className="text-lg text-gray-300">
-              Artykuły i porady dotyczące zdrowia, masażu i pracy z ciałem.
+              Artykuły o masażu, napięciu mięśni i pracy z ciałem.
             </p>
           </div>
         </Container>
