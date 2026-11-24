@@ -22,9 +22,13 @@ import { getSiteSettings } from '@/lib/site-settings';
 const BOOKSY_URL = siteConfig.links.booksy;
 
 // SEO Metadata for homepage
+const HOME_TITLE = `Masaż Gocław, Warszawa - terapeuta manualny | ${siteConfig.name}`;
+const HOME_DESCRIPTION =
+  'Masaż Gocław, Praga-Południe: praca z napięciem pleców, karku i barków. Gabinet przy ul. Bohaterewicza 1A w Warszawie. Zapisy online przez Booksy.';
+
 export const metadata: Metadata = {
-  title: `${siteConfig.name} | Masaż terapeutyczny i masaż powięziowy ${siteConfig.address.city}`,
-  description: siteConfig.description,
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
   keywords: [
     'masaż Gocław',
     'masaż Praga-Południe',
@@ -36,8 +40,8 @@ export const metadata: Metadata = {
     ...siteConfig.conditions,
   ],
   openGraph: {
-    title: `${siteConfig.name} | Masaż terapeutyczny i masaż powięziowy ${siteConfig.address.city}`,
-    description: siteConfig.description,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     url: siteConfig.url,
     siteName: 'Anatol M&T',
     locale: siteConfig.locale,
@@ -53,8 +57,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${siteConfig.name} | Masaż terapeutyczny i masaż powięziowy ${siteConfig.address.city}`,
-    description: siteConfig.description,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     images: ['/og-image.jpg'],
   },
   alternates: {
@@ -131,7 +135,7 @@ const benefits = [
 const reviewPlatforms = [
   {
     name: 'Google',
-    url: 'https://maps.app.goo.gl/cUQFbaBuvnUoHX1U6',
+    url: siteConfig.links.googleBusiness,
     icon: Star,
     bgColor: 'bg-gradient-to-br from-blue-500 to-blue-600',
     hoverColor: 'hover:from-blue-600 hover:to-blue-700',
@@ -182,7 +186,7 @@ export default async function HomePage() {
               {/* Main H1 for SEO */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                 <TextReveal delay={0.2} staggerDelay={0.06}>
-                  Pozbądź się bólu pleców i napięcia mięśniowego
+                  Masaż Gocław - terapeuta manualny w Warszawie
                 </TextReveal>
               </h1>
 
@@ -225,6 +229,33 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
+        </Container>
+      </section>
+
+      {/* Local intro Section */}
+      <section className="py-16 lg:py-20">
+        <Container>
+          <Reveal>
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-6">
+                Plecy, kark i barki - masaż na Gocławiu
+              </h2>
+              <div className="space-y-4 text-gray-700 leading-relaxed text-lg">
+                <p>
+                  Najczęściej pracuję z napięciem mięśni pleców, karku i barków u osób, które
+                  wiele godzin spędzają przy biurku, oraz u osób trenujących. Spięty kark po
+                  dniu przy komputerze albo ból pleców po treningu to typowe powody, z którymi
+                  przychodzą klienci. Wizyta zaczyna się od rozmowy, a nacisk i techniki
+                  dobieram do tego, jak reagujesz w trakcie.
+                </p>
+                <p>
+                  Gabinet mieści się na Gocławiu (Praga-Południe), przy{' '}
+                  {siteConfig.address.street}, w studiu Body Forge. Dojeżdżają do mnie także
+                  klienci z Saskiej Kępy, Grochowa, Pragi-Północ i Wawra.
+                </p>
+              </div>
+            </div>
+          </Reveal>
         </Container>
       </section>
 

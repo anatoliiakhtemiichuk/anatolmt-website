@@ -27,7 +27,7 @@ export const siteConfig = {
     postalCode: '03-982',
     city: 'Warszawa',
     district: 'Gocław',
-    region: 'Praga-Południe',
+    region: 'Mazowieckie',
     country: 'Polska',
     countryCode: 'PL',
     full: 'ul. gen. Bronisława Bohaterewicza 1A, 03-982 Warszawa',
@@ -65,6 +65,7 @@ export const siteConfig = {
     googleMaps:
       'https://www.google.com/maps/place/ul.+gen.+Bronis%C5%82awa+Bohaterewicza+1A,+03-982+Warszawa',
     instagram: 'https://www.instagram.com/anatolmt/',
+    googleBusiness: 'https://maps.app.goo.gl/cUQFbaBuvnUoHX1U6',
   },
 
   // Services offered
