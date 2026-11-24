@@ -1,10 +1,48 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, ExternalLink } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, ExternalLink, ChevronDown } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
 import type { SiteSettings } from '@/types/site-settings';
 import { DAY_NAMES_PL, DAY_ORDER, DEFAULT_SITE_SETTINGS } from '@/types/site-settings';
+import { siteConfig } from '@/config/site';
+
+// "O mnie" - collapsible section, rendered in both loading and loaded states
+// so the content is always present in the server-rendered HTML.
+const aboutSection = (
+  <section className="py-16">
+    <Container>
+      <details className="group max-w-3xl mx-auto rounded-xl border border-gray-200 bg-white">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-6 py-5 text-2xl font-bold text-[#0F172A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] [&::-webkit-details-marker]:hidden">
+          O mnie
+          <ChevronDown
+            aria-hidden="true"
+            className="w-6 h-6 flex-shrink-0 text-[#2563EB] transition-transform group-open:rotate-180"
+          />
+        </summary>
+        <div className="px-6 pb-6">
+          <h3 className="text-xl font-semibold text-[#0F172A] mb-4">
+            Plecy, kark i barki - masaż na Gocławiu
+          </h3>
+          <div className="space-y-4 text-gray-700 leading-relaxed text-lg">
+            <p>
+              Najczęściej pracuję z napięciem mięśni pleców, karku i barków u osób, które
+              wiele godzin spędzają przy biurku, oraz u osób trenujących. Spięty kark po
+              dniu przy komputerze albo ból pleców po treningu to typowe powody, z którymi
+              przychodzą klienci. Wizyta zaczyna się od rozmowy, a nacisk i techniki
+              dobieram do tego, jak reagujesz w trakcie.
+            </p>
+            <p>
+              Gabinet mieści się na Gocławiu (Praga-Południe), przy{' '}
+              {siteConfig.address.street}, w studiu Body Forge. Dojeżdżają do mnie także
+              klienci z Saskiej Kępy, Grochowa, Pragi-Północ i Wawra.
+            </p>
+          </div>
+        </div>
+      </details>
+    </Container>
+  </section>
+);
 
 // Facebook icon component (lucide-react's Facebook icon is different)
 const FacebookIcon = ({ className }: { className?: string }) => (
@@ -176,6 +214,7 @@ export default function ContactPage() {
             <div className="h-96 bg-gray-100 rounded-xl animate-pulse" />
           </Container>
         </section>
+        {aboutSection}
       </>
     );
   }
@@ -426,6 +465,8 @@ export default function ContactPage() {
           </Card>
         </Container>
       </section>
+
+      {aboutSection}
     </>
   );
 }

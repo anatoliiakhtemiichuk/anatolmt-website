@@ -232,33 +232,6 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Local intro Section */}
-      <section className="py-16 lg:py-20">
-        <Container>
-          <Reveal>
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-6">
-                Plecy, kark i barki - masaż na Gocławiu
-              </h2>
-              <div className="space-y-4 text-gray-700 leading-relaxed text-lg">
-                <p>
-                  Najczęściej pracuję z napięciem mięśni pleców, karku i barków u osób, które
-                  wiele godzin spędzają przy biurku, oraz u osób trenujących. Spięty kark po
-                  dniu przy komputerze albo ból pleców po treningu to typowe powody, z którymi
-                  przychodzą klienci. Wizyta zaczyna się od rozmowy, a nacisk i techniki
-                  dobieram do tego, jak reagujesz w trakcie.
-                </p>
-                <p>
-                  Gabinet mieści się na Gocławiu (Praga-Południe), przy{' '}
-                  {siteConfig.address.street}, w studiu Body Forge. Dojeżdżają do mnie także
-                  klienci z Saskiej Kępy, Grochowa, Pragi-Północ i Wawra.
-                </p>
-              </div>
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
       {/* Dla kogo jest terapia Section */}
       <section className="py-16 lg:py-24 bg-gray-50">
         <Container>
