@@ -34,7 +34,7 @@ function HeroMap() {
           priority
           className="w-full h-auto rounded-xl transition-transform group-hover:scale-[1.02]"
         />
-        <span className="mt-2 block text-sm text-gray-300">Dojazd - kliknij, aby powiększyć</span>
+        <span className="mt-2 block text-base font-medium text-white">Dojazd - kliknij, aby powiększyć</span>
       </button>
 
       <dialog
@@ -71,14 +71,14 @@ function HeroMap() {
   );
 }
 
-// "O mnie" - collapsible section, rendered in both loading and loaded states
+// "Informacja" - collapsible section, rendered in both loading and loaded states
 // so the content is always present in the server-rendered HTML.
 const aboutSection = (
   <section className="py-16">
     <Container>
       <details className="group max-w-3xl mx-auto rounded-xl border border-gray-200 bg-white">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-6 py-5 text-2xl font-bold text-[#0F172A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] [&::-webkit-details-marker]:hidden">
-          O mnie
+          Informacja
           <ChevronDown
             aria-hidden="true"
             className="w-6 h-6 flex-shrink-0 text-[#2563EB] transition-transform group-open:rotate-180"
