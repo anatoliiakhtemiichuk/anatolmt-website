@@ -1,20 +1,84 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, ExternalLink, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, ExternalLink, ChevronDown, X } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
 import type { SiteSettings } from '@/types/site-settings';
 import { DAY_NAMES_PL, DAY_ORDER, DEFAULT_SITE_SETTINGS } from '@/types/site-settings';
+import Image from 'next/image';
 import { siteConfig } from '@/config/site';
 
-// "O mnie" - collapsible section, rendered in both loading and loaded states
+const MAP_SRC = '/kontakt/dojazd-goclaw.png';
+const MAP_ALT =
+  'Mapa dojazdu do gabinetu M&T Anatol na Gocławiu, ul. Bohaterewicza 1A: samochodem bez korków Śródmieście 12-15 min, Wawer 12-15 min, Mokotów 13-16 min, Praga-Północ 15-18 min, Wilanów 16-20 min, Targówek 18-22 min, Żoliborz 20-23 min, Wola 21-25 min.';
+
+// Map thumbnail for the hero; opens the full-size map in a native <dialog>.
+// Rendered in both loading and loaded states so it is in the server-rendered HTML.
+function HeroMap() {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  return (
+    <div className="flex-shrink-0 mx-auto md:mx-0 md:order-last">
+      <button
+        type="button"
+        aria-haspopup="dialog"
+        onClick={() => dialogRef.current?.showModal()}
+        className="group block w-[220px] md:w-[280px] rounded-xl text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]"
+      >
+        <Image
+          src={MAP_SRC}
+          alt={MAP_ALT}
+          width={1080}
+          height={1350}
+          sizes="(min-width: 768px) 280px, 220px"
+          priority
+          className="w-full h-auto rounded-xl transition-transform group-hover:scale-[1.02]"
+        />
+        <span className="mt-2 block text-base font-medium text-white">Dojazd - kliknij, aby powiększyć</span>
+      </button>
+
+      <dialog
+        ref={dialogRef}
+        aria-label="Mapa dojazdu"
+        onClick={(e) => {
+          if (e.target === dialogRef.current) dialogRef.current.close();
+        }}
+        className="m-auto p-0 bg-transparent max-w-[95vw] max-h-[95vh] backdrop:bg-black/80"
+      >
+        <div className="relative p-2">
+          <button
+            type="button"
+            aria-label="Zamknij"
+            onClick={() => dialogRef.current?.close()}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          >
+            <X className="w-5 h-5" aria-hidden="true" />
+          </button>
+          <Image
+            src={MAP_SRC}
+            alt={MAP_ALT}
+            width={1080}
+            height={1350}
+            sizes="95vw"
+            className="w-auto h-auto max-w-full max-h-[85vh] rounded-xl"
+          />
+          <p className="mt-2 text-sm text-gray-300 text-center">
+            Czasy przybliżone, samochodem bez korków.
+          </p>
+        </div>
+      </dialog>
+    </div>
+  );
+}
+
+// "Informacja" - collapsible section, rendered in both loading and loaded states
 // so the content is always present in the server-rendered HTML.
 const aboutSection = (
   <section className="py-16">
     <Container>
       <details className="group max-w-3xl mx-auto rounded-xl border border-gray-200 bg-white">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-6 py-5 text-2xl font-bold text-[#0F172A] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] [&::-webkit-details-marker]:hidden">
-          O mnie
+          Informacja
           <ChevronDown
             aria-hidden="true"
             className="w-6 h-6 flex-shrink-0 text-[#2563EB] transition-transform group-open:rotate-180"
@@ -203,9 +267,12 @@ export default function ContactPage() {
       <>
         <section className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white py-16 lg:py-24">
           <Container>
-            <div className="max-w-3xl">
-              <div className="h-12 w-48 bg-gray-600 rounded animate-pulse mb-4" />
-              <div className="h-6 w-96 bg-gray-600 rounded animate-pulse" />
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+              <HeroMap />
+              <div className="max-w-3xl">
+                <div className="h-12 w-48 bg-gray-600 rounded animate-pulse mb-4" />
+                <div className="h-6 w-full max-w-96 bg-gray-600 rounded animate-pulse" />
+              </div>
             </div>
           </Container>
         </section>
@@ -224,11 +291,14 @@ export default function ContactPage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white py-16 lg:py-24">
         <Container>
-          <div className="max-w-3xl">
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4">Kontakt</h1>
-            <p className="text-lg text-gray-300">
-              Masz pytania? Skontaktuj się z nami. Odpowiemy najszybciej jak to możliwe.
-            </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+            <HeroMap />
+            <div className="max-w-3xl">
+              <h1 className="text-4xl lg:text-5xl font-bold mb-4">Kontakt</h1>
+              <p className="text-lg text-gray-300">
+                Masz pytania? Skontaktuj się z nami. Odpowiemy najszybciej jak to możliwe.
+              </p>
+            </div>
           </div>
         </Container>
       </section>
