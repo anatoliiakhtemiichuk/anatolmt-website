@@ -26,7 +26,6 @@ export const metadata: Metadata = {
   description:
     'Profesjonalny masaż terapeutyczny i masaż powięziowy. Umów wizytę online. Doświadczony masażysta, indywidualne podejście do każdego klienta.',
   keywords: [
-    'masaż leczniczy',
     'masaż terapeutyczny',
     'masaż Warszawa',
     'masaż powięziowy Warszawa',

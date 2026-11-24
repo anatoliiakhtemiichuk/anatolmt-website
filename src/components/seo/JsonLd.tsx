@@ -45,7 +45,7 @@ export function LocalBusinessSchema() {
       bestRating: 5,
       worstRating: 1,
     },
-    sameAs: [siteConfig.links.instagram, siteConfig.links.booksy],
+    sameAs: [siteConfig.links.instagram, siteConfig.links.booksy, siteConfig.links.googleBusiness],
     areaServed: siteConfig.areas.map((area) => ({
       '@type': 'City',
       name: area,
