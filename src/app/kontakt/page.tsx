@@ -5,7 +5,33 @@ import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, ExternalLink,
 import { Container, Card, CardContent, Button } from '@/components/ui';
 import type { SiteSettings } from '@/types/site-settings';
 import { DAY_NAMES_PL, DAY_ORDER, DEFAULT_SITE_SETTINGS } from '@/types/site-settings';
+import Image from 'next/image';
 import { siteConfig } from '@/config/site';
+
+// "Dojazd na Gocław" map - rendered in both loading and loaded states
+// so the image is always present in the server-rendered HTML.
+const mapSection = (
+  <section className="pt-16">
+    <Container>
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-2xl font-bold text-[#0F172A] mb-6 text-center">Dojazd na Gocław</h2>
+        <figure>
+          <Image
+            src="/kontakt/dojazd-goclaw.png"
+            alt="Mapa dojazdu do gabinetu M&T Anatol na Gocławiu, ul. Bohaterewicza 1A: samochodem bez korków Śródmieście 12-15 min, Wawer 12-15 min, Mokotów 13-16 min, Praga-Północ 15-18 min, Wilanów 16-20 min, Targówek 18-22 min, Żoliborz 20-23 min, Wola 21-25 min."
+            width={1080}
+            height={1350}
+            sizes="(min-width: 768px) 768px, 100vw"
+            className="w-full h-auto rounded-xl"
+          />
+          <figcaption className="mt-3 text-sm text-gray-500 text-center">
+            Czasy przybliżone, samochodem bez korków.
+          </figcaption>
+        </figure>
+      </div>
+    </Container>
+  </section>
+);
 
 // "O mnie" - collapsible section, rendered in both loading and loaded states
 // so the content is always present in the server-rendered HTML.
@@ -214,6 +240,7 @@ export default function ContactPage() {
             <div className="h-96 bg-gray-100 rounded-xl animate-pulse" />
           </Container>
         </section>
+        {mapSection}
         {aboutSection}
       </>
     );
@@ -466,6 +493,7 @@ export default function ContactPage() {
         </Container>
       </section>
 
+      {mapSection}
       {aboutSection}
     </>
   );
