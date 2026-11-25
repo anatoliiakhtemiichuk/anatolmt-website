@@ -1,14 +1,76 @@
 'use client';
 
 import { useState } from 'react';
+import { Metadata } from 'next';
 import Link from 'next/link';
+import { siteConfig } from '@/config/site';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowDown,
   CheckCircle,
   Phone,
-  Mail
+  Mail,
+  Users,
+  Building2,
+  MapPin,
+  Star,
+  TrendingDown,
+  Target,
+  Clock,
+  ChevronDown
 } from 'lucide-react';
 import { Container, Card, CardContent, Button } from '@/components/ui';
+
+// Staggered animation variants for accordion content
+const containerVariants = {
+  hidden: {
+    height: 0,
+    opacity: 0,
+  },
+  visible: {
+    height: 'auto',
+    opacity: 1,
+    transition: {
+      height: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as const },
+      opacity: { duration: 0.3, delay: 0.1 },
+      staggerChildren: 0.08,
+      delayChildren: 0.15,
+    },
+  },
+  exit: {
+    height: 0,
+    opacity: 0,
+    transition: {
+      height: { duration: 0.3, ease: [0.4, 0, 0.2, 1] as const },
+      opacity: { duration: 0.2 },
+      staggerChildren: 0.03,
+      staggerDirection: -1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 16,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: [0.4, 0, 0.2, 1] as const,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: {
+      duration: 0.2,
+      ease: [0.4, 0, 1, 1] as const,
+    },
+  },
+};
 
 interface FormData {
   companyName: string;
@@ -42,6 +104,11 @@ export default function DlaFirmPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<'test' | 'dofinansowanie' | null>(null);
+
+  const toggleCard = (card: 'test' | 'dofinansowanie') => {
+    setExpandedCard(expandedCard === card ? null : card);
+  };
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -163,7 +230,7 @@ export default function DlaFirmPage() {
         <Container>
           <div className="max-w-3xl">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              Mniej bólu pleców w zespole, mniej zwolnień
+              Masaż jako benefit dla firm - praca z napięciem mięśni u pracowników biurowych
             </h1>
             <p className="text-lg lg:text-xl text-gray-300 mb-8">
               Masaż terapeutyczny od doświadczonego terapeuty z Warszawy jako benefit dla pracowników biurowych
@@ -179,29 +246,414 @@ export default function DlaFirmPage() {
         </Container>
       </section>
 
-      {/* B2B Teaser Section */}
+      {/* Problem Section */}
+      <section className="py-16 lg:py-24 bg-gray-50">
+        <Container>
+          <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-12 text-center">
+            Problem pracodawcy
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card variant="bordered" className="bg-white">
+              <CardContent>
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4">
+                  <TrendingDown className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
+                  Absencja chorobowa
+                </h3>
+                <p className="text-gray-600 text-sm max-sm:text-base">
+                  Ból kręgosłupa i karku od pracy siedzącej prowadzi do zwolnień lekarskich
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card variant="bordered" className="bg-white">
+              <CardContent>
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                  <Target className="w-6 h-6 text-orange-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
+                  Niższa produktywność
+                </h3>
+                <p className="text-gray-600 text-sm max-sm:text-base">
+                  Ból utrudnia koncentrację i obniża efektywność pracy zespołu
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card variant="bordered" className="bg-white">
+              <CardContent>
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
+                  Gorsze samopoczucie
+                </h3>
+                <p className="text-gray-600 text-sm max-sm:text-base">
+                  Przewlekły dyskomfort wpływa na morale i atmosferę w firmie
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card variant="bordered" className="bg-white">
+              <CardContent>
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                  <Clock className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
+                  Stała rotacja
+                </h3>
+                <p className="text-gray-600 text-sm max-sm:text-base">
+                  Brak wsparcia zdrowotnego może wpływać na retencję talentów
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </Container>
+      </section>
+
+      {/* Collaboration Options Section */}
       <section className="py-16 lg:py-24">
         <Container size="md">
-          <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-6">
-              Współpraca B2B - masaż i regeneracja jako benefit dla pracowników
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
+              Dwie formy współpracy
             </h2>
-            <p className="text-lg text-gray-600 mb-8">
-              Oferuję firmom gotowy model współpracy - masaż i regeneracja jako realny benefit zdrowotny dla zespołu. Elastyczne zasady, niskie ryzyko na start. Szczegóły przedstawiam indywidualnie podczas rozmowy.
+            <p className="text-lg text-gray-600">
+              Wybierz model, który odpowiada potrzebom Twojej firmy
             </p>
-            <button
-              onClick={scrollToForm}
-              className="inline-flex items-center gap-2 bg-[#2563EB] text-white px-6 py-3.5 rounded-lg font-medium text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-lg"
-            >
-              Umów rozmowę
-              <ArrowDown className="w-5 h-5" />
-            </button>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Card 1: Test bez ryzyka */}
+            <Card variant="bordered" className="flex flex-col overflow-hidden">
+              <CardContent className="flex flex-col h-full p-0">
+                {/* Clickable Header */}
+                <button
+                  onClick={() => toggleCard('test')}
+                  className="w-full text-left p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      {/* Badge */}
+                      <span className="inline-flex items-center gap-2 bg-[#2563EB]/10 text-[#2563EB] px-3 py-1.5 rounded-full text-sm font-medium mb-4">
+                        Na start - sprawdź zainteresowanie
+                      </span>
+
+                      {/* Title */}
+                      <h3 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-2">
+                        Test bez ryzyka
+                      </h3>
+
+                      {/* Short intro */}
+                      <p className="text-gray-600">
+                        Firma nic nie płaci z góry. Pracownicy dostają zniżkę na pierwszą wizytę.
+                      </p>
+                    </div>
+
+                    {/* Chevron */}
+                    <motion.div
+                      animate={{ rotate: expandedCard === 'test' ? 180 : 0 }}
+                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <ChevronDown className="w-6 h-6 text-gray-400 flex-shrink-0" />
+                    </motion.div>
+                  </div>
+                </button>
+
+                {/* Collapsible Content */}
+                <AnimatePresence initial={false}>
+                  {expandedCard === 'test' && (
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6">
+                        {/* Step 1 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-4">
+                          <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            1
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Ustalamy kod firmy i zniżkę</h4>
+                            <p className="text-sm text-gray-600">
+                              Wspólnie tworzymy unikalny kod rabatowy dla Twojej firmy
+                            </p>
+                          </div>
+                        </motion.div>
+
+                        {/* Step 2 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-4">
+                          <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            2
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Firma informuje pracowników</h4>
+                            <p className="text-sm text-gray-600">
+                              Przekazujesz kod zespołowi. Każdy pracownik może go użyć przy rezerwacji pierwszej wizyty
+                            </p>
+                          </div>
+                        </motion.div>
+
+                        {/* Step 3 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-6">
+                          <div className="w-8 h-8 bg-[#2563EB] text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            3
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Sprawdzamy razem efekt</h4>
+                            <p className="text-sm text-gray-600">
+                              Po 2-4 tygodniach oceniamy zainteresowanie i decydujemy o dalszej współpracy
+                            </p>
+                          </div>
+                        </motion.div>
+
+                        {/* Highlight Box */}
+                        <motion.div
+                          variants={itemVariants}
+                          className="bg-[#2563EB]/5 border border-[#2563EB]/20 rounded-lg p-4 mb-6"
+                        >
+                          <div className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-[#2563EB] flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-[#0F172A] font-medium text-sm">
+                                Zero zobowiązań finansowych na start
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+
+                        {/* CTA Button */}
+                        <motion.button
+                          variants={itemVariants}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            scrollToForm();
+                          }}
+                          className="w-full inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-lg"
+                        >
+                          Umów rozmowę
+                          <ArrowDown className="w-5 h-5" />
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </CardContent>
+            </Card>
+
+            {/* Card 2: Dofinansowanie wizyt */}
+            <Card variant="bordered" className="flex flex-col overflow-hidden">
+              <CardContent className="flex flex-col h-full p-0">
+                {/* Clickable Header */}
+                <button
+                  onClick={() => toggleCard('dofinansowanie')}
+                  className="w-full text-left p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      {/* Badge */}
+                      <span className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-medium mb-4">
+                        Stała współpraca - realny benefit dla zespołu
+                      </span>
+
+                      {/* Title */}
+                      <h3 className="text-2xl lg:text-3xl font-bold text-[#0F172A] mb-2">
+                        Dofinansowanie wizyt
+                      </h3>
+
+                      {/* Short intro */}
+                      <p className="text-gray-600">
+                        Firma dofinansowuje ustaloną część każdej wizyty, pracownik dopłaca resztę.
+                      </p>
+                    </div>
+
+                    {/* Chevron */}
+                    <motion.div
+                      animate={{ rotate: expandedCard === 'dofinansowanie' ? 180 : 0 }}
+                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <ChevronDown className="w-6 h-6 text-gray-400 flex-shrink-0" />
+                    </motion.div>
+                  </div>
+                </button>
+
+                {/* Collapsible Content */}
+                <AnimatePresence initial={false}>
+                  {expandedCard === 'dofinansowanie' && (
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6">
+                        {/* Step 1 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-4">
+                          <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            1
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Ustalamy podział kosztu</h4>
+                            <p className="text-sm text-gray-600">
+                              Ustalamy zasady współpracy oraz wysokość dofinansowania do każdej wizyty
+                            </p>
+                          </div>
+                        </motion.div>
+
+                        {/* Step 2 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-4">
+                          <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            2
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Pracownicy rezerwują przez Booksy</h4>
+                            <p className="text-sm text-gray-600">
+                              Płacą swoją część na miejscu przez dedykowaną usługę partnerską danej firmy
+                            </p>
+                          </div>
+                        </motion.div>
+
+                        {/* Step 3 */}
+                        <motion.div variants={itemVariants} className="flex items-start gap-3 mb-6">
+                          <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                            3
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-[#0F172A] mb-1">Co miesiąc jedna faktura</h4>
+                            <p className="text-sm text-gray-600">
+                              Otrzymujesz jedną fakturę za faktyczną liczbę wizyt zespołu. Kwoty i szczegóły ustalamy indywidualnie
+                            </p>
+                          </div>
+                        </motion.div>
+
+                        {/* Key Info Box */}
+                        <motion.div
+                          variants={itemVariants}
+                          className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4 mb-6"
+                        >
+                          <div className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-[#0F172A] font-medium text-sm">
+                                Realny benefit zdrowotny dla pracowników, prosty proces rozliczeń dla firmy
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+
+                        {/* CTA Button */}
+                        <motion.button
+                          variants={itemVariants}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            scrollToForm();
+                          }}
+                          className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-6 py-3.5 rounded-lg font-medium transition-all duration-200 hover:bg-emerald-700 hover:shadow-lg"
+                        >
+                          Umów rozmowę
+                          <ArrowDown className="w-5 h-5" />
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </CardContent>
+            </Card>
+          </div>
+        </Container>
+      </section>
+
+      {/* Dlaczego ja Section */}
+      <section className="py-16 lg:py-24 bg-gray-50">
+        <Container size="sm">
+          <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-12 text-center">
+            Dlaczego ja
+          </h2>
+
+          <div className="space-y-6 mb-8">
+            <Card variant="bordered" className="bg-white">
+              <CardContent>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-6 h-6 text-[#2563EB]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
+                      Doświadczenie w pracy z ciałem
+                    </h3>
+                    <p className="text-gray-600">
+                      Pracuję z napięciem mięśni pleców, karku i barków u osób, które dużo czasu spędzają przy biurku.
+                      Indywidualne podejście do każdego klienta.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card variant="bordered" className="bg-white">
+              <CardContent>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-6 h-6 text-[#2563EB]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
+                      Gabinet blisko biura
+                    </h3>
+                    <p className="text-gray-600">
+                      {siteConfig.address.district}, {siteConfig.address.street} - dogodna lokalizacja, łatwo dostępna
+                      komunikacją miejską i samochodem.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card variant="bordered" className="bg-white">
+              <CardContent>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[#2563EB]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Star className="w-6 h-6 text-[#2563EB]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#0F172A] mb-2">
+                      Zobacz opinie na{' '}
+                      <a
+                        href="https://maps.app.goo.gl/cUQFbaBuvnUoHX1U6"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#2563EB] hover:underline"
+                      >
+                        Google
+                      </a>
+                      {' '}i{' '}
+                      <a
+                        href="https://booksy.com/pl-pl/217565_anatol-m-t_fizjoterapia_3_warszawa#reviews-section"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#2563EB] hover:underline"
+                      >
+                        Booksy
+                      </a>
+                    </h3>
+                    <p className="text-gray-600">
+                      Sprawdź sam opinie zadowolonych klientów, którzy polecają moje usługi.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </Container>
       </section>
 
       {/* Contact Form Section */}
-      <section id="contact-form" className="py-16 lg:py-24 bg-gray-50 scroll-mt-20">
+      <section id="contact-form" className="py-16 lg:py-24 scroll-mt-20">
         <Container size="sm">
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-[#0F172A] mb-4">
@@ -235,7 +687,7 @@ export default function DlaFirmPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card variant="bordered" className="bg-white">
+            <Card variant="bordered">
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Company Name */}
