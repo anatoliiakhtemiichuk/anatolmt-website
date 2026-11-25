@@ -95,13 +95,13 @@ export async function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {/* Brand */}
             <div className="lg:col-span-1">
-              <Link href="/" className="flex items-center gap-2 mb-4">
+              <Link href="/" className="flex items-center gap-2 mb-4 max-sm:min-h-11">
                 <div className="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">M&T</span>
                 </div>
                 <span className="font-semibold text-lg">{settings.texts.footerText || 'M&T ANATOL'}</span>
               </Link>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-gray-400 text-sm max-sm:text-base leading-relaxed">
                 {settings.texts.aboutText || 'Profesjonalny masaż terapeutyczny i praca z ciałem. Indywidualne podejście do każdego klienta.'}
               </p>
             </div>
@@ -111,7 +111,7 @@ export async function Footer() {
               <h3 className="font-semibold text-sm uppercase tracking-wider mb-4">
                 Nawigacja
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-3 max-sm:space-y-1">
                 {navigation.main.map((item) => (
                   <li key={item.name}>
                     {item.external ? (
@@ -119,14 +119,14 @@ export async function Footer() {
                         href={item.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                        className="text-gray-400 hover:text-white transition-colors duration-200 text-sm max-sm:text-base max-sm:inline-flex max-sm:items-center max-sm:min-h-11"
                       >
                         {item.name}
                       </a>
                     ) : (
                       <Link
                         href={item.href}
-                        className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                        className="text-gray-400 hover:text-white transition-colors duration-200 text-sm max-sm:text-base max-sm:inline-flex max-sm:items-center max-sm:min-h-11"
                       >
                         {item.name}
                       </Link>
@@ -165,11 +165,11 @@ export async function Footer() {
               <h3 className="font-semibold text-sm uppercase tracking-wider mb-4">
                 Kontakt
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-3 max-sm:space-y-1">
                 <li>
                   <a
                     href={`tel:${settings.contact.phone.replace(/\s/g, '')}`}
-                    className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                    className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm max-sm:text-base max-sm:min-h-11"
                   >
                     <Phone className="w-4 h-4 text-[#2563EB]" />
                     {settings.contact.phone}
@@ -178,7 +178,7 @@ export async function Footer() {
                 <li>
                   <a
                     href={`mailto:${settings.contact.email}`}
-                    className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                    className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm max-sm:text-base max-sm:min-h-11"
                   >
                     <Mail className="w-4 h-4 text-[#2563EB]" />
                     {settings.contact.email}
@@ -190,7 +190,7 @@ export async function Footer() {
                       href={settings.contact.googleMapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-start gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm"
+                      className="flex items-start gap-3 text-gray-400 hover:text-white transition-colors duration-200 text-sm max-sm:text-base max-sm:min-h-11"
                     >
                       <MapPin className="w-4 h-4 text-[#2563EB] mt-0.5" />
                       <span>
@@ -228,7 +228,7 @@ export async function Footer() {
                       href={settings.contact.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gradient-to-br hover:from-purple-500 hover:to-pink-500 hover:text-white transition-all duration-200"
+                      className="w-10 h-10 max-sm:w-11 max-sm:h-11 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gradient-to-br hover:from-purple-500 hover:to-pink-500 hover:text-white transition-all duration-200"
                       aria-label="Instagram"
                     >
                       <Instagram className="w-5 h-5" />
@@ -239,7 +239,7 @@ export async function Footer() {
                       href={settings.contact.facebookUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white transition-all duration-200"
+                      className="w-10 h-10 max-sm:w-11 max-sm:h-11 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white transition-all duration-200"
                       aria-label="Facebook"
                     >
                       <FacebookIcon className="w-5 h-5" />
@@ -260,13 +260,13 @@ export async function Footer() {
             <div className="flex gap-6">
               <Link
                 href="/polityka-prywatnosci"
-                className="text-gray-500 hover:text-white transition-colors duration-200 text-sm"
+                className="text-gray-500 hover:text-white transition-colors duration-200 text-sm max-sm:inline-flex max-sm:items-center max-sm:min-h-11"
               >
                 Polityka prywatności
               </Link>
               <Link
                 href="/regulamin"
-                className="text-gray-500 hover:text-white transition-colors duration-200 text-sm"
+                className="text-gray-500 hover:text-white transition-colors duration-200 text-sm max-sm:inline-flex max-sm:items-center max-sm:min-h-11"
               >
                 Regulamin
               </Link>

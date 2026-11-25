@@ -104,7 +104,7 @@ export function LockedVideoPreview({ video, className }: LockedVideoPreviewProps
         </div>
 
         <h3 className="text-xl font-semibold mb-2">Materiał zablokowany</h3>
-        <p className="text-white/70 text-sm max-w-xs">
+        <p className="text-white/70 text-sm max-sm:text-base max-w-xs">
           Kup dostęp, aby odblokować ten film i oglądać go przez 30 dni
         </p>
       </div>

@@ -402,14 +402,14 @@ export default function DlaFirmPage() {
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8">
                   <a
                     href="tel:+48884844191"
-                    className="flex items-center gap-2 text-[#0F172A] hover:text-[#2563EB] transition-colors"
+                    className="flex items-center gap-2 text-[#0F172A] hover:text-[#2563EB] transition-colors max-sm:min-h-11"
                   >
                     <Phone className="w-5 h-5 text-[#2563EB]" />
                     <span className="font-medium">+48 884 844 191</span>
                   </a>
                   <a
                     href="mailto:anatolmt.kontakt@gmail.com"
-                    className="flex items-center gap-2 text-[#0F172A] hover:text-[#2563EB] transition-colors"
+                    className="flex items-center gap-2 text-[#0F172A] hover:text-[#2563EB] transition-colors max-sm:min-h-11"
                   >
                     <Mail className="w-5 h-5 text-[#2563EB]" />
                     <span className="font-medium">anatolmt.kontakt@gmail.com</span>

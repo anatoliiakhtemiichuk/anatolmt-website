@@ -93,7 +93,7 @@ export function VideoCard({
 
         {/* Description */}
         {video.description && (
-          <p className="mt-2 text-sm text-gray-600 line-clamp-2">{video.description}</p>
+          <p className="mt-2 text-sm max-sm:text-base text-gray-600 line-clamp-2">{video.description}</p>
         )}
 
         {/* CTA hint */}

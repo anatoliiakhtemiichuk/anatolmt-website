@@ -51,7 +51,7 @@ export default function PakietPage() {
         <Container>
           <Link
             href="/video-pomoc"
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 transition-colors"
+            className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 transition-colors max-sm:min-h-11"
           >
             <ArrowLeft className="w-4 h-4" />
             Powrót do Wideo Pomoc
@@ -197,7 +197,7 @@ export default function PakietPage() {
                   </div>
                 </div>
                 {category.description && (
-                  <p className="mt-3 text-sm text-gray-600 line-clamp-2">
+                  <p className="mt-3 text-sm max-sm:text-base text-gray-600 line-clamp-2">
                     {category.description}
                   </p>
                 )}

@@ -15,7 +15,7 @@ interface DisclaimerProps {
 export function Disclaimer({ variant = 'full', className }: DisclaimerProps) {
   if (variant === 'inline') {
     return (
-      <p className={cn('text-sm text-gray-500 flex items-start gap-2', className)}>
+      <p className={cn('text-sm max-sm:text-base text-gray-500 flex items-start gap-2', className)}>
         <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
         <span>
           Materiały mają charakter edukacyjny i nie zastępują konsultacji terapeutycznej.
@@ -28,7 +28,7 @@ export function Disclaimer({ variant = 'full', className }: DisclaimerProps) {
     return (
       <div
         className={cn(
-          'bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800',
+          'bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm max-sm:text-base text-amber-800',
           className
         )}
       >
@@ -57,7 +57,7 @@ export function Disclaimer({ variant = 'full', className }: DisclaimerProps) {
         </div>
         <div className="space-y-3">
           <h3 className="font-semibold text-amber-900">Ważna informacja</h3>
-          <div className="space-y-2 text-amber-800 text-sm">
+          <div className="space-y-2 text-amber-800 text-sm max-sm:text-base">
             <p>
               <strong>Materiały mają charakter edukacyjny</strong> i nie zastępują
               konsultacji terapeutycznej ani diagnozy medycznej.

@@ -57,7 +57,7 @@ function VideoPomocContent() {
           {selectedCategory && (
             <Link
               href="/video-pomoc"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 transition-colors"
+              className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 transition-colors max-sm:min-h-11"
             >
               <ArrowLeft className="w-4 h-4" />
               Powrót do kategorii
@@ -355,7 +355,7 @@ function VideoPomocContent() {
                     <h3 className="font-semibold text-[#0F172A] mb-2">
                       Jak uzyskam dostęp do filmów?
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm max-sm:text-base">
                       Po płatności otrzymasz unikalny link, który da Ci dostęp do
                       zakupionych materiałów przez 30 dni. Nie wymaga to zakładania konta.
                     </p>
@@ -364,7 +364,7 @@ function VideoPomocContent() {
                     <h3 className="font-semibold text-[#0F172A] mb-2">
                       Jakie metody płatności akceptujecie?
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm max-sm:text-base">
                       Akceptujemy karty Visa i Mastercard, Apple Pay, Google Pay oraz BLIK
                       (przez Przelewy24).
                     </p>
@@ -373,7 +373,7 @@ function VideoPomocContent() {
                     <h3 className="font-semibold text-[#0F172A] mb-2">
                       Czy mogę przedłużyć dostęp?
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm max-sm:text-base">
                       Tak, po wygaśnięciu dostępu możesz dokonać ponownego zakupu na
                       kolejne 30 dni.
                     </p>
@@ -382,7 +382,7 @@ function VideoPomocContent() {
                     <h3 className="font-semibold text-[#0F172A] mb-2">
                       Dla kogo są te materiały?
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm max-sm:text-base">
                       Materiały są przeznaczone dla klientów po wizycie,
                       jako wsparcie w kontynuowaniu ćwiczeń w domu. Mają charakter
                       edukacyjny i nie zastępują konsultacji ze specjalistą.

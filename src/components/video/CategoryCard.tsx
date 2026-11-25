@@ -83,7 +83,7 @@ export function CategoryCard({ category, videoCount, className }: CategoryCardPr
 
       {/* Description */}
       {category.description && (
-        <p className="mt-4 text-sm text-gray-600 line-clamp-2">{category.description}</p>
+        <p className="mt-4 text-sm max-sm:text-base text-gray-600 line-clamp-2">{category.description}</p>
       )}
     </Link>
   );

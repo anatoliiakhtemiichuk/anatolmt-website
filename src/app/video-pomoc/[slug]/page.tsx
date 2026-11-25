@@ -46,7 +46,7 @@ export default async function SingleVideoPage({ params }: PageProps) {
         <Container>
           <Link
             href={`/video-pomoc?kategoria=${video.category}`}
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors max-sm:min-h-11"
           >
             <ArrowLeft className="w-4 h-4" />
             {categoryName}
@@ -97,7 +97,7 @@ export default async function SingleVideoPage({ params }: PageProps) {
                         <h3 className="font-semibold text-green-800 mb-2">
                           Kiedy wykonywać
                         </h3>
-                        <p className="text-sm text-green-700 leading-relaxed">
+                        <p className="text-sm max-sm:text-base text-green-700 leading-relaxed">
                           {video.when_to_do}
                         </p>
                       </div>
@@ -114,7 +114,7 @@ export default async function SingleVideoPage({ params }: PageProps) {
                         <h3 className="font-semibold text-red-800 mb-2">
                           Kiedy NIE wykonywać
                         </h3>
-                        <p className="text-sm text-red-700 leading-relaxed">
+                        <p className="text-sm max-sm:text-base text-red-700 leading-relaxed">
                           {video.when_not_to_do}
                         </p>
                       </div>
@@ -254,7 +254,7 @@ export default async function SingleVideoPage({ params }: PageProps) {
                     </p>
                     <Link
                       href="/video-pomoc/pakiet"
-                      className="inline-flex items-center gap-1 text-[#2563EB] text-sm font-medium mt-2 hover:underline"
+                      className="inline-flex items-center gap-1 text-[#2563EB] text-sm font-medium mt-2 hover:underline max-sm:min-h-11"
                     >
                       Zobacz pakiet
                       <ArrowLeft className="w-3 h-3 rotate-180" />

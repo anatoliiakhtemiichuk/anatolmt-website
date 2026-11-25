@@ -174,9 +174,9 @@ export default async function HomePage() {
               {/* Promo Badge */}
               <FadeIn delay={0.1}>
                 <FloatingBadge>
-                  <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-2 rounded-full mb-6 shadow-lg">
-                    <Sparkles className="w-4 h-4 text-yellow-300" />
-                    <span className="text-sm font-semibold text-white">
+                  <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-3 sm:px-4 py-2 rounded-full mb-6 shadow-lg">
+                    <Sparkles className="w-4 h-4 shrink-0 text-yellow-300" />
+                    <span className="text-xs sm:text-sm font-semibold text-white">
                       -10% na pierwszą wizytę dla nowych klientów
                     </span>
                   </div>
@@ -184,9 +184,9 @@ export default async function HomePage() {
               </FadeIn>
 
               {/* Main H1 for SEO */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                 <TextReveal delay={0.2} staggerDelay={0.06}>
-                  Masaż Gocław - terapeuta manualny w Warszawie
+                  Pozbądź się bólu pleców i napięcia mięśniowego
                 </TextReveal>
               </h1>
 
@@ -205,7 +205,7 @@ export default async function HomePage() {
                         href={BOOKSY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
+                        className="flex w-full sm:inline-flex sm:w-auto items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
                       >
                         <Calendar className="w-5 h-5" />
                         Umów wizytę teraz
@@ -366,7 +366,7 @@ export default async function HomePage() {
                     <h3 className="font-semibold text-lg text-[#0F172A] mb-2">
                       {benefit.title}
                     </h3>
-                    <p className="text-gray-600 text-sm">{benefit.description}</p>
+                    <p className="text-gray-600 text-sm max-sm:text-base">{benefit.description}</p>
                   </CardContent>
                 </Card>
               </StaggerItem>
@@ -457,7 +457,7 @@ export default async function HomePage() {
                     href={BOOKSY_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105"
+                    className="flex w-full sm:inline-flex sm:w-auto items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105"
                   >
                     <Calendar className="w-5 h-5" />
                     Zarezerwuj termin
@@ -541,7 +541,7 @@ export default async function HomePage() {
                     href={BOOKSY_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
+                    className="flex w-full sm:inline-flex sm:w-auto items-center justify-center gap-2 bg-[#2563EB] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 hover:bg-[#1D4ED8] hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
                   >
                     <Calendar className="w-5 h-5" />
                     Sprawdź dostępne terminy

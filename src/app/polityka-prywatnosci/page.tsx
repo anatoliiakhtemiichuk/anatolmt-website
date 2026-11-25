@@ -59,22 +59,22 @@ export default function PolitykaPrywatnosciPage() {
               <div>
                 <p className="font-bold mb-2">Realizacja usług</p>
                 <p>Rezerwacja wizyt, świadczenie usług, obsługa zakupów.</p>
-                <p className="text-[#111111]/60 text-sm mt-1">Podstawa: art. 6 ust. 1 lit. b RODO (wykonanie umowy)</p>
+                <p className="text-[#111111]/60 text-sm max-sm:text-base mt-1">Podstawa: art. 6 ust. 1 lit. b RODO (wykonanie umowy)</p>
               </div>
               <div>
                 <p className="font-bold mb-2">Obowiązki prawne</p>
                 <p>Dokumentacja księgowa, rozliczenia podatkowe.</p>
-                <p className="text-[#111111]/60 text-sm mt-1">Podstawa: art. 6 ust. 1 lit. c RODO (obowiązek prawny)</p>
+                <p className="text-[#111111]/60 text-sm max-sm:text-base mt-1">Podstawa: art. 6 ust. 1 lit. c RODO (obowiązek prawny)</p>
               </div>
               <div>
                 <p className="font-bold mb-2">Kontakt i komunikacja</p>
                 <p>Potwierdzenia rezerwacji, przypomnienia, odpowiedzi na zapytania.</p>
-                <p className="text-[#111111]/60 text-sm mt-1">Podstawa: art. 6 ust. 1 lit. b RODO (wykonanie umowy)</p>
+                <p className="text-[#111111]/60 text-sm max-sm:text-base mt-1">Podstawa: art. 6 ust. 1 lit. b RODO (wykonanie umowy)</p>
               </div>
               <div>
                 <p className="font-bold mb-2">Analiza i ulepszanie usług</p>
                 <p>Analiza korzystania ze strony, poprawa jakości.</p>
-                <p className="text-[#111111]/60 text-sm mt-1">Podstawa: art. 6 ust. 1 lit. f RODO (uzasadniony interes administratora)</p>
+                <p className="text-[#111111]/60 text-sm max-sm:text-base mt-1">Podstawa: art. 6 ust. 1 lit. f RODO (uzasadniony interes administratora)</p>
               </div>
             </div>
           </section>
