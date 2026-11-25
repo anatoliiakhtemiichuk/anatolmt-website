@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { siteConfig } from '@/config/site';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowDown,
@@ -229,7 +230,7 @@ export default function DlaFirmPage() {
         <Container>
           <div className="max-w-3xl">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              Mniej bólu pleców w zespole, mniej zwolnień
+              Masaż jako benefit dla firm - praca z napięciem mięśni u pracowników biurowych
             </h1>
             <p className="text-lg lg:text-xl text-gray-300 mb-8">
               Masaż terapeutyczny od doświadczonego terapeuty z Warszawy jako benefit dla pracowników biurowych
@@ -586,7 +587,7 @@ export default function DlaFirmPage() {
                       Doświadczenie w pracy z ciałem
                     </h3>
                     <p className="text-gray-600">
-                      Specjalizuję się w bólu kręgosłupa, karku i przeciążeniach od pracy siedzącej.
+                      Pracuję z napięciem mięśni pleców, karku i barków u osób, które dużo czasu spędzają przy biurku.
                       Indywidualne podejście do każdego klienta.
                     </p>
                   </div>
@@ -605,7 +606,7 @@ export default function DlaFirmPage() {
                       Gabinet blisko biura
                     </h3>
                     <p className="text-gray-600">
-                      Saska Kępa, Plac Przymierza 2/3 - dogodna lokalizacja, łatwo dostępna
+                      {siteConfig.address.district}, {siteConfig.address.street} - dogodna lokalizacja, łatwo dostępna
                       komunikacją miejską i samochodem.
                     </p>
                   </div>
