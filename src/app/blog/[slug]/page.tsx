@@ -95,7 +95,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="max-w-3xl">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors mb-6"
+              className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors mb-6 max-sm:min-h-11"
             >
               <ArrowLeft className="w-4 h-4" />
               Wróć do bloga
@@ -148,7 +148,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="max-w-3xl mx-auto">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-[#2563EB] hover:text-[#1D4ED8] font-medium transition-colors"
+              className="inline-flex items-center gap-2 text-[#2563EB] hover:text-[#1D4ED8] font-medium transition-colors max-sm:min-h-11"
             >
               <ArrowLeft className="w-4 h-4" />
               Wróć do listy artykułów

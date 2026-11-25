@@ -73,7 +73,7 @@ export function Header() {
           style={{ minHeight: 56 }}
         >
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group min-h-11 min-w-11">
             <motion.div
               className="bg-[#2563EB] rounded-lg flex items-center justify-center transition-transform group-hover:scale-105"
               animate={{
@@ -156,6 +156,8 @@ export function Header() {
               type="button"
               className="p-3 -mr-3 text-gray-600 hover:text-[#0F172A] transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
               aria-label={mobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'}
             >
               {mobileMenuOpen ? (
@@ -169,9 +171,11 @@ export function Header() {
 
         {/* Mobile Navigation */}
         <div
+          id="mobile-menu"
+          inert={!mobileMenuOpen}
           className={cn(
             'lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-white',
-            mobileMenuOpen ? 'max-h-[500px] pb-4' : 'max-h-0'
+            mobileMenuOpen ? 'max-h-[600px] pb-4' : 'max-h-0'
           )}
         >
           <div className="flex flex-col gap-1 pt-2">
@@ -183,7 +187,7 @@ export function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]"
+                  className="px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]"
                 >
                   {item.name}
                 </a>
@@ -193,7 +197,7 @@ export function Header() {
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    'px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200',
+                    'px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200',
                     isActive(item.href)
                       ? 'bg-[#2563EB]/10 text-[#2563EB]'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-[#0F172A]'
@@ -209,7 +213,7 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMobileMenuOpen(false)}
-              className="mt-2 mx-4 flex items-center justify-center gap-2 bg-[#2563EB] text-white px-5 py-3 rounded-lg font-medium text-sm transition-all duration-200 hover:bg-[#1D4ED8]"
+              className="mt-2 mx-4 flex items-center justify-center gap-2 bg-[#2563EB] text-white px-5 py-3 rounded-lg font-medium text-base transition-all duration-200 hover:bg-[#1D4ED8]"
             >
               <Calendar className="w-4 h-4" />
               Umów wizytę

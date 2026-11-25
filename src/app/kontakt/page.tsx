@@ -324,7 +324,7 @@ export default function ContactPage() {
                           href={item.href}
                           target={item.label === 'Adres' ? '_blank' : undefined}
                           rel={item.label === 'Adres' ? 'noopener noreferrer' : undefined}
-                          className="text-[#0F172A] font-medium hover:text-[#2563EB] transition-colors"
+                          className="text-[#0F172A] font-medium hover:text-[#2563EB] transition-colors max-sm:inline-flex max-sm:items-center max-sm:min-h-11"
                         >
                           {item.value}
                         </a>
@@ -394,7 +394,7 @@ export default function ContactPage() {
 
               {/* Friday home visits note */}
               <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-lg">
-                <p className="text-sm text-blue-800">
+                <p className="text-sm max-sm:text-base text-blue-800">
                   W piątki - wizyty z dojazdem dla osób, które nie mogą dotrzeć osobiście.
                 </p>
               </div>
